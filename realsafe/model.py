@@ -87,11 +87,11 @@ class ClassifierWithLogits(Classifier, metaclass=ABCMeta):
         :return: TODO
         """
         try:
-            return self._xs_lgs_lbs_map[xs],
+            lgs, lbs = self._xs_lgs_lbs_map[xs]
         except KeyError:
             lgs, lbs = self._logits_and_labels(xs)
             self._xs_lgs_lbs_map[xs] = (lgs, lbs)
-            return lgs, lbs
+        return lgs, lbs
 
     def labels(self, xs):
         _, lbs = self.logits_and_labels(xs)
