@@ -9,8 +9,8 @@ class FGSM(BatchAttack):
     TODO
     """
 
-    def __init__(self, model, batch_size, loss, goal, distance_metric):
-        super().__init__(model, batch_size)
+    def __init__(self, model, batch_size, loss, goal, distance_metric, session):
+        self.model, self.batch_size, self._session = model, batch_size, session
 
         self.loss, self.goal = loss, goal
         self.distance_metric = distance_metric
@@ -43,13 +43,12 @@ class FGSM(BatchAttack):
 
     def config(self, **kwargs):
         eps = maybe_to_array(kwargs['magnitude'], self.batch_size)
-        session = kwargs['session']
-        session.run(self.config_setup, feed_dict={self.eps_ph: eps})
+        self._session.run(self.config_setup, feed_dict={self.eps_ph: eps})
 
-    def batch_attack(self, xs, ys, ys_target, session):
+    def batch_attack(self, xs, ys, ys_target):
         ls = ys if self.goal == 'ut' else ys_target
 
-        return session.run(self.xs_adv, feed_dict={
+        return self._session.run(self.xs_adv, feed_dict={
             self.xs_ph: xs,
             self.ys_ph: ls
         })

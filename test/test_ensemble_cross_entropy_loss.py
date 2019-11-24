@@ -27,18 +27,16 @@ attack = FGSM(
     batch_size=batch_size,
     loss=loss,
     goal='ut',
-    distance_metric='l_inf'
+    distance_metric='l_inf',
+    session=session
 )
-attack.config(
-    magnitude=8.0 / 255.0,
-    session=session,
-)
+attack.config(magnitude=8.0 / 255.0)
 
 for hi in range(batch_size, 5 * batch_size, batch_size):
     xs = xs_test[hi - batch_size:hi]
     ys = ys_test[hi - batch_size:hi]
 
-    xs_adv = attack.batch_attack(xs, ys, None, session)
+    xs_adv = attack.batch_attack(xs, ys, None)
 
     lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
     lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})

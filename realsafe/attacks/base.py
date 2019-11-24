@@ -1,45 +1,53 @@
-class BatchAttack(object):
-    def __init__(self, model, batch_size):
-        """
-        TODO
-        :param model:
-        :param batch_size:
-        """
-        self.model = model
-        self.batch_size = batch_size
+from abc import ABCMeta, abstractmethod
 
+
+class BatchAttack(metaclass=ABCMeta):
+    """
+    TODO
+    """
+
+    @abstractmethod
     def config(self, **kwargs):
         """
         TODO
         :param kwargs:
         :return:
         """
-        raise NotImplementedError("`config()` not implemented.")
+        pass
 
-    def batch_attack(self, xs, ys, ys_target, session):
+    @abstractmethod
+    def batch_attack(self, xs, ys, ys_target):
         """
         TODO
+        :param xs:
+        :param ys:
+        :param ys_target:
         :return:
         """
-        raise NotImplementedError("`batch_attack()` not implemented.")
+        pass
 
 
-class Attack(object):
-    def __init__(self, model):
-        """
-        TODO
-        :param model:
-        """
-        self.model = model
+class Attack(metaclass=ABCMeta):
+    """
+    TODO
+    """
 
+    @abstractmethod
     def config(self, **kwargs):
         """
         TODO
         :param kwargs:
         :return:
         """
+        pass
 
-    def attack(self, x, y, y_target, session):
+    @abstractmethod
+    def attack(self, x, y, y_target):
         """
+        TODO
+        :param x:
+        :param y:
+        :param y_target:
         :return:
         """
+        pass
