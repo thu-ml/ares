@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from realsafe.attack.base import BatchAttack
-from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
+from realsafe.attacks.base import BatchAttack
+from realsafe.attacks.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class FGSM(BatchAttack):

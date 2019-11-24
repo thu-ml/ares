@@ -3,9 +3,8 @@ import numpy as np
 from os.path import expanduser
 from keras.datasets.cifar10 import load_data
 
+from realsafe import FGSM, CrossEntropyLoss
 from realsafe.models.cifar10 import ResNet56
-from realsafe.loss import CrossEntropyLoss
-from realsafe.attack import FGSM
 
 batch_size = 100
 
