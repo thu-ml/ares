@@ -36,7 +36,7 @@ for hi in range(batch_size, 5 * batch_size, batch_size):
     xs = xs_test[hi - batch_size:hi]
     ys = ys_test[hi - batch_size:hi]
 
-    xs_adv = attack.batch_attack(xs, ys, None)
+    xs_adv = attack.batch_attack(xs, ys=ys)
 
     lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
     lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})

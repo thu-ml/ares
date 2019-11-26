@@ -45,7 +45,7 @@ class FGSM(BatchAttack):
         eps = maybe_to_array(kwargs['magnitude'], self.batch_size)
         self._session.run(self.config_setup, feed_dict={self.eps_ph: eps})
 
-    def batch_attack(self, xs, ys, ys_target):
+    def batch_attack(self, xs, ys=None, ys_target=None):
         ls = ys if self.goal == 'ut' else ys_target
 
         return self._session.run(self.xs_adv, feed_dict={

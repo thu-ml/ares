@@ -16,7 +16,7 @@ class BatchAttack(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def batch_attack(self, xs, ys, ys_target):
+    def batch_attack(self, xs, ys=None, ys_target=None):
         """
         TODO
         :param xs:
@@ -42,7 +42,7 @@ class Attack(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def attack(self, x, y, y_target):
+    def attack(self, x, y=None, y_target=None):
         """
         TODO
         :param x:
