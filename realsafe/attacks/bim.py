@@ -56,7 +56,7 @@ class BIM(BatchAttack):
             grad = -grad
         elif goal != 'ut':
             raise NotImplementedError
-        # calculate one iteration
+        # update the adversarial example
         if distance_metric == 'l_2':
             grad_unit = get_unit(grad)
             xs_adv_delta = self.xs_adv_var - self.xs_var + alpha * grad_unit
@@ -73,7 +73,7 @@ class BIM(BatchAttack):
         # clip by (x_min, x_max)
         xs_adv_next = tf.clip_by_value(xs_adv_next, self.model.x_min, self.model.x_max)
 
-        self.iteration_step = self.xs_adv_var.assign(xs_adv_next)
+        self.update_xs_adv_step = self.xs_adv_var.assign(xs_adv_next)
         self.config_eps_step = self.eps_var.assign(self.eps_ph)
         self.config_alpha_step = self.alpha_var.assign(self.alpha_ph)
         self.setup_xs = [self.xs_var.assign(tf.reshape(self.xs_ph, xs_flatten_shape)),
@@ -96,5 +96,5 @@ class BIM(BatchAttack):
         self._session.run(self.setup_xs, feed_dict={self.xs_ph: xs})
         self._session.run(self.setup_ys, feed_dict={self.ys_ph: lbs})
         for _ in range(self.iteration):
-            self._session.run(self.iteration_step)
+            self._session.run(self.update_xs_adv_step)
         return self._session.run(self.xs_adv_model)
