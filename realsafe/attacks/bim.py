@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 from realsafe.attacks.base import BatchAttack
 from realsafe.attacks.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
@@ -6,7 +7,20 @@ from realsafe.attacks.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_uni
 
 class BIM(BatchAttack):
     """
-    TODO
+    Basic Iterative Method (BIM)
+    A white-box iterative constraint-based method. Require a differentiable loss function.
+
+    Supported distance metric: `l_2`, `l_inf`
+    Supported goal: `t`, `tm`, `ut`
+    Supported config parameters:
+    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
+        (batch_size,).
+    - `alpha`: step size for each iteration, could be either a float number or a numpy float number array with shape of
+        (batch_size,).
+    - `iteration`: an integer, represent iteration count.
+
+    References:
+    [1] https://arxiv.org/abs/1607.02533
     """
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
@@ -15,49 +29,72 @@ class BIM(BatchAttack):
         # placeholder for batch_attack's input
         self.xs_ph = get_xs_ph(model, batch_size)
         self.ys_ph = get_ys_ph(model, batch_size)
-        # variable for storing the original example
-        self.xs_var = tf.Variable(tf.zeros_like(self.xs_ph))
-        # variable for the adversarial noise
-        self.delta_xs_var = tf.Variable(tf.zeros_like(self.xs_ph))
+        # flatten shape of xs_ph
+        xs_flatten_shape = (batch_size, np.prod(self.model.x_shape))
+        # store xs and ys in variables to reduce memory copy between tensorflow and python
+        # variable for the original example with shape of (batch_size, D)
+        self.xs_var = tf.Variable(tf.zeros(shape=xs_flatten_shape, dtype=self.model.x_dtype))
+        # variable for labels
+        self.ys_var = tf.Variable(tf.zeros(shape=(batch_size,), dtype=self.model.y_dtype))
+        # variable for the (hopefully) adversarial example with shape of (batch_size, D)
+        self.xs_adv_var = tf.Variable(tf.zeros(shape=xs_flatten_shape, dtype=self.model.x_dtype))
         # magnitude
         self.eps_ph = tf.placeholder(self.model.x_dtype, (self.batch_size,))
         self.eps_var = tf.Variable(tf.zeros((self.batch_size,), dtype=self.model.x_dtype))
         # step size
         self.alpha_ph = tf.placeholder(self.model.x_dtype, (self.batch_size,))
         self.alpha_var = tf.Variable(tf.zeros((self.batch_size,), dtype=self.model.x_dtype))
-        # reshape to (batch_size, 1) for broadcast operations with gradient
+        # expand dim for easier broadcast operations
         eps = tf.expand_dims(self.eps_var, 1)
         alpha = tf.expand_dims(self.alpha_var, 1)
-        # calculate gradient according to adversary's goal
+        # calculate loss' gradient with relate to the adversarial example
+        # grad.shape == (batch_size, D)
+        self.xs_adv_model = tf.reshape(self.xs_adv_var, (batch_size, *self.model.x_shape))
+        self.loss = loss(self.xs_adv_model, self.ys_var)
+        grad = tf.gradients(self.loss, self.xs_adv_var)[0]
         if goal == 't' or goal == 'tm':
-            grad = -tf.gradients(self.loss(self.xs_ph, self.ys_ph), self.xs_ph)[0]
-        elif goal == 'ut':
-            grad = tf.gradients(self.loss(self.xs_ph, self.ys_ph), self.xs_ph)[0]
-        else:
+            grad = -grad
+        elif goal != 'ut':
             raise NotImplementedError
-        # flatten the gradient to a 2-D tensor
-        # grad_flatten.shape == (batch_size, D)
-        grad_flatten = tf.reshape(grad, (batch_size, -1))
-        # calculate bound for adversarial noise with the [x_min, x_max] constraint
-        delta_xs_min = tf.reshape(self.model.x_min - self.xs_var, (batch_size, -1))
-        delta_xs_max = tf.reshape(self.model.x_max - self.xs_var, (batch_size, -1))
-        # calculate the adversarial noise for one iteration
+        # calculate one iteration
         if distance_metric == 'l_2':
-            # grad_unit.shape == (batch_size, D)
-            grad_unit = get_unit(grad_flatten)
-            next_xs_delta = self.delta_xs_var + alpha * grad_unit
-            # clip by magnitude
-            next_xs_delta = tf.clip_by_norm(next_xs_delta, eps, axes=[1])
+            grad_unit = get_unit(grad)
+            xs_adv_delta = self.xs_adv_var - self.xs_var + alpha * grad_unit
+            # clip by max l_2 magnitude of adversarial noise
+            xs_adv_next = self.xs_var + tf.clip_by_norm(xs_adv_delta, eps, axes=[1])
         elif distance_metric == 'l_inf':
-            # grad_sign.shape == (batch_size, D)
-            grad_sign = tf.sign(grad_flatten)
-            update = alpha * grad_sign
+            xs_lo, xs_hi = self.xs_var - eps, self.xs_var + eps
+            grad_sign = tf.sign(grad)
+            xs_adv_delta = self.xs_adv_var - self.xs_var + alpha * grad_sign
+            # clip by max l_inf magnitude of adversarial noise
+            xs_adv_next = self.xs_var + tf.clip_by_value(xs_adv_delta, xs_lo, xs_hi)
         else:
             raise NotImplementedError
-        # clip by eps
+        # clip by (x_min, x_max)
+        xs_adv_next = tf.clip_by_value(xs_adv_next, self.model.x_min, self.model.x_max)
+
+        self.iteration_step = self.xs_adv_var.assign(xs_adv_next)
+        self.config_eps_step = self.eps_var.assign(self.eps_ph)
+        self.config_alpha_step = self.alpha_var.assign(self.alpha_ph)
+        self.setup_xs = [self.xs_var.assign(tf.reshape(self.xs_ph, xs_flatten_shape)),
+                         self.xs_adv_var.assign(tf.reshape(self.xs_ph, xs_flatten_shape))]
+        self.setup_ys = self.ys_var.assign(self.ys_ph)
+        self.iteration = None
 
     def config(self, **kwargs):
-        pass
+        if 'magnitude' in kwargs:
+            eps = maybe_to_array(kwargs['magnitude'], self.batch_size)
+            self._session.run(self.config_eps_step, feed_dict={self.eps_ph: eps})
+        if 'alpha' in kwargs:
+            alpha = maybe_to_array(kwargs['alpha'], self.batch_size)
+            self._session.run(self.config_alpha_step, feed_dict={self.alpha_ph: alpha})
+        if 'iteration' in kwargs:
+            self.iteration = kwargs['iteration']
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        pass
+        lbs = ys if self.goal == 'ut' else ys_target
+        self._session.run(self.setup_xs, feed_dict={self.xs_ph: xs})
+        self._session.run(self.setup_ys, feed_dict={self.ys_ph: lbs})
+        for _ in range(self.iteration):
+            self._session.run(self.iteration_step)
+        return self._session.run(self.xs_adv_model)

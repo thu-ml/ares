@@ -3,7 +3,7 @@ import numpy as np
 from os.path import expanduser
 from keras.datasets.cifar10 import load_data
 
-from realsafe import FGSM, CrossEntropyLoss
+from realsafe import BIM, CrossEntropyLoss
 from realsafe.models.cifar10 import ResNet56
 
 batch_size = 100
@@ -20,7 +20,7 @@ xs_ph = tf.placeholder(model.x_dtype, shape=(batch_size, *model.x_shape))
 lgs, lbs = model.logits_and_labels(xs_ph)
 
 loss = CrossEntropyLoss(model)
-attack = FGSM(
+attack = BIM(
     model=model,
     batch_size=batch_size,
     loss=loss,
@@ -28,11 +28,15 @@ attack = FGSM(
     distance_metric='l_inf',
     session=session
 )
-attack.config(magnitude=8.0 / 255.0)
+attack.config(
+    iteration=10,
+    magnitude=8.0 / 255.0,
+    alpha=1.0 / 255.0,
+)
 
-for hi in range(batch_size, 5 * batch_size, batch_size):
-    xs = xs_test[hi - batch_size:hi]
-    ys = ys_test[hi - batch_size:hi]
+for lo in range(0, batch_size, batch_size):
+    xs = xs_test[lo:lo + batch_size]
+    ys = ys_test[lo:lo + batch_size]
 
     xs_adv = attack.batch_attack(xs, ys=ys)
 
@@ -44,15 +48,18 @@ for hi in range(batch_size, 5 * batch_size, batch_size):
         np.equal(ys, lbs_adv).astype(np.float).mean()
     )
 
+eps = np.concatenate((np.ones(50) * 1.0 / 255.0, np.ones(50) * 8.0 / 255.0))
 attack.config(
-    magnitude=np.concatenate((np.ones(50) * 1.0 / 255.0, np.ones(50) * 8.0 / 255.0)),
+    iteration=10,
+    magnitude=eps,
+    alpha=eps / 8,
 )
 
-for hi in range(batch_size, 5 * batch_size, batch_size):
-    xs = xs_test[hi - batch_size:hi]
-    ys = ys_test[hi - batch_size:hi]
+for lo in range(0, batch_size, batch_size):
+    xs = xs_test[lo:lo + batch_size]
+    ys = ys_test[lo:lo + batch_size]
 
-    xs_adv = attack.batch_attack(xs, ys, None)
+    xs_adv = attack.batch_attack(xs, ys=ys)
 
     lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
     lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})
