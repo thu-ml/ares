@@ -3,7 +3,7 @@ import numpy as np
 from os.path import expanduser
 from keras.datasets.cifar10 import load_data
 
-from realsafe import BIM, CrossEntropyLoss
+from realsafe import PGD, CrossEntropyLoss
 from realsafe.models.cifar10 import ResNet56
 
 batch_size = 100
@@ -20,7 +20,7 @@ xs_ph = tf.placeholder(model.x_dtype, shape=(batch_size, *model.x_shape))
 lgs, lbs = model.logits_and_labels(xs_ph)
 
 loss = CrossEntropyLoss(model)
-attack = BIM(
+attack = PGD(
     model=model,
     batch_size=batch_size,
     loss=loss,
@@ -29,6 +29,7 @@ attack = BIM(
     session=session
 )
 attack.config(
+    rand_init_magnitude=8.0 / 255.0,
     iteration=10,
     magnitude=8.0 / 255.0,
     alpha=1.0 / 255.0,
