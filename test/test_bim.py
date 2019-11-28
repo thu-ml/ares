@@ -4,7 +4,7 @@ from os.path import expanduser
 from keras.datasets.cifar10 import load_data
 
 from realsafe import BIM, CrossEntropyLoss
-from realsafe.models.cifar10 import ResNet56
+from realsafe.model.cifar10 import ResNet56
 
 batch_size = 100
 

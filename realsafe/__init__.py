@@ -1,8 +1,8 @@
-from realsafe.attacks.fgsm import FGSM
-from realsafe.attacks.bim import BIM
-from realsafe.attacks.pgd import PGD
-from realsafe.attacks.mim import MIM
-from realsafe.model import Classifier, ClassifierWithLogits
+from realsafe.attack.fgsm import FGSM
+from realsafe.attack.bim import BIM
+from realsafe.attack.pgd import PGD
+from realsafe.attack.mim import MIM
+from realsafe.model.base import Classifier, ClassifierWithLogits
 from realsafe.loss import CrossEntropyLoss, EnsembleCrossEntropyLoss
 
 __all__ = [

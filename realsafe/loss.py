@@ -25,10 +25,10 @@ class CrossEntropyLoss(Loss):
         self.model = model
 
     def __call__(self, xs_ph, ys_ph):
-        lgs, _ = self.model.logits_and_labels(xs_ph)
+        logits, _ = self.model.logits_and_labels(xs_ph)
         loss = tf.nn.sparse_softmax_cross_entropy_with_logits(
             labels=ys_ph,
-            logits=lgs
+            logits=logits,
         )
         return loss
 
@@ -48,9 +48,9 @@ class EnsembleCrossEntropyLoss(Loss):
     def __call__(self, xs_ph, ys_ph):
         losses = []
         for model, weight in zip(self.models, self.weights):
-            lgs, _ = model.logits_and_labels(xs_ph)
+            logits, _ = model.logits_and_labels(xs_ph)
             losses.append(weight * tf.nn.sparse_softmax_cross_entropy_with_logits(
                 labels=ys_ph,
-                logits=lgs
+                logits=logits,
             ))
         return tf.reduce_sum(losses, axis=0)

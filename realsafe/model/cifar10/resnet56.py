@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 
 from six.moves import urllib
-from realsafe.model import ClassifierWithLogits
+from realsafe.model.base import ClassifierWithLogits
 
 
 class Resnet(object):

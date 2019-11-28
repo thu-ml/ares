@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from realsafe.attacks.base import BatchAttack
-from realsafe.attacks.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
+from realsafe.attack.base import BatchAttack
+from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class FGSM(BatchAttack):
@@ -56,8 +56,8 @@ class FGSM(BatchAttack):
             self._session.run(self.config_eps_step, feed_dict={self.eps_ph: eps})
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        lbs = ys if self.goal == 'ut' else ys_target
+        labels = ys if self.goal == 'ut' else ys_target
         return self._session.run(self.xs_adv, feed_dict={
             self.xs_ph: xs,
-            self.ys_ph: lbs,
+            self.ys_ph: labels,
         })

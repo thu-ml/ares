@@ -18,7 +18,7 @@ class Classifier(metaclass=ABCMeta):
         self.n_class = n_class
         self.x_min, self.x_max, self.x_shape, self.x_dtype = x_min, x_max, x_shape, x_dtype
         self.y_dtype = y_dtype
-        self._xs_lbs_map = dict()
+        self._xs_labels_map = dict()
 
     @abstractmethod
     def _labels(self, xs):
@@ -40,11 +40,11 @@ class Classifier(metaclass=ABCMeta):
             the classification result.
         """
         try:
-            return self._xs_lbs_map[xs]
+            return self._xs_labels_map[xs]
         except KeyError:
-            lbs = self._labels(xs)
-            self._xs_lbs_map[xs] = lbs
-            return lbs
+            labels = self._labels(xs)
+            self._xs_labels_map[xs] = labels
+            return labels
 
 
 class ClassifierWithLogits(Classifier, metaclass=ABCMeta):
@@ -62,7 +62,7 @@ class ClassifierWithLogits(Classifier, metaclass=ABCMeta):
         :param y_dtype: A `tf.DType` instance. The data type of the classifier's classification result.
         """
         super().__init__(n_class, x_min, x_max, x_shape, x_dtype, y_dtype)
-        self._xs_lgs_lbs_map = dict()
+        self._xs_logits_labels_map = dict()
 
     @abstractmethod
     def _logits_and_labels(self, xs):
@@ -76,8 +76,8 @@ class ClassifierWithLogits(Classifier, metaclass=ABCMeta):
         pass
 
     def _labels(self, xs):
-        _, lbs = self._logits_and_labels(xs)
-        return lbs
+        _, labels = self._logits_and_labels(xs)
+        return labels
 
     def logits_and_labels(self, xs):
         """
@@ -87,12 +87,12 @@ class ClassifierWithLogits(Classifier, metaclass=ABCMeta):
         :return: TODO
         """
         try:
-            lgs, lbs = self._xs_lgs_lbs_map[xs]
+            logits, labels = self._xs_logits_labels_map[xs]
         except KeyError:
-            lgs, lbs = self._logits_and_labels(xs)
-            self._xs_lgs_lbs_map[xs] = (lgs, lbs)
-        return lgs, lbs
+            logits, labels = self._logits_and_labels(xs)
+            self._xs_logits_labels_map[xs] = (logits, labels)
+        return logits, labels
 
     def labels(self, xs):
-        _, lbs = self.logits_and_labels(xs)
-        return lbs
+        _, labels = self.logits_and_labels(xs)
+        return labels

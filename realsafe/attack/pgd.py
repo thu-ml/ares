@@ -1,8 +1,8 @@
 import tensorflow as tf
 import numpy as np
 
-from realsafe.attacks.bim import BIM
-from realsafe.attacks.utils import maybe_to_array, uniform_l_2_noise, uniform_l_inf_noise
+from realsafe.attack.bim import BIM
+from realsafe.attack.utils import maybe_to_array, uniform_l_2_noise, uniform_l_inf_noise
 
 
 class PGD(BIM):
