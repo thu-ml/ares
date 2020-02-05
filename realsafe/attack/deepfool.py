@@ -52,25 +52,25 @@ class DeepFool(BatchAttack):
         yk0s = tf.expand_dims(tf.gather_nd(logits, k0s), axis=1)
         gradk0s = tf.expand_dims(tf.gather_nd(grads, k0s), axis=1)
 
-        self.fs = tf.abs(yk0s - logits)
-        self.ws = grads - gradk0s
+        fs = tf.abs(yk0s - logits)
+        ws = grads - gradk0s
 
-        self._init_l_2()
-        self.setup_overshot = self.overshot.assign(self.overshot_ph)
-
-        self.iteration = None
-
-    def _init_l_2(self):
-        ws_norm = tf.norm(self.ws, axis=-1)
+        ws_norm = tf.norm(ws, axis=-1)
         # for index = k0, ws_norm = 0.0, fs = 0.0, ls = 0.0 / 0.0 = NaN, and tf.argmin would ignore NaN
-        ls = self.fs / ws_norm
+        ls = fs / ws_norm
         ks = tf.argmin(ls, axis=1, output_type=self.model.y_dtype)
         ks = tf.stack((tf.range(self.batch_size), ks), axis=1)
 
-        fsks = tf.gather_nd(self.fs, ks)
+        fsks = tf.gather_nd(fs, ks)
         ws_normks = tf.gather_nd(ws_norm, ks)
-        wsks = tf.gather_nd(self.ws, ks)
-        rs = tf.reshape(fsks / tf.square(ws_normks), (self.batch_size, 1)) * wsks
+        if distance_metric == 'l_2':
+            wsks = tf.gather_nd(ws, ks)
+            rs = tf.reshape(fsks / tf.square(ws_normks), (self.batch_size, 1)) * wsks
+        elif distance_metric == 'l_inf':
+            ws_sign_ks = tf.gather_nd(tf.sign(ws), ks)
+            rs = tf.reshape(fsks / ws_normks, (self.batch_size, 1)) * ws_sign_ks
+        else:
+            raise NotImplementedError
 
         eqs = tf.equal(self.labels, self.ys_var)
         self.flag = tf.reduce_any(eqs)
@@ -80,16 +80,14 @@ class DeepFool(BatchAttack):
         xs_adv_next = tf.clip_by_value(xs_adv_next, self.model.x_min, self.model.x_max)
 
         self.update_xs_adv_step = self.xs_adv_var.assign(xs_adv_next)
-
         self.setup = [
             self.xs_var.assign(tf.reshape(self.xs_ph, self.xs_var.shape)),
             self.xs_adv_var.assign(tf.reshape(self.xs_ph, self.xs_adv_var.shape)),
             self.ys_var.assign(self.ys_ph),
         ]
+        self.setup_overshot = self.overshot.assign(self.overshot_ph)
 
-    def _init_l_inf(self):
-        # TODO
-        pass
+        self.iteration = None
 
     def config(self, **kwargs):
         if 'iteration' in kwargs:
