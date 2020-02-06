@@ -89,7 +89,7 @@ class NES(Attack):
             x_adv_next = self.x_var + tf.clip_by_norm(x_adv_delta, self.eps_var)
         elif self.distance_metric == 'l_inf':
             x_adv_delta = self.x_adv_var - self.x_var + self.lr_var * tf.sign(grad)
-            x_adv_next = self.x_var + tf.clip_by_value(x_adv_delta, -self.eps_var, self.eps_var)
+            x_adv_next = self.x_var + tf.clip_by_value(x_adv_delta, tf.negative(self.eps_var), self.eps_var)
         else:
             raise NotImplementedError
         x_adv_next = tf.clip_by_value(x_adv_next, self.model.x_min, self.model.x_max)
