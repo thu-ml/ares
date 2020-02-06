@@ -40,3 +40,13 @@ def uniform_l_2_noise(batch_size, d, eps, dtype):
     noise_r = tf.random.uniform(
         (batch_size, 1), minval=0, maxval=1, dtype=dtype)
     return eps * noise_r * noise_unit
+
+
+class ConfigVar(object):
+    def __init__(self, shape, dtype):
+        if shape is None:
+            self.var = tf.Variable(0, dtype=dtype)
+        else:
+            self.var = tf.Variable(tf.zeros(shape, dtype=dtype))
+        self.ph = tf.placeholder(dtype, shape=shape)
+        self.assign = self.var.assign(self.ph)

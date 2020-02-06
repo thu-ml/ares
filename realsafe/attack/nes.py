@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
+from realsafe.attack.utils import ConfigVar
 
 
 class NES(Attack):
@@ -47,15 +48,13 @@ class NES(Attack):
         # store sum of all batch's loss' mean
         self.loss_sum_var = tf.Variable(0.0, dtype=self.model.x_dtype)
         self.ys_var = tf.Variable(tf.zeros(dtype=self.model.y_dtype, shape=self.samples_batch_size))
-        self.eps_var = tf.Variable(0.0, dtype=self.model.x_dtype)
-        self.sigma_var = tf.Variable(0.0, dtype=tf.float32)
-        self.lr_var = tf.Variable(0.0, dtype=tf.float32)
+
+        self.eps = ConfigVar(shape=None, dtype=self.model.x_dtype)
+        self.sigma = ConfigVar(shape=None, dtype=tf.float32)
+        self.lr = ConfigVar(shape=None, dtype=tf.float32)
 
         self.x_ph = tf.placeholder(model.x_dtype, self.model.x_shape)
         self.ys_ph = tf.placeholder(model.y_dtype, (self.samples_batch_size,))
-        self.eps_ph = tf.placeholder(self.model.x_dtype)
-        self.sigma_ph = tf.placeholder(dtype=tf.float32)
-        self.lr_ph = tf.placeholder(dtype=tf.float32)
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
 
@@ -63,11 +62,11 @@ class NES(Attack):
         perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape), dtype=self.model.x_dtype)
         perts = tf.concat([perts, -perts], axis=0)
         # points to eval loss
-        points = self.x_adv_var + self.sigma_var * perts
+        points = self.x_adv_var + self.sigma.var * perts
         loss = loss(points, self.ys_var)
         # estimated gradient
         grads = tf.reshape(loss, [-1] + [1] * len(self.model.x_shape)) * perts
-        grad_one_batch = tf.reduce_mean(grads, axis=0) / self.sigma_var
+        grad_one_batch = tf.reduce_mean(grads, axis=0) / self.sigma.var
         self.reset_grad_sum_step = self.grad_sum_var.assign(grad_sum_zeros)
         self.update_grad_sum_step = self.grad_sum_var.assign_add(grad_one_batch)
         self.reset_loss_sum_step = self.loss_sum_var.assign(0.0)
@@ -80,19 +79,15 @@ class NES(Attack):
         # update the adversarial example
         if self.distance_metric == 'l_2':
             grad_norm = tf.maximum(1e-12, tf.norm(grad))
-            x_adv_delta = self.x_adv_var - self.x_var + self.lr_var * grad / grad_norm
-            x_adv_next = self.x_var + tf.clip_by_norm(x_adv_delta, self.eps_var)
+            x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * grad / grad_norm
+            x_adv_next = self.x_var + tf.clip_by_norm(x_adv_delta, self.eps.var)
         elif self.distance_metric == 'l_inf':
-            x_adv_delta = self.x_adv_var - self.x_var + self.lr_var * tf.sign(grad)
-            x_adv_next = self.x_var + tf.clip_by_value(x_adv_delta, tf.negative(self.eps_var), self.eps_var)
+            x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * tf.sign(grad)
+            x_adv_next = self.x_var + tf.clip_by_value(x_adv_delta, tf.negative(self.eps.var), self.eps.var)
         else:
             raise NotImplementedError
         x_adv_next = tf.clip_by_value(x_adv_next, self.model.x_min, self.model.x_max)
         self.update_x_adv_step = self.x_adv_var.assign(x_adv_next)
-
-        self.config_eps_step = self.eps_var.assign(self.eps_ph)
-        self.config_sigma_step = self.sigma_var.assign(self.sigma_ph)
-        self.config_lr_step = self.lr_var.assign(self.lr_ph)
 
         self.setup_x_step = [self.x_var.assign(self.x_ph), self.x_adv_var.assign(self.x_ph)]
         self.setup_ys_step = self.ys_var.assign(self.ys_ph)
@@ -102,13 +97,13 @@ class NES(Attack):
 
     def config(self, **kwargs):
         if 'magnitude' in kwargs:
-            self._session.run(self.config_eps_step, feed_dict={self.eps_ph: kwargs['magnitude']})
+            self._session.run(self.eps.assign, feed_dict={self.eps.ph: kwargs['magnitude']})
         if 'max_queries' in kwargs:
             self.max_queries = kwargs['max_queries']
         if 'sigma' in kwargs:
-            self._session.run(self.config_sigma_step, feed_dict={self.sigma_ph: kwargs['sigma']})
+            self._session.run(self.sigma.assign, feed_dict={self.sigma.ph: kwargs['sigma']})
         if 'lr' in kwargs:
-            self.lr = kwargs['lr']
+            self.init_lr = kwargs['lr']
         if 'min_lr' in kwargs:
             self.min_lr = kwargs['min_lr']
         if 'lr_tuning' in kwargs:
@@ -131,8 +126,8 @@ class NES(Attack):
             return x
 
         last_loss = []
-        lr = self.lr
-        self._session.run(self.config_lr_step, feed_dict={self.lr_ph: lr})
+        lr = self.init_lr
+        self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
 
         queries = 0
         while queries + self.samples_per_draw <= self.max_queries:
@@ -149,11 +144,11 @@ class NES(Attack):
                 if len(last_loss) == self.plateau_length:
                     if self.goal == 'ut' and last_loss[-1] < last_loss[0]:
                         lr = max(lr / 2, self.min_lr)
-                        self._session.run(self.config_lr_step, feed_dict={self.lr_ph: lr})
+                        self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
                         last_loss = []
                     elif self.goal != 'ut' and last_loss[-1] > last_loss[0]:
                         lr = max(lr / 2, self.min_lr)
-                        self._session.run(self.config_lr_step, feed_dict={self.lr_ph: lr})
+                        self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
                         last_loss = []
 
             if self.logger:
