@@ -5,10 +5,6 @@ from os.path import expanduser
 import numpy as np
 import tensorflow as tf
 import ipdb
-import logging
-
-logger = tf.get_logger()
-logger.setLevel(logging.INFO)
 
 batch_size = 20
 
@@ -41,7 +37,6 @@ attack.config(
     min_lr=ALPHA / 10,
     lr_tuning=True,
     plateau_length=20,
-    logger=logger,
 )
 
 xs_ph = tf.placeholder(model.x_dtype, shape=(batch_size, *model.x_shape))

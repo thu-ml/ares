@@ -21,27 +21,40 @@ class NES(Attack):
     [2] http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf
     """
 
-    def __init__(self, model, goal, distance_metric, session, samples_per_draw):
+    def __init__(self, model, goal, distance_metric, session, samples_per_draw, samples_batch_size=None):
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric
-        self.samples_per_draw = (samples_per_draw // 2) * 2
+
+        # when samples_batch_size is None, set it to samples_per_draw
+        samples_batch_size = samples_batch_size if samples_batch_size else samples_per_draw
+        self.samples_batch_size = (samples_batch_size // 2) * 2
+        # for efficiency, samples_per_draw should be multiple of samples_batch_size
+        self.samples_per_draw = (samples_per_draw // self.samples_batch_size) * self.samples_batch_size
+        self._samples_iteration = self.samples_per_draw // self.samples_batch_size
+
+        grad_sum_zeros = tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape)
 
         self.x_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape))
         self.x_adv_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape))
-        self.ys_var = tf.Variable(tf.zeros(dtype=self.model.y_dtype, shape=self.samples_per_draw))
+        # store sum of all batch's gradient
+        self.grad_sum_var = tf.Variable(grad_sum_zeros)
+        # store sum of all batch's loss' mean
+        self.loss_sum_var = tf.Variable(0.0, dtype=self.model.x_dtype)
+        self.ys_var = tf.Variable(tf.zeros(dtype=self.model.y_dtype, shape=self.samples_batch_size))
         self.eps_var = tf.Variable(0.0, dtype=self.model.x_dtype)
         self.sigma_var = tf.Variable(0.0, dtype=tf.float32)
         self.lr_var = tf.Variable(0.0, dtype=tf.float32)
 
         self.x_ph = tf.placeholder(model.x_dtype, self.model.x_shape)
-        self.ys_ph = tf.placeholder(model.y_dtype, (self.samples_per_draw,))
+        self.ys_ph = tf.placeholder(model.y_dtype, (self.samples_batch_size,))
         self.eps_ph = tf.placeholder(self.model.x_dtype)
         self.sigma_ph = tf.placeholder(dtype=tf.float32)
         self.lr_ph = tf.placeholder(dtype=tf.float32)
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
+
         # pertubations for each step
-        perts = tf.random.normal(shape=(self.samples_per_draw // 2, *self.model.x_shape), dtype=self.model.x_dtype)
+        perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape), dtype=self.model.x_dtype)
         perts = tf.concat([perts, -perts], axis=0)
         # points to eval the logits
         points = self.x_adv_var + self.sigma_var * perts
@@ -50,10 +63,17 @@ class NES(Attack):
         logits_mask = tf.one_hot(self.ys_var, self.model.n_class)
         logit_this = tf.reduce_sum(logits_mask * logits, axis=-1)
         logit_that = tf.reduce_max(logits - 99999 * logits_mask, axis=-1)
-        self.loss = logit_that - logit_this
+        loss = logit_that - logit_this
         # estimated gradient
-        grads = tf.reshape(self.loss, [-1] + [1] * len(self.model.x_shape)) * perts
-        grad = tf.reduce_mean(grads, axis=0) / self.sigma_var
+        grads = tf.reshape(loss, [-1] + [1] * len(self.model.x_shape)) * perts
+        grad_one_batch = tf.reduce_mean(grads, axis=0) / self.sigma_var
+        self.reset_grad_sum_step = self.grad_sum_var.assign(grad_sum_zeros)
+        self.update_grad_sum_step = self.grad_sum_var.assign_add(grad_one_batch)
+        self.reset_loss_sum_step = self.loss_sum_var.assign(0.0)
+        self.update_loss_sum_step = self.loss_sum_var.assign_add(tf.reduce_mean(loss))
+
+        self.loss = self.loss_sum_var / self._samples_iteration
+        grad = self.grad_sum_var / self._samples_iteration
         if self.goal != 'ut':
             grad = -grad
         # update the adversarial example
@@ -100,23 +120,27 @@ class NES(Attack):
     def attack(self, x, y=None, y_target=None):
         self._session.run(self.setup_x_step, feed_dict={self.x_ph: x})
         self._session.run(self.setup_ys_step, feed_dict={
-            self.ys_ph: np.repeat(y if self.goal == 'ut' else y_target, self.samples_per_draw)
+            self.ys_ph: np.repeat(y if self.goal == 'ut' else y_target, self.samples_batch_size)
         })
-
-        last_loss = []
-        queries = 0
-        lr = self.lr
-        self._session.run(self.config_lr_step, feed_dict={self.lr_ph: lr})
 
         if self._is_adversarial(y, y_target):
             if self.logger:
                 self.logger.info('Original image is already adversarial')
-            self.details['queries'] = queries
+            self.details['queries'] = 0
             return x
 
-        while queries < self.max_queries:
-            loss, _ = self._session.run((self.loss, self.update_x_adv_step))
+        last_loss = []
+        lr = self.lr
+        self._session.run(self.config_lr_step, feed_dict={self.lr_ph: lr})
+
+        queries = 0
+        while queries + self.samples_per_draw <= self.max_queries:
             queries += self.samples_per_draw
+
+            self._session.run((self.reset_grad_sum_step, self.reset_loss_sum_step))
+            for _ in range(self._samples_iteration):
+                self._session.run((self.update_grad_sum_step, self.update_loss_sum_step))
+            loss, _ = self._session.run((self.loss, self.update_x_adv_step))
 
             if self.lr_tuning:
                 last_loss.append(np.mean(loss))
@@ -138,8 +162,7 @@ class NES(Attack):
                 ))
 
             if self._is_adversarial(y, y_target):
-                self.details['queries'] = queries
-                return self._session.run(self.x_adv_var)
+                break
 
         self.details['queries'] = queries
         return self._session.run(self.x_adv_var)
