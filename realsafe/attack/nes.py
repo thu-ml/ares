@@ -5,7 +5,7 @@ from realsafe.attack.base import Attack
 
 
 class NES(Attack):
-    """
+    '''
     Natural Evolution Strategies (NES)
     A black-box constraint-based method. Use NES as gradient estimation technique and employ PGD with this estimated
     gradient to generate the adversarial example.
@@ -13,13 +13,19 @@ class NES(Attack):
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
     Supported config parameters:
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
+    - `magnitude`: max distortion, should be a float number.
+    - `max_queries`: TODO
+    - `sigma`: TODO
+    - `lr`: TODO
+    - `min_lr`: TODO
+    - `lr_tuning`: TODO
+    - `plateau_length`: TODO
+    - `logger`: a standard logger for logging verbose information during attack.
 
     References:
     [1] https://arxiv.org/abs/1804.08598
     [2] http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf
-    """
+    '''
 
     def __init__(self, model, goal, distance_metric, session, samples_per_draw, samples_batch_size=None):
         self.model, self._session = model, session
@@ -150,14 +156,14 @@ class NES(Attack):
                         lr = max(lr / 2, self.min_lr)
                         self._session.run(self.config_lr_step, feed_dict={self.lr_ph: lr})
                         last_loss = []
-                    elif self.goal != "ut" and last_loss[-1] > last_loss[0]:
+                    elif self.goal != 'ut' and last_loss[-1] > last_loss[0]:
                         lr = max(lr / 2, self.min_lr)
                         self._session.run(self.config_lr_step, feed_dict={self.lr_ph: lr})
                         last_loss = []
 
             if self.logger:
                 x_adv_label, x_adv = self._session.run((self.label_pred, self.x_adv_var))
-                self.logger.info("queries:{}, loss:{}, learning rate:{}, prediction:{}, distortion:{} {}".format(
+                self.logger.info('queries:{}, loss:{}, learning rate:{}, prediction:{}, distortion:{} {}'.format(
                     queries, np.mean(loss), lr, x_adv_label, np.max(np.abs(x_adv - x)), np.linalg.norm(x_adv - x)
                 ))
 
