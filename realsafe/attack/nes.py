@@ -27,7 +27,7 @@ class NES(Attack):
     [2] http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf
     '''
 
-    def __init__(self, model, goal, distance_metric, session, samples_per_draw, samples_batch_size=None):
+    def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None):
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric
 
@@ -62,14 +62,9 @@ class NES(Attack):
         # pertubations for each step
         perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape), dtype=self.model.x_dtype)
         perts = tf.concat([perts, -perts], axis=0)
-        # points to eval the logits
+        # points to eval loss
         points = self.x_adv_var + self.sigma_var * perts
-        logits, _ = self.model.logits_and_labels(points)
-        # NES uses margin logit loss proposed in C&W.
-        logits_mask = tf.one_hot(self.ys_var, self.model.n_class)
-        logit_this = tf.reduce_sum(logits_mask * logits, axis=-1)
-        logit_that = tf.reduce_max(logits - 99999 * logits_mask, axis=-1)
-        loss = logit_that - logit_this
+        loss = loss(points, self.ys_var)
         # estimated gradient
         grads = tf.reshape(loss, [-1] + [1] * len(self.model.x_shape)) * perts
         grad_one_batch = tf.reduce_mean(grads, axis=0) / self.sigma_var

@@ -1,5 +1,5 @@
 from realsafe.model.cifar10 import ResNet56
-from realsafe import NES
+from realsafe import NES, CWLoss
 from keras.datasets.cifar10 import load_data
 from os.path import expanduser
 import numpy as np
@@ -22,8 +22,10 @@ lgs, lbs = model.logits_and_labels(xs_ph)
 MAGNITUDE = 2 / 255.0
 ALPHA = MAGNITUDE / 10
 
+loss = CWLoss(model)
 attack = NES(
     model=model,
+    loss=loss,
     goal='ut',
     distance_metric='l_inf',
     session=session,
