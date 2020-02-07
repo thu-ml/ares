@@ -50,3 +50,11 @@ class ConfigVar(object):
             self.var = tf.Variable(tf.zeros(shape, dtype=dtype))
         self.ph = tf.placeholder(dtype, shape=shape)
         self.assign = self.var.assign(self.ph)
+
+
+class Expectation(object):
+    def __init__(self, x, iteration):
+        self._var = tf.Variable(tf.zeros_like(x))
+        self.reset = self._var.assign(tf.zeros_like(x))
+        self.update = self._var.assign_add(x)
+        self.val = self._var / iteration

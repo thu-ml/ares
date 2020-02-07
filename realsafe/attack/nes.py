@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar
+from realsafe.attack.utils import ConfigVar, Expectation
 
 
 class NES(Attack):
@@ -39,14 +39,8 @@ class NES(Attack):
         self.samples_per_draw = (samples_per_draw // self.samples_batch_size) * self.samples_batch_size
         self._samples_iteration = self.samples_per_draw // self.samples_batch_size
 
-        grad_sum_zeros = tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape)
-
         self.x_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape))
         self.x_adv_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape))
-        # store sum of all batch's gradient
-        self.grad_sum_var = tf.Variable(grad_sum_zeros)
-        # store sum of all batch's loss' mean
-        self.loss_sum_var = tf.Variable(0.0, dtype=self.model.x_dtype)
         self.ys_var = tf.Variable(tf.zeros(dtype=self.model.y_dtype, shape=self.samples_batch_size))
 
         self.eps = ConfigVar(shape=None, dtype=self.model.x_dtype)
@@ -66,14 +60,11 @@ class NES(Attack):
         loss = loss(points, self.ys_var)
         # estimated gradient
         grads = tf.reshape(loss, [-1] + [1] * len(self.model.x_shape)) * perts
-        grad_one_batch = tf.reduce_mean(grads, axis=0) / self.sigma.var
-        self.reset_grad_sum_step = self.grad_sum_var.assign(grad_sum_zeros)
-        self.update_grad_sum_step = self.grad_sum_var.assign_add(grad_one_batch)
-        self.reset_loss_sum_step = self.loss_sum_var.assign(0.0)
-        self.update_loss_sum_step = self.loss_sum_var.assign_add(tf.reduce_mean(loss))
+        grad = tf.reduce_mean(grads, axis=0) / self.sigma.var
+        self.E_grad = Expectation(grad, self._samples_iteration)
+        self.E_mean_loss = Expectation(tf.reduce_mean(loss), self._samples_iteration)
 
-        self.loss = self.loss_sum_var / self._samples_iteration
-        grad = self.grad_sum_var / self._samples_iteration
+        grad = self.E_grad.val
         if self.goal != 'ut':
             grad = -grad
         # update the adversarial example
@@ -133,10 +124,10 @@ class NES(Attack):
         while queries + self.samples_per_draw <= self.max_queries:
             queries += self.samples_per_draw
 
-            self._session.run((self.reset_grad_sum_step, self.reset_loss_sum_step))
+            self._session.run((self.E_grad.reset, self.E_mean_loss.reset))
             for _ in range(self._samples_iteration):
-                self._session.run((self.update_grad_sum_step, self.update_loss_sum_step))
-            loss, _ = self._session.run((self.loss, self.update_x_adv_step))
+                self._session.run((self.E_grad.update, self.E_mean_loss.update))
+            loss, _ = self._session.run((self.E_mean_loss.val, self.update_x_adv_step))
 
             if self.lr_tuning:
                 last_loss.append(np.mean(loss))
