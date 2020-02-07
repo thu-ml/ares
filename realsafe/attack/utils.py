@@ -26,19 +26,15 @@ def get_unit(xs_flatten):
 
 def uniform_l_inf_noise(batch_size, d, eps, dtype):
     eps = tf.expand_dims(eps, 1)
-    noise_unit = tf.random.uniform(
-        (batch_size, d), minval=-1, maxval=1, dtype=dtype)
-    noise_r = tf.random.uniform(
-        (batch_size, 1), minval=0, maxval=1, dtype=dtype)
+    noise_unit = tf.random.uniform((batch_size, d), minval=-1, maxval=1, dtype=dtype)
+    noise_r = tf.random.uniform((batch_size, 1), minval=0, maxval=1, dtype=dtype)
     return eps * noise_r * noise_unit
 
 
 def uniform_l_2_noise(batch_size, d, eps, dtype):
     eps = tf.expand_dims(eps, 1)
-    noise_unit = get_unit(tf.random.uniform(
-        (batch_size, d), minval=-1, maxval=1, dtype=dtype))
-    noise_r = tf.random.uniform(
-        (batch_size, 1), minval=0, maxval=1, dtype=dtype)
+    noise_unit = get_unit(tf.random.uniform((batch_size, d), minval=-1, maxval=1, dtype=dtype))
+    noise_r = tf.random.uniform((batch_size, 1), minval=0, maxval=1, dtype=dtype)
     return eps * noise_r * noise_unit
 
 

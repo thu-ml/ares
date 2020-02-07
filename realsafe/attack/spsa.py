@@ -5,10 +5,10 @@ from realsafe.attack.base import Attack
 from realsafe.attack.utils import ConfigVar, Expectation
 
 
-class NES(Attack):
+class SPSA(Attack):
     '''
-    Natural Evolution Strategies (NES)
-    A black-box constraint-based method. Use NES as gradient estimation technique and employ PGD with this estimated
+    Simultaneous Perturbation Stochastic Approximation (SPSA)
+    A black-box constraint-based method. Use SPSA as gradient estimation technique and employ Adam with this estimated
     gradient to generate the adversarial example.
 
     Supported distance metric: `l_2`, `l_inf`
@@ -18,14 +18,13 @@ class NES(Attack):
     - `max_queries`: TODO
     - `sigma`: TODO
     - `lr`: TODO
-    - `min_lr`: TODO
-    - `lr_tuning`: TODO
-    - `plateau_length`: TODO
+    - `beta1`: TODO. Default value is 0.9.
+    - `beta2`: TODO. Default value is 0.999.
+    - `epsilon`: TODO. Default value is 1e-9.
     - `logger`: a standard logger for logging verbose information during attack.
 
     References:
-    [1] https://arxiv.org/abs/1804.08598
-    [2] http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf
+    [1] https://arxiv.org/abs/1802.05666
     '''
 
     def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None):
@@ -53,7 +52,8 @@ class NES(Attack):
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
 
         # pertubations for each step
-        perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape), dtype=self.model.x_dtype)
+        perts_shape = (self.samples_batch_size // 2, *self.model.x_shape)
+        perts = tf.sign(tf.random.uniform(perts_shape, minval=-1.0, maxval=1.0, dtype=self.model.x_dtype))
         perts = tf.concat([perts, -perts], axis=0)
         # points to eval loss
         points = self.x_adv_var + self.sigma.var * perts
@@ -68,13 +68,29 @@ class NES(Attack):
         if self.goal != 'ut':
             grad = -grad
 
+        # Adam
+        self.beta1, self.beta1_init = ConfigVar(None, self.model.x_dtype), 0.9
+        self.beta2, self.beta2_init = ConfigVar(None, self.model.x_dtype), 0.999
+        self.epsilon, self.epsilon_init = ConfigVar(None, self.model.x_dtype), 1e-9
+        self.m_var = tf.Variable(tf.zeros(self.model.x_shape, self.model.x_dtype))
+        self.v_var = tf.Variable(tf.zeros(self.model.x_shape, self.model.x_dtype))
+        self.t_var = tf.Variable(0.0, dtype=self.model.x_dtype)
+        self.prepare_adam_step = (
+            tf.variables_initializer([self.m_var, self.v_var, self.t_var]),
+            self.beta1.assign, self.beta2.assign, self.epsilon.assign,
+        )
+        self.adam_step = (
+            self.t_var.assign_add(1.0),
+            self.m_var.assign(self.beta1.var * self.m_var + (1.0 - self.beta1.var) * grad),
+            self.v_var.assign(self.beta2.var * self.v_var + (1.0 - self.beta2.var) * grad * grad),
+        )
+        m_hat = self.m_var / (1.0 - tf.pow(self.beta1.var, self.t_var))
+        v_hat = self.v_var / (1.0 - tf.pow(self.beta2.var, self.t_var))
         # update the adversarial example
+        x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * m_hat / (tf.sqrt(v_hat) + self.epsilon.var)
         if self.distance_metric == 'l_2':
-            grad_norm = tf.maximum(1e-12, tf.norm(grad))
-            x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * grad / grad_norm
             x_adv_next = self.x_var + tf.clip_by_norm(x_adv_delta, self.eps.var)
         elif self.distance_metric == 'l_inf':
-            x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * tf.sign(grad)
             x_adv_next = self.x_var + tf.clip_by_value(x_adv_delta, tf.negative(self.eps.var), self.eps.var)
         else:
             raise NotImplementedError
@@ -95,13 +111,13 @@ class NES(Attack):
         if 'sigma' in kwargs:
             self._session.run(self.sigma.assign, feed_dict={self.sigma.ph: kwargs['sigma']})
         if 'lr' in kwargs:
-            self.init_lr = kwargs['lr']
-        if 'min_lr' in kwargs:
-            self.min_lr = kwargs['min_lr']
-        if 'lr_tuning' in kwargs:
-            self.lr_tuning = kwargs['lr_tuning']
-        if 'plateau_length' in kwargs:
-            self.plateau_length = kwargs['plateau_length']
+            self._session.run(self.lr.assign, feed_dict={self.lr.ph: kwargs['lr']})
+        if 'beta1' in kwargs:
+            self.beta1_init = kwargs['beta1']
+        if 'beta2' in kwargs:
+            self.beta2_init = kwargs['beta2']
+        if 'epsilon' in kwargs:
+            self.epsilon_init = kwargs['epsilon']
         if 'logger' in kwargs:
             self.logger = kwargs['logger']
 
@@ -125,9 +141,11 @@ class NES(Attack):
             self.details['queries'] = 0
             return x
 
-        last_loss = []
-        lr = self.init_lr
-        self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
+        self._session.run(self.prepare_adam_step, feed_dict={
+            self.beta1.ph: self.beta1_init,
+            self.beta2.ph: self.beta2_init,
+            self.epsilon.ph: self.epsilon_init,
+        })
 
         queries = 0
         while queries + self.samples_per_draw <= self.max_queries:
@@ -136,23 +154,12 @@ class NES(Attack):
             self._session.run((self.E_grad.reset, self.E_mean_loss.reset))
             for _ in range(self._samples_iteration):
                 self._session.run((self.E_grad.update, self.E_mean_loss.update))
+
+            self._session.run(self.adam_step)
             loss, _ = self._session.run((self.E_mean_loss.val, self.update_x_adv_step))
 
-            if self.lr_tuning:
-                last_loss.append(np.mean(loss))
-                last_loss = last_loss[-self.plateau_length:]
-                if len(last_loss) == self.plateau_length:
-                    if self.goal == 'ut' and last_loss[-1] < last_loss[0]:
-                        lr = max(lr / 2, self.min_lr)
-                        self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
-                        last_loss = []
-                    elif self.goal != 'ut' and last_loss[-1] > last_loss[0]:
-                        lr = max(lr / 2, self.min_lr)
-                        self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
-                        last_loss = []
-
             if self.logger:
-                x_adv_label, x_adv = self._session.run((self.label_pred, self.x_adv_var))
+                lr, x_adv_label, x_adv = self._session.run((self.lr.var, self.label_pred, self.x_adv_var))
                 distortion = np.linalg.norm(x_adv - x) if self.distance_metric == 'l_2' else np.max(np.abs(x_adv - x))
                 self.logger.info('queries:{}, loss:{}, learning rate:{}, prediction:{}, distortion:{}'.format(
                     queries, np.mean(loss), lr, x_adv_label, distortion
