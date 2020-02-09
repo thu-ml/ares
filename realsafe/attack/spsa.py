@@ -15,12 +15,12 @@ class SPSA(Attack):
     Supported goal: `t`, `tm`, `ut`
     Supported config parameters:
     - `magnitude`: max distortion, should be a float number.
-    - `max_queries`: TODO
-    - `sigma`: TODO
-    - `lr`: TODO
-    - `beta1`: TODO. Default value is 0.9.
-    - `beta2`: TODO. Default value is 0.999.
-    - `epsilon`: TODO. Default value is 1e-9.
+    - `max_queries`: max number of queries, should be a integer.
+    - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
+    - `lr`: learning rate of Amam optimizer, should be a float number.
+    - `beta1`: first-order momentum of Adam optimizer, should be a float number.
+    - `beta2`: second-order momentum of Adam optimizer, should be a float number.
+    - `epsilon`: a very small float number to prevent any division by zero in Adam.
     - `logger`: a standard logger for logging verbose information during attack.
 
     References:
@@ -139,6 +139,7 @@ class SPSA(Attack):
             if self.logger:
                 self.logger.info('Original image is already adversarial')
             self.details['queries'] = 0
+            self.details['success'] = True
             return x
 
         self._session.run(self.prepare_adam_step, feed_dict={
@@ -147,6 +148,7 @@ class SPSA(Attack):
             self.epsilon.ph: self.epsilon_init,
         })
 
+        self.details['success'] = False
         queries = 0
         while queries + self.samples_per_draw <= self.max_queries:
             queries += self.samples_per_draw
@@ -166,6 +168,7 @@ class SPSA(Attack):
                 ))
 
             if self._is_adversarial(y, y_target):
+                self.details['success'] = True
                 break
 
         self.details['queries'] = queries

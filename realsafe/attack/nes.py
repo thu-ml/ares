@@ -15,12 +15,12 @@ class NES(Attack):
     Supported goal: `t`, `tm`, `ut`
     Supported config parameters:
     - `magnitude`: max distortion, should be a float number.
-    - `max_queries`: TODO
-    - `sigma`: TODO
-    - `lr`: TODO
-    - `min_lr`: TODO
-    - `lr_tuning`: TODO
-    - `plateau_length`: TODO
+    - `max_queries`: max number of queries, should be a integer.
+    - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
+    - `lr`: learning rate (step size) for each iteration, should be a float number.
+    - `min_lr`: min learning rate if `lr_tuning=True`, should be a float number.
+    - `lr_tuning`: a bool, represents whether or not to decay the learning rate if the loss plateaus.
+    - `plateau_length`: an integer, represents the number of iterations when the loss plateaus to decay learning rate.
     - `logger`: a standard logger for logging verbose information during attack.
 
     References:
@@ -123,12 +123,14 @@ class NES(Attack):
             if self.logger:
                 self.logger.info('Original image is already adversarial')
             self.details['queries'] = 0
+            self.details['success'] = True
             return x
 
         last_loss = []
         lr = self.init_lr
         self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
-
+        
+        self.details['success'] = False
         queries = 0
         while queries + self.samples_per_draw <= self.max_queries:
             queries += self.samples_per_draw
@@ -159,6 +161,7 @@ class NES(Attack):
                 ))
 
             if self._is_adversarial(y, y_target):
+                self.details['success'] = True
                 break
 
         self.details['queries'] = queries
