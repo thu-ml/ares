@@ -52,7 +52,7 @@ class NES(Attack):
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
 
-        # pertubations for each step
+        # pertubations
         perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape), dtype=self.model.x_dtype)
         perts = tf.concat([perts, -perts], axis=0)
         # points to eval loss

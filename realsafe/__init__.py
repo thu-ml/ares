@@ -5,12 +5,13 @@ from realsafe.attack.mim import MIM
 from realsafe.attack.deepfool import DeepFool
 from realsafe.attack.nes import NES
 from realsafe.attack.spsa import SPSA
+from realsafe.attack.nattack import NAttack
 
 from realsafe.model.base import Classifier, ClassifierWithLogits
 from realsafe.loss import CrossEntropyLoss, EnsembleCrossEntropyLoss, CWLoss
 
 __all__ = [
-    'FGSM', 'BIM', 'PGD', 'MIM', 'DeepFool', 'NES', 'SPSA',
+    'FGSM', 'BIM', 'PGD', 'MIM', 'DeepFool', 'NES', 'SPSA', 'NAttack',
     'Classifier', 'ClassifierWithLogits',
     'CrossEntropyLoss', 'EnsembleCrossEntropyLoss', 'CWLoss',
 ]

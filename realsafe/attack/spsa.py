@@ -51,7 +51,7 @@ class SPSA(Attack):
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
 
-        # pertubations for each step
+        # pertubations
         perts_shape = (self.samples_batch_size // 2, *self.model.x_shape)
         perts = tf.sign(tf.random.uniform(perts_shape, minval=-1.0, maxval=1.0, dtype=self.model.x_dtype))
         perts = tf.concat([perts, -perts], axis=0)
