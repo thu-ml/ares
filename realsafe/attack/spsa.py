@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar, Expectation
+from realsafe.attack.utils import ConfigVar, Expectation, clip_eta
 
 
 class SPSA(Attack):
@@ -88,12 +88,7 @@ class SPSA(Attack):
         v_hat = self.v_var / (1.0 - tf.pow(self.beta2.var, self.t_var))
         # update the adversarial example
         x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * m_hat / (tf.sqrt(v_hat) + self.epsilon.var)
-        if self.distance_metric == 'l_2':
-            x_adv_next = self.x_var + tf.clip_by_norm(x_adv_delta, self.eps.var)
-        elif self.distance_metric == 'l_inf':
-            x_adv_next = self.x_var + tf.clip_by_value(x_adv_delta, tf.negative(self.eps.var), self.eps.var)
-        else:
-            raise NotImplementedError
+        x_adv_next = self.x_var + clip_eta(x_adv_delta, self.eps.var, self.distance_metric)
         x_adv_next = tf.clip_by_value(x_adv_next, self.model.x_min, self.model.x_max)
         self.update_x_adv_step = self.x_adv_var.assign(x_adv_next)
 

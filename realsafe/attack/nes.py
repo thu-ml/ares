@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar, Expectation
+from realsafe.attack.utils import ConfigVar, Expectation, clip_eta
 
 
 class NES(Attack):
@@ -72,12 +72,11 @@ class NES(Attack):
         if self.distance_metric == 'l_2':
             grad_norm = tf.maximum(1e-12, tf.norm(grad))
             x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * grad / grad_norm
-            x_adv_next = self.x_var + tf.clip_by_norm(x_adv_delta, self.eps.var)
         elif self.distance_metric == 'l_inf':
             x_adv_delta = self.x_adv_var - self.x_var + self.lr.var * tf.sign(grad)
-            x_adv_next = self.x_var + tf.clip_by_value(x_adv_delta, tf.negative(self.eps.var), self.eps.var)
         else:
             raise NotImplementedError
+        x_adv_next = self.x_var + clip_eta(x_adv_delta, self.eps.var, self.distance_metric)
         x_adv_next = tf.clip_by_value(x_adv_next, self.model.x_min, self.model.x_max)
         self.update_x_adv_step = self.x_adv_var.assign(x_adv_next)
 
@@ -129,7 +128,7 @@ class NES(Attack):
         last_loss = []
         lr = self.init_lr
         self._session.run(self.lr.assign, feed_dict={self.lr.ph: lr})
-        
+
         self.details['success'] = False
         queries = 0
         while queries + self.samples_per_draw <= self.max_queries:
