@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar, Expectation
+from realsafe.attack.utils import ConfigVar, Expectation, clip_eta_batch, clip_eta
 
 
 class NAttack(Attack):
@@ -52,12 +52,7 @@ class NAttack(Attack):
         arctanh_points = arctanh_x + self.mu_var + perts
         deltas = self._scale_to_model(tf.tanh(arctanh_points)) - self.x_var
         # clip the deltas by magnitude
-        if self.distance_metric == 'l_2':
-            clipped_deltas = tf.clip_by_norm(deltas, self.eps.var, axes=[1])
-        elif self.distance_metric == 'l_inf':
-            clipped_deltas = tf.clip_by_value(deltas, tf.negative(self.eps.var), self.eps.var)
-        else:
-            raise NotImplementedError
+        clipped_deltas = clip_eta_batch(deltas, self.eps.var, self.distance_metric)
         # points to eval loss
         points = self.x_var + clipped_deltas
         losses = loss(points, self.ys_var)
@@ -78,12 +73,7 @@ class NAttack(Attack):
         self.update_mu_step = self.mu_var.assign_add(self.lr.var * grad)
         delta = self._scale_to_model(tf.tanh(arctanh_x + self.mu_var)) - self.x_var
         # clip the delta by magnitude
-        if self.distance_metric == 'l_2':
-            clipped_delta = tf.clip_by_norm(delta, self.eps.var)
-        elif self.distance_metric == 'l_inf':
-            clipped_delta = tf.clip_by_value(delta, tf.negative(self.eps.var), self.eps.var)
-        else:
-            raise NotImplementedError
+        clipped_delta = clip_eta(delta, self.eps.var, self.distance_metric)
         self.x_adv = self.x_var + clipped_delta
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv, (1, *self.model.x_shape)))[1][0]

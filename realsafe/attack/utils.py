@@ -54,3 +54,22 @@ class Expectation(object):
         self.reset = self._var.assign(tf.zeros_like(x))
         self.update = self._var.assign_add(x)
         self.val = self._var / iteration
+
+
+def clip_eta_batch(xs, eta, distance_metric):
+    if distance_metric == 'l_2':
+        rank = len(xs.shape) - 1
+        return tf.clip_by_norm(xs, eta, axes=[i + 1 for i in range(rank)])
+    elif distance_metric == 'l_inf':
+        return tf.clip_by_value(xs, tf.negative(eta), eta)
+    else:
+        raise NotImplementedError
+
+
+def clip_eta(x, eta, distance_metric):
+    if distance_metric == 'l_2':
+        return tf.clip_by_norm(x, eta)
+    elif distance_metric == 'l_inf':
+        return tf.clip_by_value(x, tf.negative(eta), eta)
+    else:
+        raise NotImplementedError
