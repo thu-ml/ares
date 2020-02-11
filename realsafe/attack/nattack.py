@@ -14,6 +14,9 @@ class NAttack(Attack):
     Supported goal: `t`, `tm`, `ut`
     Supported config parameters:
     - `magnitude`: max distortion, should be a float number.
+    - `max_queries`: max number of queries, should be an integer.
+    - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
+    - `lr`: learning rate (step size) for each iteration, should be a float number.
     - `logger`: a standard logger for logging verbose information during attack.
 
     References:

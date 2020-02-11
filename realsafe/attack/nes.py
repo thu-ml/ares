@@ -15,7 +15,7 @@ class NES(Attack):
     Supported goal: `t`, `tm`, `ut`
     Supported config parameters:
     - `magnitude`: max distortion, should be a float number.
-    - `max_queries`: max number of queries, should be a integer.
+    - `max_queries`: max number of queries, should be an integer.
     - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
     - `lr`: learning rate (step size) for each iteration, should be a float number.
     - `min_lr`: min learning rate if `lr_tuning=True`, should be a float number.

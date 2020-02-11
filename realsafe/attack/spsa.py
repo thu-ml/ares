@@ -15,12 +15,12 @@ class SPSA(Attack):
     Supported goal: `t`, `tm`, `ut`
     Supported config parameters:
     - `magnitude`: max distortion, should be a float number.
-    - `max_queries`: max number of queries, should be a integer.
+    - `max_queries`: max number of queries, should be an integer.
     - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
     - `lr`: learning rate of Amam optimizer, should be a float number.
     - `beta1`: first-order momentum of Adam optimizer, should be a float number.
     - `beta2`: second-order momentum of Adam optimizer, should be a float number.
-    - `epsilon`: a very small float number to prevent any division by zero in Adam.
+    - `epsilon`: a small float number to prevent division by zero in Adam.
     - `logger`: a standard logger for logging verbose information during attack.
 
     References:
