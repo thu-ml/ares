@@ -73,3 +73,7 @@ def clip_eta(x, eta, distance_metric):
         return tf.clip_by_value(x, tf.negative(eta), eta)
     else:
         raise NotImplementedError
+
+
+def mean_square_distance(x1, x2, x_min, x_max):
+    return np.mean((x1 - x2) ** 2) / ((x_max - x_min) ** 2)
