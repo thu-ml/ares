@@ -4,9 +4,11 @@ from keras.datasets.cifar10 import load_data
 from os.path import expanduser
 import numpy as np
 import tensorflow as tf
-import ipdb
 
-batch_size = 10
+logger = tf.get_logger()
+logger.setLevel(tf.logging.INFO)
+
+batch_size = 100
 
 session = tf.Session()
 model = ResNet56()
@@ -31,6 +33,7 @@ attack.config(
     spherical_step=1e-2,
     source_step=1e-2,
     step_adaptation=1.5,
+    logger=logger,
 )
 
 xs_ph = tf.placeholder(model.x_dtype, shape=(None, *model.x_shape))
@@ -52,7 +55,6 @@ xs_adv = attack.batch_attack(xs, ys=ys)
 lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
 lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})
 
-print(
-    np.equal(ys, lbs_pred).astype(np.float).mean(),
-    np.equal(ys, lbs_adv).astype(np.float).mean()
-)
+print([np.linalg.norm(x) for x in xs_adv - xs])
+print([np.max(np.abs(x)) for x in xs_adv - xs])
+print(np.equal(ys, lbs_pred).astype(np.float).mean(), np.equal(ys, lbs_adv).astype(np.float).mean())
