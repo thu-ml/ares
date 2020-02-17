@@ -3,205 +3,201 @@ import numpy as np
 import multiprocessing as mp
 import ctypes
 import collections
-import time
 
 from realsafe.attack.base import BatchAttack
 from realsafe.attack.utils import mean_square_distance
 
 
-def _worker(xs_adv_array, xs_adv_shape, xs_adv_preds_array, xs_adv_preds_shape, indexes, pipe,
-            goal, starting_points, x_min, x_max, x_shape, x_dtype, ys, ys_target, y_dtype,
-            spherical_step, source_step, step_adaptation, max_queries, max_directions):
-    xs_adv = np.frombuffer(xs_adv_array, dtype=x_dtype).reshape(xs_adv_shape)
-    xs_adv_preds = np.frombuffer(xs_adv_preds_array, dtype=y_dtype).reshape(xs_adv_preds_shape)
-    attackers = []
-    for index in indexes:
-        attackers.append(_attack_one(
-            xs_adv, xs_adv_preds, index, goal, starting_points[index],
-            x_min, x_max, x_shape, x_dtype,
-            None if ys is None else ys[index],
-            None if ys_target is None else ys_target[index],
-            spherical_step, source_step, step_adaptation, max_queries, max_directions
-        ))
-    n_active = 0
-    for attacker in attackers:
-        try:
-            next(attacker)
-            n_active += 1
-        except StopIteration:
-            pass
+class AttackCtx(object):
+    def __init__(self, attacker, index, xs_array, xs_preds_array, starting_points, ys, ys_target, pipe):
+        self.x_dtype, self.y_dtype = attacker.model.x_dtype.as_numpy_dtype, attacker.model.y_dtype.as_numpy_dtype
+        self.batch_size, self.x_shape = attacker.batch_size, attacker.model.x_shape
+        self.goal = attacker.goal
+        self.index = index
+        self.x_min, self.x_max = attacker.model.x_min, attacker.model.x_max
+        self.y = None if ys is None else ys[index]
+        self.y_target = None if ys_target is None else ys_target[index]
+        self.spherical_step = attacker.spherical_step
+        self.source_step = attacker.source_step
+        self.step_adaptation = attacker.step_adaptation
+        self.max_queries, self.max_directions = attacker.max_queries, attacker.max_directions
+        self.pipe = pipe
+        self.starting_point = starting_points[index]
+        self._xs_array, self._xs_preds_array = xs_array, xs_preds_array
 
-    while True:
-        pipe.recv()
-        n_active = 0
-        for attacker in attackers:
+        self.logs = [] if attacker.logger else None
+
+    def _is_adversarial(self, label):
+        if self.goal == 'ut' or self.goal == 'tm':
+            return label != self.y
+        else:
+            return label == self.y_target
+
+    def worker(self):
+        task = self.run()
+        next(task)
+
+        while True:
+            self.pipe.recv()
             try:
-                next(attacker)
-                n_active += 1
+                next(task)
+                self.pipe.send((False, self.logs.copy() if self.logs else []))
+                self.logs = [] if self.logs is not None else None
             except StopIteration:
-                pass
-        pipe.send(n_active)
-        if n_active == 0:
-            return
-
-
-def _is_adversarial(goal, label, y, y_target):
-    if goal == 'ut' or goal == 'tm':
-        return label != y
-    else:
-        return label == y_target
-
-
-def _attack_one(xs_adv, xs_adv_preds, index,
-                goal,
-                x_adv, x_min, x_max, x_shape, x_dtype,
-                y, y_target,
-                spherical_step, source_step, step_adaptation,
-                max_queries, max_directions):
-    x = xs_adv[index].copy()
-
-    if _is_adversarial(goal, xs_adv_preds[index], y, y_target):
-        # if self.logger:
-        #     self.logger.info('The {}-th original image is already adversarial'.format(index))
-        return
-
-    dist = mean_square_distance(x_adv, x, x_min, x_max)
-    dist_per_query = np.zeros([max_queries + 1])
-    stats_spherical_adversarial = collections.deque(maxlen=100)
-    stats_step_adversarial = collections.deque(maxlen=30)
-
-    xs_adv[index] = x_adv
-    yield
-    x_adv_label = xs_adv_preds[index]
-
-    # if self.logger:
-    #     self.logger.info('step {}: index={}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-    #         0, index, x_adv_label, dist, spherical_step, source_step, ''
-    #     ))
-    dist_per_query[0] = dist
-
-    step, queries, last_queries = 0, 0, 0
-    while True:
-        step += 1
-
-        unnormalized_source_direction = x - x_adv
-        source_norm = np.linalg.norm(unnormalized_source_direction)
-        source_direction = unnormalized_source_direction / source_norm
-
-        do_spherical = (step % 10 == 0)
-
-        for _ in range(max_directions):
-            perturbation = np.random.normal(0.0, 1.0, x_shape).astype(x_dtype)
-            dot = np.vdot(perturbation, source_direction)
-            perturbation -= dot * source_direction
-            perturbation *= spherical_step * source_norm / np.linalg.norm(perturbation)
-
-            D = 1 / np.sqrt(spherical_step ** 2.0 + 1)
-            direction = perturbation - unnormalized_source_direction
-            spherical_candidate = np.clip(x + D * direction, x_min, x_max)
-
-            new_source_direction = x - spherical_candidate
-            new_source_direction_norm = np.linalg.norm(new_source_direction)
-            length = source_step * source_norm
-
-            deviation = new_source_direction_norm - source_norm
-            length = max(0, length + deviation) / new_source_direction_norm
-            candidate = np.clip(spherical_candidate + length * new_source_direction, x_min, x_max)
-
-            if do_spherical:
-                xs_adv[index] = spherical_candidate
-                yield
-                spherical_is_adversarial = _is_adversarial(goal, xs_adv_preds[index], y, y_target)
-
-                queries += 1
-                if queries == max_queries:
-                    xs_adv[index] = x_adv
-                    return
-                stats_spherical_adversarial.appendleft(spherical_is_adversarial)
-
-                if not spherical_is_adversarial:
-                    continue
-
-            xs_adv[index] = candidate
-            yield
-            is_adversarial = _is_adversarial(goal, xs_adv_preds[index], y, y_target)
-
-            queries += 1
-            if queries == max_queries:
-                xs_adv[index] = x_adv
+                self.pipe.send((True, self.logs.copy() if self.logs else []))
                 return
 
-            if do_spherical:
-                stats_step_adversarial.appendleft(is_adversarial)
+    def run(self):
+        index = self.index
+        xs = np.frombuffer(self._xs_array, dtype=self.x_dtype).reshape((self.batch_size, *self.x_shape))
+        xs_preds = np.frombuffer(self._xs_preds_array, dtype=self.y_dtype).reshape((self.batch_size,))
 
-            if not is_adversarial:
-                continue
+        x = xs[index].copy()
 
-            new_x_adv = candidate
-            new_dist = mean_square_distance(new_x_adv, x, x_min, x_max)
-            break
-        else:
-            new_x_adv = None
-
-        dist_per_query[last_queries:min(queries, max_queries + 1)] = dist
-
-        message = ''
-        if new_x_adv is not None:
-            abs_improvement = dist - new_dist
-            rel_improvement = abs_improvement / dist
-            message = 'd. reduced by {:.2f}% ({:.4e})'.format(rel_improvement * 100, abs_improvement)
-            x_adv_label, x_adv, dist = xs_adv_preds[index], new_x_adv, new_dist
-
-        # if self.logger:
-        #     self.logger.info('step {}: index={}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-        #         0, index, x_adv_label, dist, spherical_step, source_step, message
-        #     ))
-
-        if len(stats_step_adversarial) == stats_step_adversarial.maxlen and \
-                len(stats_spherical_adversarial) == stats_spherical_adversarial.maxlen:
-            p_spherical = np.mean(stats_spherical_adversarial)
-            p_step = np.mean(stats_step_adversarial)
-            n_spherical = len(stats_spherical_adversarial)
-            n_step = len(stats_step_adversarial)
-
-            if p_spherical > 0.5:
-                message = 'Boundary too linear, increasing steps:'
-                spherical_step *= step_adaptation
-                source_step *= step_adaptation
-            elif p_spherical < 0.2:
-                message = 'Boundary too non-linear, decreasing steps:'
-                spherical_step /= step_adaptation
-                source_step /= step_adaptation
-            else:
-                message = None
-
-            if message is not None:
-                stats_spherical_adversarial.clear()
-                # if self.logger:
-                #     self.logger.info(' {} {:.2f} ({:3d}), {:.2f} ({:3d})'.format(
-                #         message, p_spherical, n_spherical, p_step, n_step
-                #     ))
-
-            if p_step > 0.5:
-                message = 'Success rate too high, increasing source step:'
-                source_step *= step_adaptation
-            elif p_step < 0.2:
-                message = 'Success rate too low, decreasing source step:'
-                source_step /= step_adaptation
-            else:
-                message = None
-
-            if message is not None:
-                stats_step_adversarial.clear()
-                # if self.logger:
-                #     self.logger.info(' {} {:.2f} ({:3d}), {:.2f} ({:3d})'.format(
-                #         message, p_spherical, n_spherical, p_step, n_step
-                #     ))
-
-        last_queries = queries
-        if queries == max_queries:
-            xs_adv[index] = x_adv
+        yield
+        if self._is_adversarial(xs_preds[index]):
+            if self.logs is not None:
+                self.logs.append('{}: The original image is already adversarial'.format(index))
             return
+
+        x_adv = self.starting_point
+        dist = mean_square_distance(x_adv, x, self.x_min, self.x_max)
+        dist_per_query = np.zeros([self.max_queries + 1])
+        stats_spherical_adversarial = collections.deque(maxlen=100)
+        stats_step_adversarial = collections.deque(maxlen=30)
+
+        xs[index] = x_adv
+        yield
+        x_adv_label = xs_preds[index]
+
+        if self.logs is not None:
+            self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
+                index, 0, x_adv_label, dist, self.spherical_step, self.source_step, ''
+            ))
+        dist_per_query[0] = dist
+
+        step, queries, last_queries = 0, 0, 0
+        while True:
+            step += 1
+
+            unnormalized_source_direction = x - x_adv
+            source_norm = np.linalg.norm(unnormalized_source_direction)
+            source_direction = unnormalized_source_direction / source_norm
+
+            do_spherical = (step % 10 == 0)
+
+            for _ in range(self.max_directions):
+                perturbation = np.random.normal(0.0, 1.0, self.x_shape).astype(self.x_dtype)
+                dot = np.vdot(perturbation, source_direction)
+                perturbation -= dot * source_direction
+                perturbation *= self.spherical_step * source_norm / np.linalg.norm(perturbation)
+
+                D = 1 / np.sqrt(self.spherical_step ** 2.0 + 1)
+                direction = perturbation - unnormalized_source_direction
+                spherical_candidate = np.clip(x + D * direction, self.x_min, self.x_max)
+
+                new_source_direction = x - spherical_candidate
+                new_source_direction_norm = np.linalg.norm(new_source_direction)
+                length = self.source_step * source_norm
+
+                deviation = new_source_direction_norm - source_norm
+                length = max(0, length + deviation) / new_source_direction_norm
+                candidate = np.clip(spherical_candidate + length * new_source_direction, self.x_min, self.x_max)
+
+                if do_spherical:
+                    xs[index] = spherical_candidate
+                    yield
+                    spherical_is_adversarial = self._is_adversarial(xs_preds[index])
+
+                    queries += 1
+                    if queries == self.max_queries:
+                        xs[index] = x_adv
+                        return
+                    stats_spherical_adversarial.appendleft(spherical_is_adversarial)
+
+                    if not spherical_is_adversarial:
+                        continue
+
+                xs[index] = candidate
+                yield
+                is_adversarial = self._is_adversarial(xs_preds[index])
+
+                queries += 1
+                if queries == self.max_queries:
+                    xs[index] = x_adv
+                    return
+
+                if do_spherical:
+                    stats_step_adversarial.appendleft(is_adversarial)
+
+                if not is_adversarial:
+                    continue
+
+                new_x_adv = candidate
+                new_dist = mean_square_distance(new_x_adv, x, self.x_min, self.x_max)
+                break
+            else:
+                new_x_adv = None
+
+            dist_per_query[last_queries:min(queries, self.max_queries + 1)] = dist
+
+            message = ''
+            if new_x_adv is not None:
+                abs_improvement = dist - new_dist
+                rel_improvement = abs_improvement / dist
+                message = 'd. reduced by {:.2f}% ({:.4e})'.format(rel_improvement * 100, abs_improvement)
+                x_adv_label, x_adv, dist = xs_preds[index], new_x_adv, new_dist
+
+            if self.logs is not None:
+                self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
+                    index, step, x_adv_label, dist, self.spherical_step, self.source_step, message
+                ))
+
+            if len(stats_step_adversarial) == stats_step_adversarial.maxlen and \
+                    len(stats_spherical_adversarial) == stats_spherical_adversarial.maxlen:
+                p_spherical = np.mean(stats_spherical_adversarial)
+                p_step = np.mean(stats_step_adversarial)
+                n_spherical = len(stats_spherical_adversarial)
+                n_step = len(stats_step_adversarial)
+
+                if p_spherical > 0.5:
+                    message = 'Boundary too linear, increasing steps:'
+                    self.spherical_step *= self.step_adaptation
+                    self.source_step *= self.step_adaptation
+                elif p_spherical < 0.2:
+                    message = 'Boundary too non-linear, decreasing steps:'
+                    self.spherical_step /= self.step_adaptation
+                    self.source_step /= self.step_adaptation
+                else:
+                    message = None
+
+                if message is not None:
+                    stats_spherical_adversarial.clear()
+                    if self.logs is not None:
+                        self.logs.append('{}: {} {:.2f} ({:3d}), {:.2f} ({:3d})'.format(
+                            index, message, p_spherical, n_spherical, p_step, n_step
+                        ))
+
+                if p_step > 0.5:
+                    message = 'Success rate too high, increasing source step:'
+                    self.source_step *= self.step_adaptation
+                elif p_step < 0.2:
+                    message = 'Success rate too low, decreasing source step:'
+                    self.source_step /= self.step_adaptation
+                else:
+                    message = None
+
+                if message is not None:
+                    stats_step_adversarial.clear()
+                    if self.logs is not None:
+                        self.logs.append('{}: {} {:.2f} ({:3d}), {:.2f} ({:3d})'.format(
+                            index, message, p_spherical, n_spherical, p_step, n_step
+                        ))
+
+            last_queries = queries
+            if queries == self.max_queries:
+                xs[index] = x_adv
+                return
 
 
 class Boundary(BatchAttack):
@@ -246,49 +242,41 @@ class Boundary(BatchAttack):
             self.logger = kwargs['logger']
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        x_dtype, y_dtype = self.model.x_dtype.as_numpy_dtype,  self.model.y_dtype.as_numpy_dtype
-        xs = xs.astype(x_dtype)
-        ys = None if ys is None else ys.astype(y_dtype)
-        ys_target = None if ys_target is None else ys_target.astype(y_dtype)
+        _xs_array = mp.RawArray(ctypes.c_byte, np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).nbytes)
+        _xs_shape = (self.batch_size, *self.model.x_shape)
+        _xs = np.frombuffer(_xs_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(_xs_shape)
+        _xs[:] = xs
 
-        xs_adv_array = mp.RawArray(ctypes.c_byte, xs.nbytes)
-        xs_adv = np.frombuffer(xs_adv_array, dtype=x_dtype).reshape(xs.shape)
-        xs_adv[:] = xs
+        lbs = ys_target if ys is None else ys
+        _xs_preds_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
+        _xs_preds_shape = (self.batch_size,)
+        _xs_preds = np.frombuffer(_xs_preds_array, dtype=self.model.y_dtype.as_numpy_dtype).reshape(_xs_preds_shape)
 
-        preds_array = mp.RawArray(ctypes.c_byte, ys.nbytes)
-        preds = np.frombuffer(preds_array, dtype=y_dtype).reshape(ys.shape)
-        preds[:] = self._session.run(self.labels, feed_dict={self.xs_ph: xs_adv})
-
-        self._workers = []
-        self._workers_pipe = []
+        workers = []
         for index in range(self.batch_size):
             local, remote = mp.Pipe()
-            process = mp.Process(target=_worker, args=(
-                xs_adv_array, xs.shape, preds, ys.shape, [index], remote,
-                self.goal, self.starting_points,
-                self.model.x_min, self.model.x_max, self.model.x_shape, self.model.x_dtype.as_numpy_dtype,
-                ys, ys_target, self.model.y_dtype.as_numpy_dtype,
-                self.spherical_step, self.source_step, self.step_adaptation, self.max_queries, self.max_directions
-            ))
-            process.start()
-            self._workers.append(process)
-            self._workers_pipe.append(local)
+            ctx = AttackCtx(self, index, _xs_array, _xs_preds_array, self.starting_points, ys, ys_target, remote)
+            worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
+            worker.start()
+            workers.append((worker, local))
 
-        for i in range(self.max_queries + 1):
-            print(i)
-            begin = time.time()
-            preds[:] = self._session.run(self.labels, feed_dict={self.xs_ph: xs_adv})
-            end = time.time()
-            print(end - begin)
-            begin = time.time()
-            for pipe in self._workers_pipe:
+        while True:
+            _xs_preds[:] = self._session.run(self.labels, feed_dict={self.xs_ph: _xs})
+            for _, pipe in workers:
                 if not pipe.closed:
-                    pipe.send(None)
-            for pipe in self._workers_pipe:
+                    pipe.send(())
+            flag = False
+            for _, pipe in workers:
                 if not pipe.closed:
-                    if pipe.recv() == 0:
+                    stop, logs = pipe.recv()
+                    if self.logger:
+                        for log in logs:
+                            self.logger.info(log)
+                    if stop:
                         pipe.close()
-            end = time.time()
-            print(end - begin)
+                    else:
+                        flag = True
+            if not flag:
+                break
 
-        return xs_adv.copy()
+        return _xs.copy()
