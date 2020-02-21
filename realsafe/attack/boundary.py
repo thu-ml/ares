@@ -9,7 +9,7 @@ from realsafe.attack.utils import mean_square_distance
 
 
 class AttackCtx(object):
-    def __init__(self, attacker, index, xs_array, xs_preds_array, starting_points, ys, ys_target, pipe):
+    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, starting_points, ys, ys_target, pipe):
         self.x_dtype, self.y_dtype = attacker.model.x_dtype.as_numpy_dtype, attacker.model.y_dtype.as_numpy_dtype
         self.batch_size, self.x_shape = attacker.batch_size, attacker.model.x_shape
         self.goal = attacker.goal
@@ -23,7 +23,7 @@ class AttackCtx(object):
         self.max_queries, self.max_directions = attacker.max_queries, attacker.max_directions
         self.pipe = pipe
         self.starting_point = starting_points[index]
-        self._xs_array, self._xs_preds_array = xs_array, xs_preds_array
+        self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
 
         self.logs = [] if attacker.logger else None
 
@@ -49,13 +49,13 @@ class AttackCtx(object):
 
     def run(self):
         index = self.index
-        xs = np.frombuffer(self._xs_array, dtype=self.x_dtype).reshape((self.batch_size, *self.x_shape))
-        xs_preds = np.frombuffer(self._xs_preds_array, dtype=self.y_dtype).reshape((self.batch_size,))
+        xs_batch = np.frombuffer(self._xs_batch_array, dtype=self.x_dtype).reshape((self.batch_size, *self.x_shape))
+        ys_batch = np.frombuffer(self._ys_batch_array, dtype=self.y_dtype).reshape((self.batch_size,))
 
-        x = xs[index].copy()
+        x = xs_batch[index].copy()
 
         yield
-        if self._is_adversarial(xs_preds[index]):
+        if self._is_adversarial(ys_batch[index]):
             if self.logs is not None:
                 self.logs.append('{}: The original image is already adversarial'.format(index))
             return
@@ -66,9 +66,9 @@ class AttackCtx(object):
         stats_spherical_adversarial = collections.deque(maxlen=100)
         stats_step_adversarial = collections.deque(maxlen=30)
 
-        xs[index] = x_adv
+        xs_batch[index] = x_adv
         yield
-        x_adv_label = xs_preds[index]
+        x_adv_label = ys_batch[index]
 
         if self.logs is not None:
             self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
@@ -105,26 +105,26 @@ class AttackCtx(object):
                 candidate = np.clip(spherical_candidate + length * new_source_direction, self.x_min, self.x_max)
 
                 if do_spherical:
-                    xs[index] = spherical_candidate
+                    xs_batch[index] = spherical_candidate
                     yield
-                    spherical_is_adversarial = self._is_adversarial(xs_preds[index])
+                    spherical_is_adversarial = self._is_adversarial(ys_batch[index])
 
                     queries += 1
                     if queries == self.max_queries:
-                        xs[index] = x_adv
+                        xs_batch[index] = x_adv
                         return
                     stats_spherical_adversarial.appendleft(spherical_is_adversarial)
 
                     if not spherical_is_adversarial:
                         continue
 
-                xs[index] = candidate
+                xs_batch[index] = candidate
                 yield
-                is_adversarial = self._is_adversarial(xs_preds[index])
+                is_adversarial = self._is_adversarial(ys_batch[index])
 
                 queries += 1
                 if queries == self.max_queries:
-                    xs[index] = x_adv
+                    xs_batch[index] = x_adv
                     return
 
                 if do_spherical:
@@ -146,7 +146,7 @@ class AttackCtx(object):
                 abs_improvement = dist - new_dist
                 rel_improvement = abs_improvement / dist
                 message = 'd. reduced by {:.2f}% ({:.4e})'.format(rel_improvement * 100, abs_improvement)
-                x_adv_label, x_adv, dist = xs_preds[index], new_x_adv, new_dist
+                x_adv_label, x_adv, dist = ys_batch[index], new_x_adv, new_dist
 
             if self.logs is not None:
                 self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
@@ -196,7 +196,7 @@ class AttackCtx(object):
 
             last_queries = queries
             if queries == self.max_queries:
-                xs[index] = x_adv
+                xs_batch[index] = x_adv
                 return
 
 
@@ -242,26 +242,26 @@ class Boundary(BatchAttack):
             self.logger = kwargs['logger']
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        _xs_array = mp.RawArray(ctypes.c_byte, np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).nbytes)
-        _xs_shape = (self.batch_size, *self.model.x_shape)
-        _xs = np.frombuffer(_xs_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(_xs_shape)
-        _xs[:] = xs
+        xs_batch_array = mp.RawArray(ctypes.c_byte, np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).nbytes)
+        xs_shape = (self.batch_size, *self.model.x_shape)
+        xs_batch = np.frombuffer(xs_batch_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(xs_shape)
+        xs_batch[:] = xs
 
         lbs = ys_target if ys is None else ys
-        _xs_preds_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
-        _xs_preds_shape = (self.batch_size,)
-        _xs_preds = np.frombuffer(_xs_preds_array, dtype=self.model.y_dtype.as_numpy_dtype).reshape(_xs_preds_shape)
+        ys_batch_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
+        ys_batch_shape = (self.batch_size,)
+        ys_batch = np.frombuffer(ys_batch_array, dtype=self.model.y_dtype.as_numpy_dtype).reshape(ys_batch_shape)
 
         workers = []
         for index in range(self.batch_size):
             local, remote = mp.Pipe()
-            ctx = AttackCtx(self, index, _xs_array, _xs_preds_array, self.starting_points, ys, ys_target, remote)
+            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, self.starting_points, ys, ys_target, remote)
             worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
             worker.start()
             workers.append((worker, local))
 
         while True:
-            _xs_preds[:] = self._session.run(self.labels, feed_dict={self.xs_ph: _xs})
+            ys_batch[:] = self._session.run(self.labels, feed_dict={self.xs_ph: xs_batch})
             for _, pipe in workers:
                 if not pipe.closed:
                     pipe.send(())
@@ -279,4 +279,4 @@ class Boundary(BatchAttack):
             if not flag:
                 break
 
-        return _xs.copy()
+        return xs_batch.copy()
