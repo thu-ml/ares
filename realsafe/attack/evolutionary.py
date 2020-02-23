@@ -78,8 +78,10 @@ class AttackCtx(object):
         yield
         x_adv_label = ys_batch[self.index]
 
-        # if self.logging:
-        #     self.log_step(0, xs_adv_label, dis, self.sigma, mu)
+        if self.logs is not None:
+            self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
+                self.index, 0, dist, x_adv_label, self.sigma, self.mu, ''
+            ))
 
         dist_per_query[0] = dist
 
@@ -124,8 +126,10 @@ class AttackCtx(object):
 
             dist_per_query[step] = dist
 
-            # if self.logging:
-            #     self.log_step(step, xs_adv_label, dis, self.sigma, mu, message)
+            if self.logs is not None:
+                self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
+                    self.index, step, dist, x_adv_label, self.sigma, self.mu, message
+                ))
 
             if len(stats_adversarial) == stats_adversarial.maxlen:
                 p_step = np.mean(stats_adversarial)
@@ -198,7 +202,6 @@ class Evolutionary(BatchAttack):
 
         i = 0
         while True:
-            print(i)
             i += 1
             ys_batch[:] = self._session.run(self.labels, feed_dict={self.xs_ph: xs_batch})
             for _, pipe in workers:

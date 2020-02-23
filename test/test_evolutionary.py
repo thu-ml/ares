@@ -8,7 +8,7 @@ import tensorflow as tf
 logger = tf.get_logger()
 logger.setLevel(tf.logging.INFO)
 
-batch_size = 100
+batch_size = 1
 
 session = tf.Session()
 model = ResNet56()
@@ -33,7 +33,7 @@ attack.config(
     sigma=3e-2,
     decay_factor=0.99,
     c=0.001,
-    logger=None,
+    logger=logger,
 )
 
 xs_ph = tf.placeholder(model.x_dtype, shape=(None, *model.x_shape))
