@@ -8,7 +8,7 @@ import tensorflow as tf
 logger = tf.get_logger()
 logger.setLevel(tf.logging.INFO)
 
-batch_size = 1
+batch_size = 100
 
 session = tf.Session()
 model = ResNet56()

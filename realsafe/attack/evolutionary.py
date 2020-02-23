@@ -9,7 +9,8 @@ from realsafe.attack.utils import mean_square_distance
 
 
 class AttackCtx(object):
-    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, starting_points, ys, ys_target, pipe):
+    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, dist_array,
+                 starting_points, ys, ys_target, pipe):
         self.x_dtype, self.y_dtype = attacker.model.x_dtype.as_numpy_dtype, attacker.model.y_dtype.as_numpy_dtype
         self.batch_size, self.x_shape = attacker.batch_size, attacker.model.x_shape
         self.goal = attacker.goal
@@ -25,6 +26,7 @@ class AttackCtx(object):
         self.pipe = pipe
         self.starting_point = starting_points[index]
         self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
+        self._dist_array = dist_array
 
         self.logs = [] if attacker.logger else None
 
@@ -63,7 +65,7 @@ class AttackCtx(object):
 
         x_adv = self.starting_point
         dist = mean_square_distance(x, x_adv, self.x_min, self.x_max)
-        dist_per_query = np.zeros([self.max_queries + 1])
+        dist_per_query = np.frombuffer(self._dist_array, dtype=np.float).reshape((self.batch_size, -1))
         stats_adversarial = collections.deque(maxlen=30)
 
         pert_shape = self.x_shape
@@ -83,7 +85,7 @@ class AttackCtx(object):
                 self.index, 0, dist, x_adv_label, self.sigma, self.mu, ''
             ))
 
-        dist_per_query[0] = dist
+        dist_per_query[self.index][0] = dist
 
         for step in range(1, self.max_queries + 1):
             unnormalized_source_direction = x - x_adv
@@ -124,7 +126,7 @@ class AttackCtx(object):
                 x_adv, dist = new_x_adv, new_dist
                 x_adv_label = ys_batch[self.index]
 
-            dist_per_query[step] = dist
+            dist_per_query[self.index][step] = dist
 
             if self.logs is not None:
                 self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
@@ -159,6 +161,7 @@ class Evolutionary(BatchAttack):
 
         self.xs_ph = tf.placeholder(model.x_dtype, (self.batch_size, *self.model.x_shape))
         self.labels = self.model.labels(self.xs_ph)
+        self.details = {}
 
         self.logger = None
 
@@ -186,6 +189,8 @@ class Evolutionary(BatchAttack):
         xs_shape = (self.batch_size, *self.model.x_shape)
         xs_batch = np.frombuffer(xs_batch_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(xs_shape)
         xs_batch[:] = xs
+        self.details['dist_per_query'] = np.zeros((self.batch_size, self.max_queries + 1), dtype=np.float)
+        dist_array = mp.RawArray(ctypes.c_byte, self.details['dist_per_query'].nbytes)
 
         lbs = ys_target if ys is None else ys
         ys_batch_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
@@ -195,7 +200,8 @@ class Evolutionary(BatchAttack):
         workers = []
         for index in range(self.batch_size):
             local, remote = mp.Pipe()
-            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, self.starting_points, ys, ys_target, remote)
+            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, dist_array,
+                            self.starting_points, ys, ys_target, remote)
             worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
             worker.start()
             workers.append((worker, local))
@@ -221,4 +227,6 @@ class Evolutionary(BatchAttack):
             if not flag:
                 break
 
+        dist_per_query = np.frombuffer(dist_array, dtype=np.float).reshape((self.batch_size, -1))
+        np.copyto(self.details['dist_per_query'], dist_per_query)
         return xs_batch.copy()
