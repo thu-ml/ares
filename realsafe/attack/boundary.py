@@ -9,7 +9,8 @@ from realsafe.attack.utils import mean_square_distance
 
 
 class AttackCtx(object):
-    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, starting_points, ys, ys_target, pipe):
+    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, dist_array,
+                 starting_points, ys, ys_target, pipe):
         self.x_dtype, self.y_dtype = attacker.model.x_dtype.as_numpy_dtype, attacker.model.y_dtype.as_numpy_dtype
         self.batch_size, self.x_shape = attacker.batch_size, attacker.model.x_shape
         self.goal = attacker.goal
@@ -24,6 +25,7 @@ class AttackCtx(object):
         self.pipe = pipe
         self.starting_point = starting_points[index]
         self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
+        self._dist_array = dist_array
 
         self.logs = [] if attacker.logger else None
 
@@ -62,7 +64,7 @@ class AttackCtx(object):
 
         x_adv = self.starting_point
         dist = mean_square_distance(x_adv, x, self.x_min, self.x_max)
-        dist_per_query = np.zeros([self.max_queries + 1])
+        dist_per_query = np.frombuffer(self._dist_array, dtype=np.float).reshape((self.batch_size, -1))
         stats_spherical_adversarial = collections.deque(maxlen=100)
         stats_step_adversarial = collections.deque(maxlen=30)
 
@@ -74,7 +76,7 @@ class AttackCtx(object):
             self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
                 index, 0, x_adv_label, dist, self.spherical_step, self.source_step, ''
             ))
-        dist_per_query[0] = dist
+        dist_per_query[self.index][0] = dist
 
         step, queries, last_queries = 0, 0, 0
         while True:
@@ -112,6 +114,7 @@ class AttackCtx(object):
                     queries += 1
                     if queries == self.max_queries:
                         xs_batch[index] = x_adv
+                        dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
                         return
                     stats_spherical_adversarial.appendleft(spherical_is_adversarial)
 
@@ -125,6 +128,7 @@ class AttackCtx(object):
                 queries += 1
                 if queries == self.max_queries:
                     xs_batch[index] = x_adv
+                    dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
                     return
 
                 if do_spherical:
@@ -139,7 +143,7 @@ class AttackCtx(object):
             else:
                 new_x_adv = None
 
-            dist_per_query[last_queries:min(queries, self.max_queries + 1)] = dist
+            dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
 
             message = ''
             if new_x_adv is not None:
@@ -197,6 +201,7 @@ class AttackCtx(object):
             last_queries = queries
             if queries == self.max_queries:
                 xs_batch[index] = x_adv
+                dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
                 return
 
 
@@ -221,6 +226,7 @@ class Boundary(BatchAttack):
         self.labels = self.model.labels(self.xs_ph)
 
         self.logger = None
+        self.details = {}
 
     def config(self, **kwargs):
         if 'starting_points' in kwargs:
@@ -246,6 +252,8 @@ class Boundary(BatchAttack):
         xs_shape = (self.batch_size, *self.model.x_shape)
         xs_batch = np.frombuffer(xs_batch_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(xs_shape)
         xs_batch[:] = xs
+        self.details['dist_per_query'] = np.zeros((self.batch_size, self.max_queries + 1), dtype=np.float)
+        dist_array = mp.RawArray(ctypes.c_byte, self.details['dist_per_query'].nbytes)
 
         lbs = ys_target if ys is None else ys
         ys_batch_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
@@ -255,7 +263,8 @@ class Boundary(BatchAttack):
         workers = []
         for index in range(self.batch_size):
             local, remote = mp.Pipe()
-            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, self.starting_points, ys, ys_target, remote)
+            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, dist_array,
+                            self.starting_points, ys, ys_target, remote)
             worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
             worker.start()
             workers.append((worker, local))
@@ -279,4 +288,6 @@ class Boundary(BatchAttack):
             if not flag:
                 break
 
+        dist_per_query = np.frombuffer(dist_array, dtype=np.float).reshape((self.batch_size, -1))
+        np.copyto(self.details['dist_per_query'], dist_per_query)
         return xs_batch.copy()
