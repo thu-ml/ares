@@ -4,7 +4,6 @@ from keras.datasets.cifar10 import load_data
 from os.path import expanduser
 import numpy as np
 import tensorflow as tf
-import ipdb
 
 batch_size = 20
 

@@ -28,7 +28,8 @@ class NES(Attack):
     [2] http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf
     '''
 
-    def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None):
+    def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None,
+                 dimension_reduction=None):
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric
 
@@ -53,8 +54,17 @@ class NES(Attack):
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
 
         # pertubations
-        perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape), dtype=self.model.x_dtype)
-        perts = tf.concat([perts, -perts], axis=0)
+        if dimension_reduction:
+            assert len(self.model.x_shape) == 3
+            perts = tf.random.normal(shape=(self.samples_batch_size // 2, *dimension_reduction, self.model.x_shape[2]),
+                                     dtype=self.model.x_dtype)
+            perts = tf.image.resize(perts, self.model.x_shape[:2], method=tf.image.ResizeMethod.BILINEAR,
+                                    preserve_aspect_ratio=False, align_corners=True)
+            perts = tf.concat([perts, tf.negative(perts)], axis=0)
+        else:
+            perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape),
+                                     dtype=self.model.x_dtype)
+            perts = tf.concat([perts, tf.negative(perts)], axis=0)
         # points to eval loss
         points = self.x_adv_var + self.sigma.var * perts
         loss = loss(points, self.ys_var)
