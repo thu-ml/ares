@@ -3,7 +3,7 @@ import numpy as np
 import multiprocessing as mp
 import ctypes
 import collections
-from cv2 import resize as cv2_resize
+import cv2
 
 from realsafe.attack.base import BatchAttack
 from realsafe.attack.utils import mean_square_distance
@@ -107,7 +107,7 @@ class AttackCtx(object):
             perturbation *= factor.reshape(pert_shape) * np.sqrt(diagonal_covariance)
 
             if self.dimension_reduction:
-                perturbation_large = cv2_resize(perturbation, self.x_shape[:2])
+                perturbation_large = cv2.resize(perturbation, self.x_shape[:2])
             else:
                 perturbation_large = perturbation
 
