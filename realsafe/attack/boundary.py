@@ -3,6 +3,7 @@ import numpy as np
 import multiprocessing as mp
 import ctypes
 import collections
+import cv2
 
 from realsafe.attack.base import BatchAttack
 from realsafe.attack.utils import mean_square_distance
@@ -24,6 +25,8 @@ class AttackCtx(object):
         self.max_queries, self.max_directions = attacker.max_queries, attacker.max_directions
         self.pipe = pipe
         self.starting_point = starting_points[index]
+        self.dimension_reduction = attacker.dimension_reduction
+
         self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
         self._dist_array = dist_array
 
@@ -89,7 +92,13 @@ class AttackCtx(object):
             do_spherical = (step % 10 == 0)
 
             for _ in range(self.max_directions):
-                perturbation = np.random.normal(0.0, 1.0, self.x_shape).astype(self.x_dtype)
+                if self.dimension_reduction:
+                    assert len(self.x_shape) == 3
+                    perturbation_shape = (*self.dimension_reduction, self.x_shape[2])
+                    perturbation = np.random.normal(0.0, 1.0, perturbation_shape).astype(self.x_dtype)
+                    perturbation = cv2.resize(perturbation, self.x_shape[:2])
+                else:
+                    perturbation = np.random.normal(0.0, 1.0, self.x_shape).astype(self.x_dtype)
                 dot = np.vdot(perturbation, source_direction)
                 perturbation -= dot * source_direction
                 perturbation *= self.spherical_step * source_norm / np.linalg.norm(perturbation)
@@ -219,8 +228,9 @@ class Boundary(BatchAttack):
     [1]
     '''
 
-    def __init__(self, model, batch_size, goal, session):
+    def __init__(self, model, batch_size, goal, session, dimension_reduction=None):
         self.model, self.batch_size, self.goal, self._session = model, batch_size, goal, session
+        self.dimension_reduction = dimension_reduction
 
         self.xs_ph = tf.placeholder(model.x_dtype, (self.batch_size, *self.model.x_shape))
         self.labels = self.model.labels(self.xs_ph)
