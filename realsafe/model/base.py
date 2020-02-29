@@ -96,3 +96,7 @@ class ClassifierWithLogits(Classifier, metaclass=ABCMeta):
     def labels(self, xs):
         _, labels = self.logits_and_labels(xs)
         return labels
+
+    def logits(self, xs):
+        logits, _ = self.logits_and_labels(xs)
+        return logits
