@@ -82,3 +82,9 @@ def mean_square_distance(x1, x2, x_min, x_max):
 def image_resize(imgs, width, height):
     return tf.image.resize(imgs, (width, height), method=tf.image.ResizeMethod.BILINEAR,
                            align_corners=True, preserve_aspect_ratio=False)
+
+
+def scale(x, dst_min, dst_max, src_min, src_max):
+    k = (dst_max - dst_min) / (src_max - src_min)
+    b = dst_min - k * src_min
+    return k * x + b

@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar, Expectation, clip_eta_batch, clip_eta, image_resize
+from realsafe.attack.utils import ConfigVar, Expectation, clip_eta_batch, clip_eta, image_resize, scale
 
 
 class NAttack(Attack):
@@ -150,19 +150,13 @@ class NAttack(Attack):
         self.details['queries'] = queries
         return self._session.run(self.x_adv)
 
-    @staticmethod
-    def _scale(x, dst_lo, dst_hi, src_lo, src_hi):
-        k = (dst_hi - dst_lo) / (src_hi - src_lo)
-        b = dst_lo - k * src_lo
-        return k * x + b
-
     def _scale_to_model(self, x):
-        return NAttack._scale(x, self.model.x_min, self.model.x_max, -1.0, 1.0)
+        return scale(x, self.model.x_min, self.model.x_max, -1.0, 1.0)
 
     def _scale_to_tanh(self, x):
         # np.arctanh(np.tanh(np.arctanh(1.0 - 1e-6) + 10.0)) == 17.242754385535303
         bound = 1.0 - 1e-6
-        return NAttack._scale(x, -bound, bound, self.model.x_min, self.model.x_max)
+        return scale(x, -bound, bound, self.model.x_min, self.model.x_max)
 
     def _is_adversarial(self, y, y_target):
         # label of x_adv
