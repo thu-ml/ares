@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar, Expectation, clip_eta_batch, clip_eta
+from realsafe.attack.utils import ConfigVar, Expectation, clip_eta_batch, clip_eta, image_resize
 
 
 class NAttack(Attack):
@@ -24,7 +24,7 @@ class NAttack(Attack):
     '''
 
     def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw,
-                 samples_batch_size=None, init_distortion=0.001):
+                 samples_batch_size=None, init_distortion=0.001, dimension_reduction=None):
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric
 
@@ -36,8 +36,6 @@ class NAttack(Attack):
 
         self.x_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape))
         self.ys_var = tf.Variable(tf.zeros(dtype=self.model.y_dtype, shape=self.samples_batch_size))
-        # the mu parameter for the Gaussian
-        self.mu_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=self.model.x_shape))
 
         self.x_ph = tf.placeholder(model.x_dtype, self.model.x_shape)
         self.ys_ph = tf.placeholder(model.y_dtype, (self.samples_batch_size,))
@@ -45,14 +43,24 @@ class NAttack(Attack):
         self.eps = ConfigVar(shape=None, dtype=self.model.x_dtype)
         self.sigma = ConfigVar(shape=None, dtype=tf.float32)
         self.lr = ConfigVar(shape=None, dtype=tf.float32)
-
-        # pertubations
-        perts_shape = (self.samples_batch_size, *self.model.x_shape)
-        perts = tf.random.normal(stddev=self.sigma.var, shape=perts_shape, dtype=self.model.x_dtype)
+        # shape after dimension reduction
+        if dimension_reduction:
+            assert len(self.model.x_shape) == 3
+            perts_shape = (*dimension_reduction, self.model.x_shape[2])
+        else:
+            perts_shape = self.model.x_shape
+        # the mu parameter for the Gaussian
+        self.mu_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=perts_shape))
+        mu_var_resized = image_resize(self.mu_var, *self.model.x_shape[:2])
+        # sample pertubations from a normal distribution
+        perts = tf.random.normal(shape=(self.samples_batch_size, *perts_shape), dtype=self.model.x_dtype)
+        mu_perts = self.mu_var + self.sigma.var * perts
+        if dimension_reduction:
+            mu_perts = image_resize(mu_perts, *self.model.x_shape[:2])
         # linear transform the model's input to range (-1.0, 1.0), and apply arctanh
         arctanh_x = tf.atanh(self._scale_to_tanh(self.x_var))
         # points in the arctanh space to eval loss
-        arctanh_points = arctanh_x + self.mu_var + perts
+        arctanh_points = arctanh_x + mu_perts
         deltas = self._scale_to_model(tf.tanh(arctanh_points)) - self.x_var
         # clip the deltas by magnitude
         clipped_deltas = clip_eta_batch(deltas, self.eps.var, self.distance_metric)
@@ -74,14 +82,14 @@ class NAttack(Attack):
 
         # update mu
         self.update_mu_step = self.mu_var.assign_add(self.lr.var * grad)
-        delta = self._scale_to_model(tf.tanh(arctanh_x + self.mu_var)) - self.x_var
+        delta = self._scale_to_model(tf.tanh(arctanh_x + mu_var_resized)) - self.x_var
         # clip the delta by magnitude
         clipped_delta = clip_eta(delta, self.eps.var, self.distance_metric)
         self.x_adv = self.x_var + clipped_delta
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv, (1, *self.model.x_shape)))[1][0]
 
-        self.setup_mu_step = [self.mu_var.assign(tf.random.normal(self.model.x_shape, stddev=init_distortion))]
+        self.setup_mu_step = [self.mu_var.assign(tf.random.normal(perts_shape, stddev=init_distortion))]
         self.setup_x_step = self.x_var.assign(self.x_ph)
         self.setup_ys_step = self.ys_var.assign(self.ys_ph)
 

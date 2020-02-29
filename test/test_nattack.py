@@ -29,6 +29,7 @@ attack = NAttack(
     session=session,
     samples_per_draw=100,
     samples_batch_size=25,
+    dimension_reduction=(28, 28),
 )
 logger = tf.get_logger()
 logger.setLevel(tf.logging.INFO)

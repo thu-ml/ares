@@ -77,3 +77,8 @@ def clip_eta(x, eta, distance_metric):
 
 def mean_square_distance(x1, x2, x_min, x_max):
     return np.mean((x1 - x2) ** 2) / ((x_max - x_min) ** 2)
+
+
+def image_resize(imgs, width, height):
+    return tf.image.resize(imgs, (width, height), method=tf.image.ResizeMethod.BILINEAR,
+                           align_corners=True, preserve_aspect_ratio=False)
