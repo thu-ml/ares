@@ -26,6 +26,7 @@ attack = Evolutionary(
     batch_size=batch_size,
     goal='ut',
     session=session,
+    dimension_reduction=(24, 24),
 )
 attack.config(
     max_queries=20000,

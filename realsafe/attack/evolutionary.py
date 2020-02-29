@@ -3,6 +3,7 @@ import numpy as np
 import multiprocessing as mp
 import ctypes
 import collections
+from cv2 import resize as cv2_resize
 
 from realsafe.attack.base import BatchAttack
 from realsafe.attack.utils import mean_square_distance
@@ -25,6 +26,8 @@ class AttackCtx(object):
         self.max_queries = attacker.max_queries
         self.pipe = pipe
         self.starting_point = starting_points[index]
+        self.dimension_reduction = attacker.dimension_reduction
+
         self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
         self._dist_array = dist_array
 
@@ -68,7 +71,11 @@ class AttackCtx(object):
         dist_per_query = np.frombuffer(self._dist_array, dtype=np.float).reshape((self.batch_size, -1))
         stats_adversarial = collections.deque(maxlen=30)
 
-        pert_shape = self.x_shape
+        if self.dimension_reduction:
+            assert len(self.x_shape) == 3
+            pert_shape = (*self.dimension_reduction, self.x_shape[2])
+        else:
+            pert_shape = self.x_shape
 
         N = np.prod(pert_shape)
         K = int(N / 20)
@@ -99,8 +106,13 @@ class AttackCtx(object):
             factor[selected_indices] = 1
             perturbation *= factor.reshape(pert_shape) * np.sqrt(diagonal_covariance)
 
+            if self.dimension_reduction:
+                perturbation_large = cv2_resize(perturbation, self.x_shape[:2])
+            else:
+                perturbation_large = perturbation
+
             biased = x_adv + self.mu * unnormalized_source_direction
-            candidate = biased + self.sigma * source_norm * perturbation / np.linalg.norm(perturbation)
+            candidate = biased + self.sigma * source_norm * perturbation_large / np.linalg.norm(perturbation_large)
             candidate = x - (x - candidate) / np.linalg.norm(x - candidate) * np.linalg.norm(x - biased)
             candidate = np.clip(candidate, self.x_min, self.x_max)
 
@@ -156,8 +168,9 @@ class Evolutionary(BatchAttack):
     [1]
     '''
 
-    def __init__(self, model, batch_size, goal, session):
+    def __init__(self, model, batch_size, goal, session, dimension_reduction=None):
         self.model, self.batch_size, self.goal, self._session = model, batch_size, goal, session
+        self.dimension_reduction = dimension_reduction
 
         self.xs_ph = tf.placeholder(model.x_dtype, (self.batch_size, *self.model.x_shape))
         self.labels = self.model.labels(self.xs_ph)
