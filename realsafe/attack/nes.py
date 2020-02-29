@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar, Expectation, clip_eta
+from realsafe.attack.utils import ConfigVar, Expectation, clip_eta, image_resize
 
 
 class NES(Attack):
@@ -58,8 +58,7 @@ class NES(Attack):
             assert len(self.model.x_shape) == 3
             perts = tf.random.normal(shape=(self.samples_batch_size // 2, *dimension_reduction, self.model.x_shape[2]),
                                      dtype=self.model.x_dtype)
-            perts = tf.image.resize(perts, self.model.x_shape[:2], method=tf.image.ResizeMethod.BILINEAR,
-                                    preserve_aspect_ratio=False, align_corners=True)
+            perts = image_resize(perts, *self.model.x_shape[:2])
             perts = tf.concat([perts, tf.negative(perts)], axis=0)
         else:
             perts = tf.random.normal(shape=(self.samples_batch_size // 2, *self.model.x_shape),

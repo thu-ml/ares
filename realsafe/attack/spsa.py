@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from realsafe.attack.base import Attack
-from realsafe.attack.utils import ConfigVar, Expectation, clip_eta
+from realsafe.attack.utils import ConfigVar, Expectation, clip_eta, image_resize
 
 
 class SPSA(Attack):
@@ -57,8 +57,7 @@ class SPSA(Attack):
             assert len(self.model.x_shape) == 3
             perts_shape = (self.samples_batch_size // 2, *dimension_reduction, self.model.x_shape[2])
             perts = tf.random.uniform(perts_shape, minval=-1.0, maxval=1.0, dtype=self.model.x_dtype)
-            perts = tf.image.resize(perts, self.model.x_shape[:2], method=tf.image.ResizeMethod.BILINEAR,
-                                    preserve_aspect_ratio=False, align_corners=True)
+            perts = image_resize(perts, *self.model.x_shape[:2])
             perts = tf.sign(perts)
             perts = tf.concat([perts, tf.negative(perts)], axis=0)
         else:
