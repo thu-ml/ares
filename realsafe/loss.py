@@ -1,27 +1,28 @@
 import tensorflow as tf
+
 from abc import ABCMeta, abstractmethod
 
 
 class Loss(metaclass=ABCMeta):
-    """
-    TODO
-    """
+    ''' An abstract interface for loss function, which is supported by some attack methods. '''
 
     @abstractmethod
     def __call__(self, xs, ys):
+        '''
+        :param xs: the input examples.
+        :param ys: the input examples' labels.
+        :return: a tensor of float number with same shape as `ys`.
+        '''
         pass
 
 
 class CrossEntropyLoss(Loss):
-    """
-    TODO
-    """
+    ''' Cross entropy loss. '''
 
     def __init__(self, model):
-        """
-        TODO
-        :param model:
-        """
+        '''
+        :param model: an instance of `ClassifierWithLogits`.
+        '''
         self.model = model
 
     def __call__(self, xs, ys):
@@ -34,15 +35,13 @@ class CrossEntropyLoss(Loss):
 
 
 class EnsembleCrossEntropyLoss(Loss):
-    """
-    TODO
-    """
+    ''' Ensemble multiple models' logits, and then calculate the cross entropy loss from this ensemble logits. '''
 
     def __init__(self, models, weights):
-        """
-        TODO
-        :param models:
-        """
+        '''
+        :param models: a list of `ClassifierWithLogits`.
+        :param weights: weights for ensemble these models.
+        '''
         self.models, self.weights = models, weights
 
     def __call__(self, xs, ys):
@@ -57,13 +56,12 @@ class EnsembleCrossEntropyLoss(Loss):
 
 
 class CWLoss(Loss):
-    '''
-    TODO
-    '''
+    ''' C&W loss. '''
 
     def __init__(self, model, c=99999.0):
         '''
-        :param model:
+        :param model: an instance of `ClassifierWithLogits`.
+        :param c: a large float number.
         '''
         self.model = model
         self.c = c
