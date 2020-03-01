@@ -29,7 +29,8 @@ attack = CW(
     session=session,
 )
 attack.config(
-    cs=1.0
+    cs=1.0,
+    logger=logger,
 )
 
 xs_ph = tf.placeholder(model.x_dtype, shape=(None, *model.x_shape))

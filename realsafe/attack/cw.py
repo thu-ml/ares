@@ -14,10 +14,14 @@ class CW(BatchAttack):
     Supported distance metric: `l_2`
     Supported goal: `t`, `tm`, `ut`
     Supported config parameters:
-    - TODO
+    - `cs`: initial c, could be either a float number or a numpy float number array with shape of (batch_size,).
+    - `iteration`: an integer, represent iteration count for each search step and binary search step.
+    - `search_steps`: an integer, the number of times for running initial search for c before binary search.
+    - `binsearch_steps`: an integer, the number of times for running binary search on c.
+    - `logger`: a standard logger for logging verbose information during attack.
 
     References:
-    [1] TODO
+    [1] https://arxiv.org/pdf/1608.04644.pdf
     '''
 
     def __init__(self, model, batch_size, goal, distance_metric, session,
@@ -73,6 +77,7 @@ class CW(BatchAttack):
         self.binsearch_steps = 10
 
         self.details = {}
+        self.logger = None
 
     def config(self, **kwargs):
         if 'cs' in kwargs:
@@ -84,68 +89,103 @@ class CW(BatchAttack):
         if 'binsearch_steps' in kwargs:
             self.binsearch_steps = kwargs['binsearch_steps']
 
+        if 'logger' in kwargs:
+            self.logger = kwargs['logger']
+
     def batch_attack(self, xs, ys=None, ys_target=None):
-        ys_flatten = np.arange(0, self.batch_size * self.model.n_class, self.model.n_class) + ys
         ys_input = ys_target if self.goal == 't' or self.goal == 'tm' else ys
-        cs, xs_adv = self.cs.copy(), np.array(xs).copy()
-        self._session.run((self.setup_xs, self.setup_ys, self.setup_d_ws), feed_dict={
-            self.xs_ph: xs, self.ys_ph: ys_input
-        })
-        # find c to begin with
+
+        # create numpy index for fetching the original label's logit value
+        ys_flatten = np.arange(0, self.batch_size * self.model.n_class, self.model.n_class)
+        ys_flatten = ys_flatten.astype(self.model.y_dtype.as_numpy_dtype) + ys
+
+        # store the adversarial examples and its distance to the original examples
+        xs_adv = np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).copy()
+        min_dists = np.repeat(self.model.x_dtype.max, self.batch_size).astype(self.model.x_dtype.as_numpy_dtype)
+
+        self._session.run(self.setup_xs, feed_dict={self.xs_ph: xs})
+        self._session.run(self.setup_ys, feed_dict={self.ys_ph: ys_input})
+        self._session.run(self.setup_d_ws)
+
+        # setup initial cs value
+        cs = self.cs.copy()
+        self._session.run(self.setup_cs, feed_dict={self.cs_ph: cs})
+
+        # find cs to begin with
         found = np.repeat(False, self.batch_size)
-        min_dists = np.repeat(self.model.x_dtype.max, self.batch_size)
-        for _ in range(self.search_steps):
+        for search_step in range(self.search_steps):
             # reset optimizer on each search step
             self._session.run(self.setup_optimizer)
-            self._session.run(self.setup_cs, feed_dict={self.cs_ph: cs})
             for _ in range(self.iteration):
                 self._session.run(self.optimizer_step)
                 new_score, new_logits, new_xs_adv, new_dists = self._session.run(
-                    (self.score, self.logits, self.xs_adv_model, self.dists)
-                )
+                    (self.score, self.logits, self.xs_adv_model, self.dists))
+                better_dists = new_dists < min_dists
                 if self.goal == 'ut' or self.goal == 'tm':
+                    # for ut and tm goal, if the original label's logit is not the largest one, the example is
+                    # adversarial.
                     new_succ = new_logits.max(axis=1) - new_logits.take(ys_flatten) > self.confidence
                 else:
+                    # for t goal, if the score is smaller than 0, the example is adversarial. The confidence is already
+                    # included in the score, no need to add the confidence term here.
                     new_succ = new_score < 1e-12
-                better_dists = new_dists <= min_dists
+                # if the example is adversarial and has small distance to the original example, update xs_adv and
+                # min_dists
                 to_update = np.logical_and(new_succ, better_dists)
                 xs_adv[to_update], min_dists[to_update] = new_xs_adv[to_update], new_dists[to_update]
                 found[to_update] = True
-            if np.all(found):
+
+            if self.logger:
+                self.logger.info('search_step={}, cs_mean={}, success_rate={}'.format(
+                    search_step, cs.mean(), found.astype(np.float).mean()))
+
+            if np.all(found):  # we have found an adversarial example for all inputs
                 break
-            else:
+            else:  # update c value for all failed-to-attack inputs
                 cs[np.logical_not(found)] *= 10.0
+                self._session.run(self.setup_cs, feed_dict={self.cs_ph: cs})
 
-        cs_hi = cs
-        cs_lo = np.zeros_like(cs)
+        # prepare cs for binary search, no need to copy cs here
+        cs_lo, cs_hi = np.zeros_like(cs), cs
         cs = (cs_hi + cs_lo) / 2
+        self._session.run(self.setup_cs, feed_dict={self.cs_ph: cs})
 
-        # binsearch
-        for i in range(self.binsearch_steps):
+        # binary search on cs
+        for binsearch_step in range(self.binsearch_steps):
             # reset optimizer on each search step
             self._session.run(self.setup_optimizer)
-            self._session.run(self.setup_cs, feed_dict={self.cs_ph: cs})
-
             succ = np.repeat(False, self.batch_size)
-
             for _ in range(self.iteration):
                 self._session.run(self.optimizer_step)
                 new_score, new_logits, new_xs_adv, new_dists = self._session.run(
-                    (self.score, self.logits, self.xs_adv_model, self.dists)
-                )
+                    (self.score, self.logits, self.xs_adv_model, self.dists))
+                better_dists = new_dists <= min_dists
                 if self.goal == 'ut' or self.goal == 'tm':
+                    # for ut and tm goal, if the original label's logit is not the largest one, the example is
+                    # adversarial.
                     new_succ = new_logits.max(axis=1) - new_logits.take(ys_flatten) > self.confidence
                 else:
+                    # for t goal, if the score is smaller than 0, the example is adversarial. The confidence is already
+                    # included in the score, no need to add the confidence term here.
                     new_succ = new_score < 1e-12
-                better_dists = new_dists <= min_dists
+                # if the example is adversarial and has small distance to the original example, update xs_adv and
+                # min_dists
                 to_update = np.logical_and(new_succ, better_dists)
                 xs_adv[to_update], min_dists[to_update] = new_xs_adv[to_update], new_dists[to_update]
                 succ[to_update] = True
+                # the initial search for c might fail, while we might succeed finding an adversarial example during
+                # binary search
+                found[to_update] = True
 
+            # update cs
             not_succ = np.logical_not(succ)
-            cs_hi[succ] = cs[succ]
-            cs_lo[not_succ] = cs[not_succ]
+            cs_lo[not_succ], cs_hi[succ] = cs[not_succ], cs[succ]
             cs = (cs_hi + cs_lo) / 2.0
+            self._session.run(self.setup_cs, feed_dict={self.cs_ph: cs})
+
+            if self.logger:
+                self.logger.info('binsearch_step={}, cs_mean={}, success_rate={}'.format(
+                    binsearch_step, cs.mean(), succ.astype(np.float).mean()))
 
         self.details['success'] = found
         return xs_adv
