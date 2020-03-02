@@ -1,7 +1,7 @@
-from realsafe.model.cifar10 import ResNet56
+from realsafe.model.utils import load_model_from_path
 from realsafe import CW
 from keras.datasets.cifar10 import load_data
-from os.path import expanduser
+import os
 import numpy as np
 import tensorflow as tf
 
@@ -11,8 +11,10 @@ logger.setLevel(tf.logging.INFO)
 batch_size = 100
 
 session = tf.Session()
-model = ResNet56()
-model.load(session, model_path=expanduser('~/.realsafe/cifar10/resnet56.ckpt'))
+
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../example/cifar10/resnet56.py')
+rs_model = load_model_from_path(model_path)
+model = rs_model.load(session)
 
 _, (xs_test, ys_test) = load_data()
 xs_test = (xs_test / 255.0) * (model.x_max - model.x_min) + model.x_min

@@ -1,9 +1,18 @@
-import os
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
+import os
+import urllib
 
-from six.moves import urllib
 from realsafe.model.base import ClassifierWithLogits
+from realsafe.model.utils import get_res
+
+MODEL_PATH = get_res('./cifar10/resnet56.ckpt')
+
+
+def load(session):
+    model = ResNet56()
+    model.load(MODEL_PATH, session)
+    return model
 
 
 class Resnet(object):
@@ -181,13 +190,8 @@ class Resnet(object):
 class ResNet56(ClassifierWithLogits):
     def __init__(self):
         ClassifierWithLogits.__init__(self,
-                                      x_min=0.0,
-                                      x_max=1.0,
-                                      x_shape=(32, 32, 3,),
-                                      x_dtype=tf.float32,
-                                      y_dtype=tf.int32,
-                                      n_class=10)
-
+                                      x_min=0.0, x_max=1.0, x_shape=(32, 32, 3,), x_dtype=tf.float32,
+                                      y_dtype=tf.int32, n_class=10)
         self.num_residual_blocks = 9
         self.model = Resnet('eval')
 
@@ -195,26 +199,21 @@ class ResNet56(ClassifierWithLogits):
         logits = self.model.inference(xs_ph, self.num_residual_blocks, reuse=tf.AUTO_REUSE)
         predicts = tf.nn.softmax(logits)
         predicted_labels = tf.argmax(predicts, 1, output_type=tf.int32)
-
         return logits, predicted_labels
 
-    def load(self, session, **kwargs):
+    def load(self, model_path, session):
         x_input = tf.placeholder(tf.float32, shape=(None,) + self.x_shape)
         self.model.inference(x_input, self.num_residual_blocks, reuse=False)
-
-        model_path = kwargs['model_path']
-
-        if not os.path.exists(model_path):
-            if not os.path.exists(os.path.dirname(model_path)):
-                os.makedirs(os.path.dirname(model_path))
-            urllib.request.urlretrieve(
-                'http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/resnet56-cifar.ckpt',
-                model_path)
-
         saver = tf.train.Saver(var_list=tf.global_variables())
         saver.restore(session, model_path)
 
+    def download(self, model_path):
+        if not os.path.exists(model_path):
+            if not os.path.exists(os.path.dirname(model_path)):
+                os.makedirs(os.path.dirname(model_path))
+            url = 'http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/resnet56-cifar.ckpt'
+            urllib.request.urlretrieve(url, MODEL_PATH)
+
 
 if __name__ == '__main__':
-    with tf.Session() as sess:
-        model = ResNet56()
+    ResNet56().download(MODEL_PATH)
