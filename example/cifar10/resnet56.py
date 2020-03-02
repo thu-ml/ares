@@ -4,9 +4,9 @@ import os
 import urllib
 
 from realsafe.model.base import ClassifierWithLogits
-from realsafe.model.utils import get_res
+from realsafe.model.loader import get_res_path
 
-MODEL_PATH = get_res('./cifar10/resnet56.ckpt')
+MODEL_PATH = get_res_path('./cifar10/resnet56.ckpt')
 
 
 def load(session):

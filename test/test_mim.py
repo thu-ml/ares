@@ -5,7 +5,7 @@ import os
 from keras.datasets.cifar10 import load_data
 
 from realsafe import MIM, CrossEntropyLoss
-from realsafe.model.utils import load_model_from_path
+from realsafe.model.loader import load_model_from_path
 
 batch_size = 100
 

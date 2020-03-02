@@ -1,4 +1,4 @@
-from realsafe.model.utils import load_model_from_path
+from realsafe.model.loader import load_model_from_path
 from realsafe import CW
 from keras.datasets.cifar10 import load_data
 import os

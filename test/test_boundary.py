@@ -5,7 +5,7 @@ import os
 from keras.datasets.cifar10 import load_data
 
 from realsafe import Boundary
-from realsafe.model.utils import load_model_from_path
+from realsafe.model.loader import load_model_from_path
 
 logger = tf.get_logger()
 logger.setLevel(tf.logging.INFO)
