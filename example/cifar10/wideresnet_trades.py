@@ -1,11 +1,8 @@
 ''' This file provides a wrapper class for TRADES (https://github.com/yaodongyu/TRADES) model for CIFAR-10 dataset. '''
 
 import os
-import urllib
-import tensorflow as tf
-import math
 import torch
-import numpy as np
+import tensorflow as tf
 
 from realsafe.model.pytorch_wrapper import pytorch_classifier_with_logits
 from realsafe.model.loader import get_res_path
@@ -15,7 +12,7 @@ from third_party.wideresnet import WideResNet
 MODEL_PATH = get_res_path('./cifar10/wrn.pt')
 
 
-def load(session):
+def load(_):
     model = WideResNet_TRADES()
     model.load()
     return model
@@ -23,7 +20,7 @@ def load(session):
 
 @pytorch_classifier_with_logits(10, 0.0, 1.0, (32, 32, 3), tf.float32, tf.int32)
 class WideResNet_TRADES(torch.nn.Module):
-    def __init__(self, use_cuda=True):
+    def __init__(self):
         torch.nn.Module.__init__(self)
         self.model = WideResNet().cuda()
 

@@ -1,1 +1,8 @@
-generate-members
+[MASTER]
+generated-members=REQUEST,acl_users,aq_parent
+max-line-length=120
+extension-pkg-whitelist=numpy,torch
+
+[TYPECHECK]
+ignored-modules=numpy,torch
+ignored-classes=numpy,torch

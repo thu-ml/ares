@@ -1,7 +1,7 @@
-import numpy as np
-import tensorflow as tf
 import os
 import urllib
+import numpy as np
+import tensorflow as tf
 
 from realsafe.model.base import ClassifierWithLogits
 from realsafe.model.loader import get_res_path
