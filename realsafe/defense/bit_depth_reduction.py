@@ -3,7 +3,7 @@
 import tensorflow as tf
 import numpy as np
 
-from realsafe.model import Classifier, ClassifierWithLogits
+from realsafe.defense.input_transformation import input_transformation
 
 
 def bit_depth_reduce(xs, x_min, x_max, step_num, alpha=1e6):
@@ -43,22 +43,10 @@ def bit_depth_reduction(step_num, alpha=1e6):
     :param step_num: Step number for bit depth reduction.
     :param alpha: Alpha for bit depth reduction.
     '''
-    def decorator(rs_class):
-        if issubclass(rs_class, ClassifierWithLogits):  # prefer using ClassifierWithLogits
-            class Wrapper(rs_class):  # directly inherit the classifier's class
-                def _logits_and_labels(self, xs):  # implement ClassifierWithLogits' interface
-                    xs_bdr = bit_depth_reduce(xs, self.x_min, self.x_max, step_num, alpha)
-                    # we need to call the _logits_and_labels() instead of logits_and_labels() here
-                    return super()._logits_and_labels(xs_bdr)
-            return Wrapper
-        elif issubclass(rs_class, Classifier):
-            class Wrapper(rs_class):  # directly inherit the classifier's class
-                def _labels(self, xs):  # implement Classifier's interface
-                    xs_bdr = bit_depth_reduce(xs, self.x_min, self.x_max, step_num, alpha)
-                    # we need to call the _logits() instead of logits() here
-                    return super()._labels(xs_bdr)
-            return Wrapper
-        else:
-            raise TypeError('bit_depth_reduction() requires a Classifier or a ClassifierWithLogits class.')
+    def args_fn(model):
+        return (model.x_min, model.x_max, step_num, alpha)
 
-    return decorator
+    def kwargs_fn(_):
+        return {}
+
+    return lambda rs_class: input_transformation(rs_class, bit_depth_reduce, args_fn, kwargs_fn)

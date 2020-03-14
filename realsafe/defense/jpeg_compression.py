@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from realsafe.model import Classifier, ClassifierWithLogits
+from realsafe.defense.input_transformation import input_transformation
 
 
 def jpeg_compress(xs, x_min, x_max, quality=95):
@@ -37,22 +37,10 @@ def jpeg_compression(quality=95):
     classifier.
     :param quality: The jpeg compression quality.
     '''
-    def decorator(rs_class):
-        if issubclass(rs_class, ClassifierWithLogits):  # prefer using ClassifierWithLogits
-            class Wrapper(rs_class):  # directly inherit the classifier's class
-                def _logits_and_labels(self, xs):  # implement ClassifierWithLogits' interface
-                    xs_jpeg = jpeg_compress(xs, self.x_min, self.x_max, quality)
-                    # we need to call the _logits_and_labels() instead of logits_and_labels() here
-                    return super()._logits_and_labels(xs_jpeg)
-            return Wrapper
-        elif issubclass(rs_class, Classifier):
-            class Wrapper(rs_class):  # directly inherit the classifier's class
-                def _labels(self, xs):  # implement Classifier's interface
-                    xs_jpeg = jpeg_compress(xs, self.x_min, self.x_max, quality)
-                    # we need to call the _logits() instead of logits() here
-                    return super()._labels(xs_jpeg)
-            return Wrapper
-        else:
-            raise TypeError('jpeg_compression() requires a Classifier or a ClassifierWithLogits class.')
+    def args_fn(model):
+        return (model.x_min, model.x_max, quality)
 
-    return decorator
+    def kwargs_fn(_):
+        return {}
+
+    return lambda rs_class: input_transformation(rs_class, jpeg_compress, args_fn, kwargs_fn)
