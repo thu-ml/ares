@@ -17,9 +17,7 @@ def pytorch_classifier_with_logits(n_class, x_min, x_max, x_shape, x_dtype, y_dt
     :param y_dtype: A `tf.DType` instance. The data type of the classifier's classification result.
     '''
     def decorator(nn_class):  # the inner decorator
-        class Wrapper(ClassifierWithLogits):
-            ''' Wrapper class for the pytorch model class `nn_class`. '''
-
+        class Wrapper(ClassifierWithLogits):  # Wrapper class for the pytorch model class `nn_class`
             def __init__(self, *args, **kwargs):  # we need to pass all parameters down to the pytorch model
                 super().__init__(n_class, x_min, x_max, x_shape, x_dtype, y_dtype)
                 # create the inner model

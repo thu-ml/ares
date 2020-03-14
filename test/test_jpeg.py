@@ -13,7 +13,7 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 session = tf.Session(config=config)
 
-model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../example/cifar10/resnet56.py')
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../example/cifar10/resnet56_jpeg.py')
 rs_model = load_model_from_path(model_path)
 model = rs_model.load(session)
 
@@ -60,7 +60,7 @@ attack.config(
     alpha=eps / 8,
 )
 
-for lo in range(0, batch_size, batch_size):
+for lo in range(0, 100 * batch_size, batch_size):
     xs = xs_test[lo:lo + batch_size]
     ys = ys_test[lo:lo + batch_size]
 
