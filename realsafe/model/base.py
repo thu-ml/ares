@@ -28,7 +28,6 @@ class Classifier(metaclass=ABCMeta):
         :return: A `tf.Tensor` instance with shape of `(self.n_class,)` and with data type of `self.y_dtype`. Represents
             the classification result.
         '''
-        pass
 
     def labels(self, xs):
         '''
@@ -71,7 +70,6 @@ class ClassifierWithLogits(Classifier, metaclass=ABCMeta):
             `self.x_dtype`. `xs` shall be in the range of [`self.x_min`, `self.x_max`].
         :return: A tuple of two tensor, which represent the logits and the labels output of the classifier.
         '''
-        pass
 
     def _labels(self, xs):
         ''' Implementation for the `Classifier` interface. '''

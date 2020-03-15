@@ -14,10 +14,10 @@ def randomize(xs, scale_min=0.875, pad_value=0.0):
     :return: A new tensor with same shape and dtype as xs.
     '''
     ratio = tf.random.uniform((), minval=scale_min, maxval=1.0)
-    width, height = tf.cast(xs.shape[1].value * ratio, tf.int32), tf.cast(xs.shape[2].value * ratio, tf.int32)
-    xs_rescaled = tf.image.resize(xs, (width, height), method=tf.image.ResizeMethod.NEAREST_NEIGHBOR,
+    height, width = tf.cast(xs.shape[1].value * ratio, tf.int32), tf.cast(xs.shape[2].value * ratio, tf.int32)
+    xs_rescaled = tf.image.resize(xs, (height, width), method=tf.image.ResizeMethod.NEAREST_NEIGHBOR,
                                   align_corners=True, preserve_aspect_ratio=False)
-    width_rem, height_rem = xs.shape[1].value - width, xs.shape[2].value - height
+    height_rem, width_rem = xs.shape[1].value - height, xs.shape[2].value - width
     pad_left = tf.random_uniform((), 0, width_rem, dtype=tf.int32)
     pad_right = width_rem - pad_left
     pad_top = tf.random_uniform((), 0, height_rem, dtype=tf.int32)
