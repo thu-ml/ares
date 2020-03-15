@@ -1,7 +1,8 @@
 import sys
 import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), './third_party/fd')))
+THIRD_PARTY_PATH = '../../third_party/ImageNet-Adversarial-Training'
+THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), THIRD_PARTY_PATH))
+sys.path.append(THIRD_PARTY_PATH)
 
 import tensorflow as tf
 import nets

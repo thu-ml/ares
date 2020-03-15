@@ -1,13 +1,19 @@
 ''' This file provides a wrapper class for TRADES (https://github.com/yaodongyu/TRADES) model for CIFAR-10 dataset. '''
 
+import sys
 import os
+THIRD_PARTY_PATH = '../../third_party/TRADES/models'
+THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), THIRD_PARTY_PATH))
+sys.path.append(THIRD_PARTY_PATH)
+
 import torch
 import tensorflow as tf
 
 from realsafe.model.pytorch_wrapper import pytorch_classifier_with_logits
 from realsafe.model.loader import get_res_path
 
-from third_party.wideresnet import WideResNet
+import wideresnet
+WideResNet = wideresnet.WideResNet
 
 MODEL_PATH = get_res_path('./cifar10/wrn.pt')
 
