@@ -1,4 +1,4 @@
-''' ImageNet dataset (ILSVRC 2021). '''
+''' ImageNet dataset (ILSVRC 2012). '''
 
 import os
 import tensorflow as tf
@@ -29,9 +29,10 @@ def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_
     dataset = load_dataset(height, width, offset=offset, label_dtype=label_dtype,
                            load_target=load_target, target_label=target_label)
 
-    def scale(ts):
+    def scale(*ts):
+        ts = list(ts)
         ts[1] = tf.cast(ts[1], x_dtype) * ((x_max - x_min) / 255.0) + x_min
-        return ts
+        return tuple(ts)
 
     return dataset.map(scale, num_parallel_calls=8)
 

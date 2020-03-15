@@ -1,0 +1,3 @@
+[submodule "example/imagenet/third_party/fd"]
+	path = example/imagenet/third_party/fd
+	url = https://github.com/facebookresearch/ImageNet-Adversarial-Training
