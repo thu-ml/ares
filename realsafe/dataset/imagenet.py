@@ -17,7 +17,8 @@ def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_
     Get an ImageNet dataset in tf.data.Dataset format. The first element of the dataset is the filename, the second one
     is the image tensor with shape of the classifier's `x_shape` in the classifier's `x_dtype`, the third one is the
     label in the classifier's `y_dtype`. If `load_target` is true, the target label would be returned as the fourth
-    element of the dataset.
+    element of the dataset. It would automatically handle `n_class == 1000` and `n_class == 1001` case (assume the empty
+    class is labeled 0).
     :param offset: Ignore the first `offset` images.
     :param load_target: Whether to load the target label.
     :param target_label: If it is a integer, the returned dataset would only include data points with this label.
@@ -27,8 +28,9 @@ def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_
     height, width = classifier.x_shape[:2]
     label_dtype = classifier.y_dtype
     x_dtype, x_min, x_max = classifier.x_dtype, classifier.x_min, classifier.x_max
+    label_offset = 0 if classifier.n_class == 1000 else 1
     dataset = load_dataset(height, width, offset=offset, label_dtype=label_dtype,
-                           load_target=load_target, target_label=target_label, clip=clip)
+                           load_target=load_target, target_label=target_label, clip=clip, label_offset=label_offset)
 
     def scale(*ts):
         ts = list(ts)
@@ -38,7 +40,8 @@ def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_
     return dataset.map(scale, num_parallel_calls=8)
 
 
-def load_dataset(height, width, offset=0, label_dtype=tf.int32, load_target=False, target_label=None, clip=True):
+def load_dataset(height, width, offset=0, label_dtype=tf.int32, load_target=False, target_label=None, clip=True,
+                 label_offset=0):
     '''
     Get an ImageNet dataset in tf.data.Dataset format. The first element of the dataset is the filename, the second one
     is the image tensor with shape of (height, width, 3) in `tf.uint8`, the third one is the label. If `load_target` is
@@ -50,11 +53,13 @@ def load_dataset(height, width, offset=0, label_dtype=tf.int32, load_target=Fals
     :param load_target: Whether to load the target label.
     :param target_label: If it is a integer, the returned dataset would only include data points with this label.
     :param clip: If it is true, the images would be clipped towards center.
+    :param label_offset: This offset is added to returned labels and target labels. Some models on ImageNet has an empty
+        class, so that other labels begins at 1.
     :return: A `tf.data.Dataset` instance.
     '''
-    filenames, labels = _load_txt(PATH_VAL_TXT)
+    filenames, labels = _load_txt(PATH_VAL_TXT, label_offset)
     filenames, labels = filenames[offset:], labels[offset:]
-    targets = None if not load_target else _load_txt(PATH_TARGET_TXT)[1][offset:]
+    targets = None if not load_target else _load_txt(PATH_TARGET_TXT, label_offset)[1][offset:]
 
     if target_label is not None:
         filenames, labels, targets = _filter_by_label(target_label, filenames, labels, targets)
@@ -94,14 +99,14 @@ def _load_image(filename, to_height, to_width, clip):
     return tf.convert_to_tensor(np.array(img.resize((to_height, to_width))))
 
 
-def _load_txt(txt_filename):
+def _load_txt(txt_filename, label_offset):
     ''' Load images' filename and label from `txt_filename`. '''
     filenames, labels = [], []
     with open(txt_filename) as txt:
         for line in txt:
             filename, label = line.strip('\n').split(' ')
             filenames.append(filename)
-            labels.append(int(label))
+            labels.append(int(label) + label_offset)
     return filenames, labels
 
 
