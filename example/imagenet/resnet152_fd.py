@@ -1,3 +1,8 @@
+'''
+This file provides a wrapper class for fd (https://github.com/facebookresearch/ImageNet-Adversarial-Training) model for
+ImageNet dataset.
+'''
+
 import sys
 import os
 THIRD_PARTY_PATH = '../../third_party/ImageNet-Adversarial-Training'
@@ -26,7 +31,7 @@ def load(session):
 
 class ResNet152_Denoising(ClassifierWithLogits):
     def __init__(self):
-        ClassifierWithLogits.__init__(self, 100, 0.0, 1.0, (224, 224, 3), tf.float32, tf.int32)
+        ClassifierWithLogits.__init__(self, 1000, 0.0, 1.0, (224, 224, 3), tf.float32, tf.int32)
         args = argparse.Namespace()
         args.depth = 152
         self.model = ResNetDenoiseModel(args)
