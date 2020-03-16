@@ -4,3 +4,6 @@
 [submodule "third_party/TRADES"]
 	path = third_party/TRADES
 	url = https://github.com/yaodongyu/TRADES/
+[submodule "third_party/models"]
+	path = third_party/models
+	url = https://github.com/tensorflow/models.git
