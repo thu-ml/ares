@@ -1,11 +1,15 @@
 from realsafe.defense.bit_depth_reduction import bit_depth_reduction
+from realsafe.utils import get_res_path
 
 import inception_v3
 
 
+MODEL_PATH = get_res_path('./imagenet/inception_v3.ckpt')
+
+
 def load(session):
     model = InceptionV3Bit()
-    model.load(session)
+    model.load(session, MODEL_PATH)
     return model
 
 

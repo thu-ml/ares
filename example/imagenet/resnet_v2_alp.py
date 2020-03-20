@@ -12,15 +12,29 @@ import urllib
 from nets import resnet_v2
 
 from realsafe import ClassifierWithLogits
-from realsafe.utils import get_res_path
+from realsafe.utils import get_res_path, download_res
 
 slim = tf.contrib.slim
+
+MODEL_PATH = get_res_path('./imagenet/imagenet64_alp025_2018_06_26.ckpt')
 
 
 def load(session):
     model = ResnetV2ALP()
-    model.load(session)
+    model.load(session, MODEL_PATH)
     return model
+
+
+def download(model_path):
+    url = 'http://download.tensorflow.org/models/adversarial_logit_pairing/imagenet64_alp025_2018_06_26.ckpt.tar.gz'
+    if not os.path.exists(model_path + '.meta'):
+        if not os.path.exists(os.path.dirname(model_path)):
+            os.makedirs(os.path.dirname(model_path))
+        import tarfile
+        download_res(url, model_path + '.tar.gz')
+        t = tarfile.open(model_path + '.tar.gz')
+        t.extractall(os.path.dirname(model_path))
+        os.remove(model_path + '.tar.gz')
 
 
 class ResnetV2ALP(ClassifierWithLogits):
@@ -35,22 +49,13 @@ class ResnetV2ALP(ClassifierWithLogits):
         predicted_labels = tf.cast(tf.argmax(predicts, 1), tf.int32)
         return logits, predicted_labels
 
-    def load(self, session):
+    def load(self, session, model_path):
         x_input = tf.placeholder(tf.float32, shape=(None, *self.x_shape))
         with tf.contrib.framework.arg_scope(resnet_v2.resnet_arg_scope()):
-            logits, _ = resnet_v2.resnet_v2_50(x_input, self.n_class, is_training=False, reuse=tf.AUTO_REUSE)
-        model_path = get_res_path('./imagenet/alp')
-        url = 'http://download.tensorflow.org/models/adversarial_logit_pairing/imagenet64_alp025_2018_06_26.ckpt.tar.gz'
-        fname = os.path.join(model_path, url.split('/')[-1])
-        if not os.path.exists(fname):
-            if not os.path.exists(model_path):
-                os.makedirs(model_path)
-            urllib.request.urlretrieve(url, fname)
-
-            import tarfile
-            t = tarfile.open(fname)
-            t.extractall(model_path)
-            print('Extracted model')
-
+            _, _ = resnet_v2.resnet_v2_50(x_input, self.n_class, is_training=False, reuse=tf.AUTO_REUSE)
         saver = tf.train.Saver()
-        saver.restore(session, fname.split('.tar.gz')[0])
+        saver.restore(session, model_path)
+
+
+if __name__ == '__main__':
+    download(MODEL_PATH)

@@ -11,20 +11,28 @@ sys.path.append(THIRD_PARTY_PATH)
 
 
 import tensorflow as tf
-import urllib
 
 from nets import inception_v3
 
 from realsafe import ClassifierWithLogits
-from realsafe.utils import get_res_path
+from realsafe.utils import get_res_path, download_res
 
 slim = tf.contrib.slim
+
+MODEL_PATH = get_res_path('./imagenet/inception_v3.ckpt')
 
 
 def load(session):
     model = InceptionV3()
-    model.load(session)
+    model.load(session, MODEL_PATH)
     return model
+
+
+def download(model_path):
+    if not os.path.exists(model_path):
+        if not os.path.exists(os.path.dirname(model_path)):
+            os.makedirs(os.path.dirname(model_path))
+        download_res('http://ml.cs.tsinghua.edu.cn/~yinpeng/downloads/inception_v3.ckpt', model_path)
 
 
 class InceptionV3(ClassifierWithLogits):
@@ -45,16 +53,13 @@ class InceptionV3(ClassifierWithLogits):
 
         return logits, predicted_labels
 
-    def load(self, session):
+    def load(self, session, model_path):
         x_input = tf.placeholder(self.x_dtype, shape=(None,) + self.x_shape)
         with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
             inception_v3.inception_v3(x_input, num_classes=self.n_class, is_training=False, reuse=tf.AUTO_REUSE)
-
-        model_path = get_res_path('./imagenet/inception_v3.ckpt')
-        if not os.path.exists(model_path):
-            if not os.path.exists(os.path.dirname(model_path)):
-                os.makedirs(os.path.dirname(model_path))
-            urllib.request.urlretrieve('http://ml.cs.tsinghua.edu.cn/~yinpeng/downloads/inception_v3.ckpt', model_path)
-
         saver = tf.train.Saver(slim.get_model_variables(scope='InceptionV3'))
         saver.restore(session, model_path)
+
+
+if __name__ == '__main__':
+    download(MODEL_PATH)

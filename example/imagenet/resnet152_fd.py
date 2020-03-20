@@ -18,15 +18,25 @@ from tensorpack import TowerContext
 from tensorpack.tfutils import get_model_loader
 
 from realsafe import ClassifierWithLogits
-from realsafe.utils import get_res_path
+from realsafe.utils import get_res_path, download_res
 
 import argparse
+
+MODEL_PATH = get_res_path('./imagenet/R152-Denoise.npz')
 
 
 def load(session):
     model = ResNet152_Denoising()
-    model.load(session)
+    model.load(session, MODEL_PATH)
     return model
+
+
+def download(model_path):
+    url = 'https://github.com/facebookresearch/ImageNet-Adversarial-Training/releases/download/v0.1/R152-Denoise.npz'
+    if not os.path.exists(model_path):
+        if not os.path.exists(os.path.dirname(model_path)):
+            os.makedirs(os.path.dirname(model_path))
+        download_res(url, model_path)
 
 
 class ResNet152_Denoising(ClassifierWithLogits):
@@ -47,20 +57,14 @@ class ResNet152_Denoising(ClassifierWithLogits):
         predicted_labels = tf.argmax(predicts, 1)
         return logits, predicted_labels
 
-    def load(self, session):
+    def load(self, session, model_path):
         x_input = tf.placeholder(tf.float32, shape=(None,) + self.x_shape)
         x_input = tf.transpose(x_input, [0, 3, 1, 2])
         with TowerContext('', is_training=False):
             with tf.variable_scope('', reuse=tf.AUTO_REUSE):
-                logits = self.model.get_logits(x_input)
-
-        model_path = get_res_path('./imagenet/R152-Denoise.npz')
-        url = 'http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/realsafe/feature_denosing/R152-Denoise.npz'
-        if not os.path.exists(model_path):
-            if not os.path.exists(os.path.dirname(model_path)):
-                os.makedirs(os.path.dirname(model_path))
-
-            from six.moves import urllib
-            urllib.request.urlretrieve(url, model_path)
-
+                _ = self.model.get_logits(x_input)
         get_model_loader(model_path).init(session)
+
+
+if __name__ == '__main__':
+    download(MODEL_PATH)

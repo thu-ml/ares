@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-from realsafe.utils import get_res_path
+from realsafe.utils import get_res_path, download_res
 
 PATH_IMGS = get_res_path('./imagenet/ILSVRC2012_img_val')
 PATH_VAL_TXT = get_res_path('./imagenet/val.txt')
@@ -126,3 +126,15 @@ def _filter_by_label(target_label, filenames, labels, targets):
                 r_labels.append(label)
                 r_targets.append(target)
         return r_filenames, r_labels, r_targets
+
+
+if __name__ == '__main__':
+    if not os.path.exists(PATH_VAL_TXT):
+        os.makedirs(os.path.dirname(PATH_VAL_TXT), exist_ok=True)
+        download_res('http://ml.cs.tsinghua.edu.cn/~yinpeng/downloads/val.txt', PATH_VAL_TXT)
+    if not os.path.exists(PATH_TARGET_TXT):
+        os.makedirs(os.path.dirname(PATH_TARGET_TXT), exist_ok=True)
+        download_res('http://ml.cs.tsinghua.edu.cn/~yinpeng/downloads/target.txt', PATH_TARGET_TXT)
+    if not os.path.exists(PATH_IMGS):
+        print('Please download "ILSVRC2012_img_val.tar" from "http://www.image-net.org/download-images", ' +
+              'and extract it to "{}".'.format(PATH_IMGS))
