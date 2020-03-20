@@ -1,10 +1,9 @@
 import os
-import urllib
 import numpy as np
 import tensorflow as tf
 
 from realsafe.model.base import ClassifierWithLogits
-from realsafe.model.loader import get_res_path
+from realsafe.utils import download_res, get_res_path
 
 MODEL_PATH = get_res_path('./cifar10/resnet56.ckpt')
 
@@ -13,6 +12,13 @@ def load(session):
     model = ResNet56()
     model.load(MODEL_PATH, session)
     return model
+
+
+def download(model_path):
+    if not os.path.exists(model_path):
+        if not os.path.exists(os.path.dirname(model_path)):
+            os.makedirs(os.path.dirname(model_path))
+        download_res('http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/resnet56-cifar.ckpt', model_path)
 
 
 class Resnet(object):
@@ -207,13 +213,6 @@ class ResNet56(ClassifierWithLogits):
         saver = tf.train.Saver(var_list=tf.global_variables())
         saver.restore(session, model_path)
 
-    def download(self, model_path):
-        if not os.path.exists(model_path):
-            if not os.path.exists(os.path.dirname(model_path)):
-                os.makedirs(os.path.dirname(model_path))
-            url = 'http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/resnet56-cifar.ckpt'
-            urllib.request.urlretrieve(url, MODEL_PATH)
-
 
 if __name__ == '__main__':
-    ResNet56().download(MODEL_PATH)
+    download(MODEL_PATH)

@@ -18,7 +18,7 @@ from tensorpack import TowerContext
 from tensorpack.tfutils import get_model_loader
 
 from realsafe import ClassifierWithLogits
-from realsafe.model.loader import get_res_path
+from realsafe.utils import get_res_path
 
 import argparse
 

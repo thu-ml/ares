@@ -16,7 +16,7 @@ import urllib
 from nets import inception_v3
 
 from realsafe import ClassifierWithLogits
-from realsafe.model.loader import get_res_path
+from realsafe.utils import get_res_path
 
 slim = tf.contrib.slim
 

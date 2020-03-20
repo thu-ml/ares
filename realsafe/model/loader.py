@@ -1,17 +1,8 @@
+''' Loader for loading model from a python file. '''
+
 import os
 import sys
 import importlib
-
-
-def get_res_path(path):
-    '''
-    Get resource's full path. By default, all resources are downloaded into `~/.realsafe`. This location could be
-    overrided by the `REALSAFE_RES_DIR` environment variable.
-    '''
-    prefix = os.environ.get('REALSAFE_RES_DIR')
-    if prefix is None:
-        prefix = os.path.expanduser('~/.realsafe/')
-    return os.path.abspath(os.path.join(prefix, path))
 
 
 def load_model_from_path(path):

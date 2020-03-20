@@ -1,4 +1,4 @@
-from realsafe.model.loader import get_res_path
+from realsafe.utils import get_res_path
 from realsafe.defense.randomization import randomization
 
 import resnet56

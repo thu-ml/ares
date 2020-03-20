@@ -1,4 +1,4 @@
-from realsafe.model.loader import get_res_path
+from realsafe.utils import get_res_path
 from realsafe.defense.jpeg_compression import jpeg_compression
 
 import resnet56

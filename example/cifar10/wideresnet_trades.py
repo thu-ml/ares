@@ -10,7 +10,7 @@ import torch
 import tensorflow as tf
 
 from realsafe.model.pytorch_wrapper import pytorch_classifier_with_logits
-from realsafe.model.loader import get_res_path
+from realsafe.utils import get_res_path
 
 import wideresnet
 WideResNet = wideresnet.WideResNet

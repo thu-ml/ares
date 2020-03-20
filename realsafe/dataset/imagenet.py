@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-from realsafe.model.loader import get_res_path
+from realsafe.utils import get_res_path
 
 PATH_IMGS = get_res_path('./imagenet/ILSVRC2012_img_val')
 PATH_VAL_TXT = get_res_path('./imagenet/val.txt')
