@@ -161,11 +161,9 @@ class Evolutionary(BatchAttack):
 
     Supported distance metric: `l_2`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
 
     References:
-    [1]
+    [1] TODO
     '''
 
     def __init__(self, model, batch_size, goal, session, dimension_reduction=None):
@@ -179,6 +177,16 @@ class Evolutionary(BatchAttack):
         self.logger = None
 
     def config(self, **kwargs):
+        '''
+        :param starting_points: Starting points which are already adversarial. A numpy array with data type of
+            `self.x_dtype`, with shape of `(self.batch_size, *self.x_shape)`.
+        :param max_queries: Max queries. An integer.
+        :param mu: TODO.
+        :param sigma: TODO.
+        :param decay_factor: TODO.
+        :param c: TODO.
+        :param logger: A standard logger for logging verbose information during attacking.
+        '''
         if 'starting_points' in kwargs:
             self.starting_points = kwargs['starting_points']
 

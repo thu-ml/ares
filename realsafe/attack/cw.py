@@ -13,12 +13,6 @@ class CW(BatchAttack):
 
     Supported distance metric: `l_2`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `cs`: initial c, could be either a float number or a numpy float number array with shape of (batch_size,).
-    - `iteration`: an integer, represent iteration count for each search step and binary search step.
-    - `search_steps`: an integer, the number of times for running initial search for c before binary search.
-    - `binsearch_steps`: an integer, the number of times for running binary search on c.
-    - `logger`: a standard logger for logging verbose information during attack.
 
     References:
     [1] https://arxiv.org/pdf/1608.04644.pdf
@@ -80,6 +74,14 @@ class CW(BatchAttack):
         self.logger = None
 
     def config(self, **kwargs):
+        '''
+        :param cs: Initial c, could be either a float number or a numpy float number array with shape of
+            `(self.batch_size,)`.
+        :param iteration: An integer, represent iteration count for each search step and binary search step.
+        :param search_steps: An integer, the number of times for running initial search for c before binary search.
+        :param binsearch_steps: An integer, the number of times for running binary search on c.
+        :param logger: A standard logger for logging verbose information during attacking.
+        '''
         if 'cs' in kwargs:
             self.cs = maybe_to_array(kwargs['cs'], target_len=self.batch_size).astype(self.model.x_dtype.as_numpy_dtype)
         if 'iteration' in kwargs:

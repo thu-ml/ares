@@ -221,11 +221,9 @@ class Boundary(BatchAttack):
 
     Supported distance metric: `l_2`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
 
     References:
-    [1]
+    [1] https://arxiv.org/abs/1712.04248
     '''
 
     def __init__(self, model, batch_size, goal, session, dimension_reduction=None):
@@ -239,6 +237,16 @@ class Boundary(BatchAttack):
         self.details = {}
 
     def config(self, **kwargs):
+        '''
+        :param starting_points: Starting points which are already adversarial. A numpy array with data type of
+            `self.x_dtype`, with shape of `(self.batch_size, *self.x_shape)`.
+        :param max_queries: Max queries. An integer.
+        :param max_directions: Max directions to explore on each iteration. An integer.
+        :param spherical_step: A float number.
+        :param source_step: A float number.
+        :param step_adaptation: A float number.
+        :param logger: A standard logger for logging verbose information during attacking.
+        '''
         if 'starting_points' in kwargs:
             self.starting_points = kwargs['starting_points']
 

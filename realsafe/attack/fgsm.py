@@ -11,9 +11,6 @@ class FGSM(BatchAttack):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
 
     References:
     [1] https://arxiv.org/abs/1412.6572
@@ -51,6 +48,10 @@ class FGSM(BatchAttack):
         self.config_eps_step = self.eps_var.assign(self.eps_ph)
 
     def config(self, **kwargs):
+        '''
+        :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
+            `(self.batch_size,)`.
+        '''
         if 'magnitude' in kwargs:
             eps = maybe_to_array(kwargs['magnitude'], self.batch_size)
             self._session.run(self.config_eps_step, feed_dict={self.eps_ph: eps})

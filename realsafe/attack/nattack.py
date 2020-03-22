@@ -12,12 +12,6 @@ class NAttack(Attack):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, should be a float number.
-    - `max_queries`: max number of queries, should be an integer.
-    - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
-    - `lr`: learning rate (step size) for each iteration, should be a float number.
-    - `logger`: a standard logger for logging verbose information during attack.
 
     References:
     [1] https://arxiv.org/abs/1905.00441
@@ -97,6 +91,13 @@ class NAttack(Attack):
         self.details = {}
 
     def config(self, **kwargs):
+        '''
+        :param magnitude: Max distortion, should be a float number.
+        :param max_queries: Max number of queries, should be an integer.
+        :param sigma: Sampling variance (perturbation size) in gradient estimation, should be a float number.
+        :param lr: Learning rate (step size) for each iteration, should be a float number.
+        :param logger: A standard logger for logging verbose information during attacking.
+        '''
         if 'magnitude' in kwargs:
             self._session.run(self.eps.assign, feed_dict={self.eps.ph: kwargs['magnitude']})
         if 'max_queries' in kwargs:

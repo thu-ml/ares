@@ -12,13 +12,6 @@ class MIM(BatchAttack):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `alpha`: step size for each iteration, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `decay_factor`: an float number, the decay factor for momentum.
-    - `iteration`: an integer, the iteration count.
 
     References:
     [1] https://arxiv.org/abs/1710.06081
@@ -95,6 +88,14 @@ class MIM(BatchAttack):
         self.iteration = None
 
     def config(self, **kwargs):
+        '''
+        :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
+            `(self.batch_size,)`.
+        :param alpha: Step size for each iteration, could be either a float number or a numpy float number array with
+            shape of `(self.batch_size,)`.
+        :param decay_factor: A float number, the decay factor for momentum.
+        :param iteration: An integer, the iteration count.
+        '''
         if 'magnitude' in kwargs:
             eps = maybe_to_array(kwargs['magnitude'], self.batch_size)
             self._session.run(self.config_eps_step, feed_dict={self.eps_ph: eps})

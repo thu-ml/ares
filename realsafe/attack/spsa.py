@@ -13,15 +13,6 @@ class SPSA(Attack):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, should be a float number.
-    - `max_queries`: max number of queries, should be an integer.
-    - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
-    - `lr`: learning rate of Amam optimizer, should be a float number.
-    - `beta1`: first-order momentum of Adam optimizer, should be a float number.
-    - `beta2`: second-order momentum of Adam optimizer, should be a float number.
-    - `epsilon`: a small float number to prevent division by zero in Adam.
-    - `logger`: a standard logger for logging verbose information during attack.
 
     References:
     [1] https://arxiv.org/abs/1802.05666
@@ -108,6 +99,16 @@ class SPSA(Attack):
         self.details = {}
 
     def config(self, **kwargs):
+        '''
+        :param magnitude: Max distortion, should be a float number.
+        :param max_queries: Max number of queries, should be an integer.
+        :param sigma: Sampling variance (perturbation size) in gradient estimation, should be a float number.
+        :param lr: Learning rate of Amam optimizer, should be a float number.
+        :param beta1: First-order momentum of Adam optimizer, should be a float number.
+        :param beta2: Second-order momentum of Adam optimizer, should be a float number.
+        :param epsilon: A small float number to prevent division by zero in Adam.
+        :param logger: A standard logger for logging verbose information during attack.
+        '''
         if 'magnitude' in kwargs:
             self._session.run(self.eps.assign, feed_dict={self.eps.ph: kwargs['magnitude']})
         if 'max_queries' in kwargs:

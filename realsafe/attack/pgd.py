@@ -12,14 +12,6 @@ class PGD(BIM):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - 'rand_init_magnitude': random init max distortion, could be either a float number or a numpy float number array
-        with shape of (batch_size,).
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `alpha`: step size for each iteration, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `iteration`: an integer, represent iteration count.
 
     References:
     [1] https://arxiv.org/abs/1706.06083
@@ -46,6 +38,15 @@ class PGD(BIM):
         self.config_rand_init_eps = self.rand_init_eps_var.assign(self.rand_init_eps_ph)
 
     def config(self, **kwargs):
+        '''
+        :param rand_init_magnitude: Random init max distortion, could be either a float number or a numpy float number
+            array with shape of `(self.batch_size,)`.
+        :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
+            `(self.batch_size,)`.
+        :param alpha: Step size for each iteration, could be either a float number or a numpy float number array with
+            shape of `(self.batch_size,)`.
+        :param iteration: Iteration count. An integer.
+        '''
         super().config(**kwargs)
         if 'rand_init_magnitude' in kwargs:
             rand_init_eps = maybe_to_array(kwargs['rand_init_magnitude'], self.batch_size)

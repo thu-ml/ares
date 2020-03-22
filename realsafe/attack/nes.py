@@ -13,15 +13,6 @@ class NES(Attack):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, should be a float number.
-    - `max_queries`: max number of queries, should be an integer.
-    - `sigma`: sampling variance (perturbation size) in gradient estimation, should be a float number.
-    - `lr`: learning rate (step size) for each iteration, should be a float number.
-    - `min_lr`: min learning rate if `lr_tuning=True`, should be a float number.
-    - `lr_tuning`: a bool, represents whether or not to decay the learning rate if the loss plateaus.
-    - `plateau_length`: an integer, represents the number of iterations when the loss plateaus to decay learning rate.
-    - `logger`: a standard logger for logging verbose information during attack.
 
     References:
     [1] https://arxiv.org/abs/1804.08598
@@ -96,6 +87,17 @@ class NES(Attack):
         self.details = {}
 
     def config(self, **kwargs):
+        '''
+        :param magnitude: Max distortion, should be a float number.
+        :param max_queries: Max number of queries, should be an integer.
+        :param sigma: Sampling variance (perturbation size) in gradient estimation, should be a float number.
+        :param lr: Learning rate (step size) for each iteration, should be a float number.
+        :param min_lr: Min learning rate if `lr_tuning=True`, should be a float number.
+        :param lr_tuning: A bool, represents whether or not to decay the learning rate if the loss plateaus.
+        :param plateau_length: An integer, represents the number of iterations when the loss plateaus to decay learning
+            rate.
+        :param logger: A standard logger for logging verbose information during attack.
+        '''
         if 'magnitude' in kwargs:
             self._session.run(self.eps.assign, feed_dict={self.eps.ph: kwargs['magnitude']})
         if 'max_queries' in kwargs:

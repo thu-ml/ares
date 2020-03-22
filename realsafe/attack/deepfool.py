@@ -13,12 +13,6 @@ class DeepFool(BatchAttack):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `alpha`: step size for each iteration, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `iteration`: an integer, represent iteration count.
 
     References:
     [1] https://arxiv.org/abs/1511.04599
@@ -90,6 +84,10 @@ class DeepFool(BatchAttack):
         self.iteration = None
 
     def config(self, **kwargs):
+        '''
+        :param iteration: Iteration count. An integer.
+        :param overshot: Overshot rate. A float number. Set to 0.02 by default.
+        '''
         if 'iteration' in kwargs:
             self.iteration = kwargs['iteration']
         if 'overshot' in kwargs:

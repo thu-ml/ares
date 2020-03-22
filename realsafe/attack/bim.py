@@ -12,12 +12,6 @@ class BIM(BatchAttack):
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
-    Supported config parameters:
-    - `magnitude`: max distortion, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `alpha`: step size for each iteration, could be either a float number or a numpy float number array with shape of
-        (batch_size,).
-    - `iteration`: an integer, represent iteration count.
 
     References:
     [1] https://arxiv.org/abs/1607.02533
@@ -82,6 +76,13 @@ class BIM(BatchAttack):
         self.iteration = None
 
     def config(self, **kwargs):
+        '''
+        :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
+            (batch_size,).
+        :param alpha: Step size for each iteration, could be either a float number or a numpy float number array with
+            shape of (batch_size,).
+        :param iteration: Iteration count. An integer.
+        '''
         if 'magnitude' in kwargs:
             eps = maybe_to_array(kwargs['magnitude'], self.batch_size)
             self._session.run(self.config_eps_step, feed_dict={self.eps_ph: eps})
