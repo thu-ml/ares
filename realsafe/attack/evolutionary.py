@@ -181,10 +181,10 @@ class Evolutionary(BatchAttack):
         :param starting_points: Starting points which are already adversarial. A numpy array with data type of
             `self.x_dtype`, with shape of `(self.batch_size, *self.x_shape)`.
         :param max_queries: Max queries. An integer.
-        :param mu: A hyper-parameter controlling the mean of the Gaussian distribution.
-        :param sigma: A hyper-parameter controlling the variance of the Gaussian distribution.
-        :param decay_factor: The decay factor for the evolution path.
-        :param c: The decay factor for the covariance matrix.
+        :param mu: A hyper-parameter controlling the mean of the Gaussian distribution. A float number.
+        :param sigma: A hyper-parameter controlling the variance of the Gaussian distribution. A float number.
+        :param decay_factor: The decay factor for the evolution path. A float number.
+        :param c: The decay factor for the covariance matrix. A float number.
         :param logger: A standard logger for logging verbose information during attacking.
         '''
         if 'starting_points' in kwargs:
