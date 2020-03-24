@@ -247,6 +247,9 @@ class Evolutionary(BatchAttack):
                         flag = True
             if not flag:
                 break
+        
+        for worker, _ in workers:
+            worker.join()
 
         dist_per_query = np.frombuffer(dist_array, dtype=np.float).reshape((self.batch_size, -1))
         np.copyto(self.details['dist_per_query'], dist_per_query)
