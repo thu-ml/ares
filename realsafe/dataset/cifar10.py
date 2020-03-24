@@ -55,9 +55,9 @@ def load_dataset(offset=0, label_dtype=tf.int32, load_target=False, target_label
 
     if target_label is not None:
         if load_target:
-            return tf.data.Dataset.zip((ids, xs, ys, ts)).filter(lambda _, x, y: tf.math.equal(y, target_label))
+            return tf.data.Dataset.zip((ids, xs, ys, ts)).filter(lambda *ps: tf.math.equal(ps[2], target_label))
         else:
-            return tf.data.Dataset.zip((ids, xs, ys)).filter(lambda _, x, y: tf.math.equal(y, target_label))
+            return tf.data.Dataset.zip((ids, xs, ys)).filter(lambda *ps: tf.math.equal(ps[2], target_label))
     if load_target:
         return tf.data.Dataset.zip((ids, xs, ys, ts))
     else:
