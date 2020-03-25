@@ -5,7 +5,7 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class FGSM(BatchAttack):
-    """
+    '''
     Fast Gradient Sign Method (FGSM)
     A white-box single-step constraint-based method. Require a differentiable loss function.
 
@@ -14,7 +14,7 @@ class FGSM(BatchAttack):
 
     References:
     [1] https://arxiv.org/abs/1412.6572
-    """
+    '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
         self.model, self.batch_size, self._session = model, batch_size, session

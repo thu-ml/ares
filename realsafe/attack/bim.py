@@ -59,9 +59,8 @@ class BIM(BatchAttack):
         elif distance_metric == 'l_inf':
             xs_lo, xs_hi = self.xs_var - eps, self.xs_var + eps
             grad_sign = tf.sign(grad)
-            xs_adv_delta = self.xs_adv_var - self.xs_var + alpha * grad_sign
             # clip by max l_inf magnitude of adversarial noise
-            xs_adv_next = self.xs_var + tf.clip_by_value(xs_adv_delta, xs_lo, xs_hi)
+            xs_adv_next = tf.clip_by_value(self.xs_adv_var + alpha * grad_sign, xs_lo, xs_hi)
         else:
             raise NotImplementedError
         # clip by (x_min, x_max)

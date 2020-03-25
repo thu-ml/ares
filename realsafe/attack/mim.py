@@ -6,7 +6,7 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class MIM(BatchAttack):
-    """
+    '''
     Momentum Iterative Method (MIM)
     A white-box iterative constraint-based method. Require a differentiable loss function.
 
@@ -15,7 +15,7 @@ class MIM(BatchAttack):
 
     References:
     [1] https://arxiv.org/abs/1710.06081
-    """
+    '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
         self.model, self.batch_size, self._session = model, batch_size, session
@@ -69,9 +69,8 @@ class MIM(BatchAttack):
         elif distance_metric == 'l_inf':
             xs_lo, xs_hi = self.xs_var - eps, self.xs_var + eps
             g_sign = tf.sign(self.g_var)
-            xs_adv_delta = self.xs_adv_var - self.xs_var + alpha * g_sign
             # clip by max l_inf magnitude of adversarial noise
-            xs_adv_next = self.xs_var + tf.clip_by_value(xs_adv_delta, xs_lo, xs_hi)
+            xs_adv_next = tf.clip_by_value(self.xs_adv_var + alpha * g_sign, xs_lo, xs_hi)
         else:
             raise NotImplementedError
         # clip by (x_min, x_max)

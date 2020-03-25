@@ -73,8 +73,7 @@ class AttackBenchmark(object):
                 xs_adv = self.attack.batch_attack(xs, ys, ts)
                 xs_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: xs})
                 xs_adv_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: xs_adv})
-                accs, accs_adv, totals, succs, dists = self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred)
-                update(accs, accs_adv, totals, succs, dists)
+                update(*self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred))
         elif self.attack_name in ('boundary'):
             iterator = dataset_to_iterator(dataset.batch(self.batch_size), self.session)
         elif self.attack_name in ('nes', 'spsa', 'nattack'):
@@ -86,8 +85,7 @@ class AttackBenchmark(object):
                 xs, xs_adv = np.array([x]), np.array([x_adv])
                 ys, ts = np.array([y]), np.array([t])
                 xs_pred, xs_adv_pred = np.array([x_pred]), np.array([x_adv_pred])
-                accs, accs_adv, totals, succs, dists = self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred)
-                update(accs, accs_adv, totals, succs, dists)
+                update(*self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred))
         return tuple(map(np.concatenate, (acc, acc_adv, total, succ, dist)))
 
     def _distance(self, xs):

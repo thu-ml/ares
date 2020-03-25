@@ -6,7 +6,7 @@ from realsafe.attack.utils import maybe_to_array, uniform_l_2_noise, uniform_l_i
 
 
 class PGD(BIM):
-    """
+    '''
     Projected Gradient Descent (PGD)
     A white-box iterative constraint-based method. Require a differentiable loss function.
 
@@ -15,7 +15,7 @@ class PGD(BIM):
 
     References:
     [1] https://arxiv.org/abs/1706.06083
-    """
+    '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
         super().__init__(model, batch_size, loss, goal, distance_metric, session)
