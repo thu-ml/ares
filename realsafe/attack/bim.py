@@ -6,7 +6,7 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class BIM(BatchAttack):
-    """
+    '''
     Basic Iterative Method (BIM)
     A white-box iterative constraint-based method. Require a differentiable loss function.
 
@@ -15,7 +15,7 @@ class BIM(BatchAttack):
 
     References:
     [1] https://arxiv.org/abs/1607.02533
-    """
+    '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
         self.model, self.batch_size, self._session = model, batch_size, session
