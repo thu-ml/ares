@@ -52,6 +52,11 @@ class AttackBenchmark(object):
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.
         :param logger: A standard logger.
+        :return: A tuple of five numpy array. The first element represents whether the model predicting correctly on
+            each dataset point. The second element represents whether the model predicting correctly on the adversarial
+            example for each dataset point. The third element represents whether the dataset point is non-adversarial
+            according the the goal. The fourth element represents whether the attack succeed. The fifth element
+            is the generated adversarial example's distance to the dataset's original example.
         '''
         acc, acc_adv, total, succ, dist = [], [], [], [], []
 
@@ -82,13 +87,14 @@ class AttackBenchmark(object):
                 x_adv = self.attack.attack(x, y, t)
                 x_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: [x]})[0]
                 x_adv_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: [x]})[0]
-                xs, xs_adv = np.array([x]), np.array([x_adv])
-                ys, ts = np.array([y]), np.array([t])
+                xs, xs_adv, ys, ts = np.array([x]), np.array([x_adv]), np.array([y]), np.array([t])
                 xs_pred, xs_adv_pred = np.array([x_pred]), np.array([x_adv_pred])
                 update(*self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred))
+
         return tuple(map(np.concatenate, (acc, acc_adv, total, succ, dist)))
 
     def _distance(self, xs):
+        ''' Calculate distance according to the distance metric. '''
         xs = xs.reshape((xs.shape[0], -1))
         if self.distance_metric == 'l_2':
             return np.linalg.norm(xs, axis=1)
@@ -96,6 +102,7 @@ class AttackBenchmark(object):
             return np.max(np.abs(xs), axis=1)
 
     def _batch_info(self, xs, xs_adv, ys, ts, xs_pred, xs_adv_pred):
+        ''' Get benchmark information for a batch of examples. '''
         dists = self._distance(xs - xs_adv)
         accs = np.equal(xs_pred, ys)
         accs_adv = np.equal(xs_adv_pred, ys)
