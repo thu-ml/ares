@@ -48,6 +48,8 @@ PARSER.add_argument('--max-directions', type=int)
 PARSER.add_argument('--spherical-step', type=float)
 PARSER.add_argument('--source-step', type=float)
 PARSER.add_argument('--step-adaptation', type=float)
+PARSER.add_argument('--mu', type=float)
+PARSER.add_argument('--c', type=float)
 PARSER.add_argument('--logger', action='store_true', default=False)
 
 
@@ -57,9 +59,10 @@ if __name__ == '__main__':
     config_kwargs = dict()
     for kwarg in ('iteration', 'max_queries', 'magnitude', 'alpha', 'rand_init_magnitude', 'decay_factor', 'cs',
                   'search_steps', 'binsearch_steps', 'overshot', 'sigma', 'lr', 'min_lr', 'lr_tuning', 'plateau_length',
-                  'max_directions', 'spherical_step', 'source_step', 'step_adaptation'):
-        if kwarg in args:
-            config_kwargs[kwarg] = getattr(args, kwarg)
+                  'max_directions', 'spherical_step', 'source_step', 'step_adaptation', 'mu', 'c'):
+        attr = getattr(args, kwarg)
+        if attr is not None:
+            config_kwargs[kwarg] = attr
 
     logger = tf.get_logger()
     logger.setLevel(tf.logging.INFO)
@@ -89,9 +92,10 @@ if __name__ == '__main__':
 
     kwargs = dict()
     for kwarg in ('learning_rate', 'cw_loss_c', 'samples_per_draw', 'init_distortion'):
-        if kwarg in args:
-            kwargs[kwarg] = getattr(args, kwarg)
-    if 'dimension_reduction_height' in args and 'dimension_reduction_width' in args:
+        attr = getattr(args, kwarg)
+        if attr is not None:
+            kwargs[kwarg] = attr
+    if args.dimension_reduction_height is not None and args.dimension_reduction_width is not None:
         kwargs['dimension_reduction'] = (args.dimension_reduction_height, args.dimension_reduction_width)
     if attack_name in ('fgsm', 'bim', 'pgd', 'mim'):
         kwargs['loss'] = CrossEntropyLoss(model)

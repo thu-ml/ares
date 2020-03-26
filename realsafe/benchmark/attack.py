@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from realsafe.benchmark.utils import load_attack
+from realsafe.benchmark.utils import load_attack, gen_starting_points
 from realsafe.dataset import dataset_to_iterator
 
 
@@ -31,6 +31,7 @@ class AttackBenchmark(object):
         for k, v in kwargs.items():
             init_kwargs[k] = v
 
+        self.model = model
         self.attack_name, self.dataset_name = attack_name, dataset_name
         self.batch_size, self.goal, self.distance_metric, self.session = batch_size, goal, distance_metric, session
         self.attack = load_attack(attack_name, init_kwargs)
@@ -79,8 +80,23 @@ class AttackBenchmark(object):
                 xs_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: xs})
                 xs_adv_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: xs_adv})
                 update(*self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred))
-        elif self.attack_name in ('boundary'):
+
+        elif self.attack_name in ('boundary', 'evolutionary'):
+            cache = dict()
             iterator = dataset_to_iterator(dataset.batch(self.batch_size), self.session)
+
+            def pred_fn(xs):
+                return self.session.run(self.xs_label, feed_dict={self.xs_ph: xs})
+
+            for _, xs, ys, ts in iterator:
+                starting_points = gen_starting_points(
+                    self.model, ys, ts, self.goal, self.dataset_name, self.session, pred_fn, cache)
+                self.config(starting_points=starting_points)
+                xs_adv = self.attack.batch_attack(xs, ys, ts)
+                xs_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: xs})
+                xs_adv_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: xs_adv})
+                update(*self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred))
+
         elif self.attack_name in ('nes', 'spsa', 'nattack'):
             iterator = dataset_to_iterator(dataset, self.session)
             for _, x, y, t in iterator:
