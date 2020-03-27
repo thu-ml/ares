@@ -1,59 +1,58 @@
-import argparse
-import numpy as np
-import tensorflow as tf
-
-from realsafe import CrossEntropyLoss, CWLoss
-from realsafe.model.loader import load_model_from_path
-from realsafe.benchmark.attack import AttackBenchmark
-
-PARSER = argparse.ArgumentParser(description='Run attack on a classifier.')
-
-PARSER.add_argument(
-    '--method', help='Attack method.', required=True,
-    choices=['fgsm', 'bim', 'pgd', 'mim', 'cw', 'deepfool', 'nes', 'spsa', 'nattack', 'boundary', 'evolutionary'],
-)
-PARSER.add_argument('--dataset', help='Dataset for this model.', choices=['cifar10', 'imagenet'], required=True)
-PARSER.add_argument('--offset', help='Dataset offset.', type=int, required=True)
-PARSER.add_argument('--count', help='Number of examples to attack.', type=int, required=True)
-
-PARSER.add_argument('model', help='Path to the model\'s python source file.')
-
-# Attack method initialization parameters
-PARSER.add_argument('--goal', help='Attack goal.', required=True, choices=['t', 'tm', 'ut'])
-PARSER.add_argument('--distance-metric', help='Attack\' distance metric.', required=True, choices=['l_2', 'l_inf'])
-PARSER.add_argument('--batch-size', help='Batch size hint for attack method.', type=int, required=True)
-PARSER.add_argument('--learning-rate', help='Learning rate in CW attack.', type=float)
-PARSER.add_argument('--cw-loss-c', help='CWLoss\'s c value in CW attack.', type=float)
-PARSER.add_argument('--samples-per-draw', type=int)
-PARSER.add_argument('--init-distortion', type=float)
-PARSER.add_argument('--dimension-reduction-height', type=int)
-PARSER.add_argument('--dimension-reduction-width', type=int)
-
-PARSER.add_argument('--iteration', type=int)
-PARSER.add_argument('--max-queries', type=int)
-PARSER.add_argument('--magnitude', type=float)
-PARSER.add_argument('--alpha', type=float)
-PARSER.add_argument('--rand-init-magnitude', type=float)
-PARSER.add_argument('--decay-factor', type=float)
-PARSER.add_argument('--cs', type=float)
-PARSER.add_argument('--search-steps', type=int)
-PARSER.add_argument('--binsearch-steps', type=int)
-PARSER.add_argument('--overshot', type=float)
-PARSER.add_argument('--sigma', type=float)
-PARSER.add_argument('--lr', type=float)
-PARSER.add_argument('--min-lr', type=float)
-PARSER.add_argument('--lr-tuning', action='store_true', default=False)
-PARSER.add_argument('--plateau-length', type=int)
-PARSER.add_argument('--max-directions', type=int)
-PARSER.add_argument('--spherical-step', type=float)
-PARSER.add_argument('--source-step', type=float)
-PARSER.add_argument('--step-adaptation', type=float)
-PARSER.add_argument('--mu', type=float)
-PARSER.add_argument('--c', type=float)
-PARSER.add_argument('--logger', action='store_true', default=False)
-
-
 if __name__ == '__main__':
+    import argparse
+    import numpy as np
+    import tensorflow as tf
+
+    from realsafe import CrossEntropyLoss, CWLoss
+    from realsafe.model.loader import load_model_from_path
+    from realsafe.benchmark.attack import AttackBenchmark
+
+    PARSER = argparse.ArgumentParser(description='Run attack on a classifier.')
+
+    PARSER.add_argument(
+        '--method', help='Attack method.', required=True,
+        choices=['fgsm', 'bim', 'pgd', 'mim', 'cw', 'deepfool', 'nes', 'spsa', 'nattack', 'boundary', 'evolutionary'],
+    )
+    PARSER.add_argument('--dataset', help='Dataset for this model.', choices=['cifar10', 'imagenet'], required=True)
+    PARSER.add_argument('--offset', help='Dataset offset.', type=int, required=True)
+    PARSER.add_argument('--count', help='Number of examples to attack.', type=int, required=True)
+
+    PARSER.add_argument('model', help='Path to the model\'s python source file.')
+
+    # Attack method initialization parameters
+    PARSER.add_argument('--goal', help='Attack goal.', required=True, choices=['t', 'tm', 'ut'])
+    PARSER.add_argument('--distance-metric', help='Attack\' distance metric.', required=True, choices=['l_2', 'l_inf'])
+    PARSER.add_argument('--batch-size', help='Batch size hint for attack method.', type=int, required=True)
+    PARSER.add_argument('--learning-rate', help='Learning rate in CW attack.', type=float)
+    PARSER.add_argument('--cw-loss-c', help='CWLoss\'s c value in CW attack.', type=float)
+    PARSER.add_argument('--samples-per-draw', type=int)
+    PARSER.add_argument('--init-distortion', type=float)
+    PARSER.add_argument('--dimension-reduction-height', type=int)
+    PARSER.add_argument('--dimension-reduction-width', type=int)
+
+    PARSER.add_argument('--iteration', type=int)
+    PARSER.add_argument('--max-queries', type=int)
+    PARSER.add_argument('--magnitude', type=float)
+    PARSER.add_argument('--alpha', type=float)
+    PARSER.add_argument('--rand-init-magnitude', type=float)
+    PARSER.add_argument('--decay-factor', type=float)
+    PARSER.add_argument('--cs', type=float)
+    PARSER.add_argument('--search-steps', type=int)
+    PARSER.add_argument('--binsearch-steps', type=int)
+    PARSER.add_argument('--overshot', type=float)
+    PARSER.add_argument('--sigma', type=float)
+    PARSER.add_argument('--lr', type=float)
+    PARSER.add_argument('--min-lr', type=float)
+    PARSER.add_argument('--lr-tuning', action='store_true', default=False)
+    PARSER.add_argument('--plateau-length', type=int)
+    PARSER.add_argument('--max-directions', type=int)
+    PARSER.add_argument('--spherical-step', type=float)
+    PARSER.add_argument('--source-step', type=float)
+    PARSER.add_argument('--step-adaptation', type=float)
+    PARSER.add_argument('--mu', type=float)
+    PARSER.add_argument('--c', type=float)
+    PARSER.add_argument('--logger', action='store_true', default=False)
+
     args = PARSER.parse_args()
 
     config_kwargs = dict()

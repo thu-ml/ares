@@ -1,6 +1,6 @@
+import multiprocessing
 import tensorflow as tf
 import numpy as np
-import multiprocessing as mp
 import ctypes
 import collections
 import cv2
@@ -50,6 +50,7 @@ class AttackCtx(object):
                 self.logs = [] if self.logs is not None else None
             except StopIteration:
                 self.pipe.send((True, self.logs.copy() if self.logs else []))
+                self.pipe.close()
                 return
 
     def run(self):
@@ -77,7 +78,7 @@ class AttackCtx(object):
 
         if self.logs is not None:
             self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-                index, 0, x_adv_label, dist, self.spherical_step, self.source_step, ''
+                index, 0, dist, x_adv_label, self.spherical_step, self.source_step, ''
             ))
         dist_per_query[self.index][0] = dist
 
@@ -163,7 +164,7 @@ class AttackCtx(object):
 
             if self.logs is not None:
                 self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-                    index, step, x_adv_label, dist, self.spherical_step, self.source_step, message
+                    index, step, dist, x_adv_label, self.spherical_step, self.source_step, message
                 ))
 
             if len(stats_step_adversarial) == stats_step_adversarial.maxlen and \
@@ -266,6 +267,8 @@ class Boundary(BatchAttack):
             self.logger = kwargs['logger']
 
     def batch_attack(self, xs, ys=None, ys_target=None):
+        mp = multiprocessing.get_context('spawn')
+
         xs_batch_array = mp.RawArray(ctypes.c_byte, np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).nbytes)
         xs_shape = (self.batch_size, *self.model.x_shape)
         xs_batch = np.frombuffer(xs_batch_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(xs_shape)
@@ -284,7 +287,10 @@ class Boundary(BatchAttack):
             ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, dist_array,
                             self.starting_points, ys, ys_target, remote)
             worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
+            if self.logger:
+                self.logger.info('Starting worker {}...'.format(index))
             worker.start()
+            remote.close()
             workers.append((worker, local))
 
         while True:
