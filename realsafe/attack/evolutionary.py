@@ -164,7 +164,7 @@ class Evolutionary(BatchAttack):
     Supported goal: `t`, `tm`, `ut`
 
     References:
-    [1] TODO
+    [1] https://arxiv.org/abs/1904.04433
     '''
 
     def __init__(self, model, batch_size, goal, session, dimension_reduction=None):
