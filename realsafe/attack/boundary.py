@@ -1,17 +1,15 @@
-import multiprocessing
 import tensorflow as tf
 import numpy as np
 import ctypes
 import collections
-import cv2
+import multiprocessing
 
 from realsafe.attack.base import BatchAttack
 from realsafe.attack.utils import mean_square_distance
 
 
 class AttackCtx(object):
-    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, dist_array,
-                 starting_points, ys, ys_target, pipe):
+    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, starting_point, ys, ys_target, pipe):
         self.x_dtype, self.y_dtype = attacker.model.x_dtype.as_numpy_dtype, attacker.model.y_dtype.as_numpy_dtype
         self.batch_size, self.x_shape = attacker.batch_size, attacker.model.x_shape
         self.goal = attacker.goal
@@ -24,11 +22,10 @@ class AttackCtx(object):
         self.step_adaptation = attacker.step_adaptation
         self.max_queries, self.max_directions = attacker.max_queries, attacker.max_directions
         self.pipe = pipe
-        self.starting_point = starting_points[index]
+        self.starting_point = starting_point
         self.dimension_reduction = attacker.dimension_reduction
 
         self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
-        self._dist_array = dist_array
 
         self.logs = [] if attacker.logger else None
 
@@ -54,6 +51,8 @@ class AttackCtx(object):
                 return
 
     def run(self):
+        import cv2
+
         index = self.index
         xs_batch = np.frombuffer(self._xs_batch_array, dtype=self.x_dtype).reshape((self.batch_size, *self.x_shape))
         ys_batch = np.frombuffer(self._ys_batch_array, dtype=self.y_dtype).reshape((self.batch_size,))
@@ -68,7 +67,6 @@ class AttackCtx(object):
 
         x_adv = self.starting_point
         dist = mean_square_distance(x_adv, x, self.x_min, self.x_max)
-        dist_per_query = np.frombuffer(self._dist_array, dtype=np.float).reshape((self.batch_size, -1))
         stats_spherical_adversarial = collections.deque(maxlen=100)
         stats_step_adversarial = collections.deque(maxlen=30)
 
@@ -80,9 +78,8 @@ class AttackCtx(object):
             self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
                 index, 0, dist, x_adv_label, self.spherical_step, self.source_step, ''
             ))
-        dist_per_query[self.index][0] = dist
 
-        step, queries, last_queries = 0, 0, 0
+        step, queries = 0, 0
         while True:
             step += 1
 
@@ -124,7 +121,6 @@ class AttackCtx(object):
                     queries += 1
                     if queries == self.max_queries:
                         xs_batch[index] = x_adv
-                        dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
                         return
                     stats_spherical_adversarial.appendleft(spherical_is_adversarial)
 
@@ -138,7 +134,6 @@ class AttackCtx(object):
                 queries += 1
                 if queries == self.max_queries:
                     xs_batch[index] = x_adv
-                    dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
                     return
 
                 if do_spherical:
@@ -152,8 +147,6 @@ class AttackCtx(object):
                 break
             else:
                 new_x_adv = None
-
-            dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
 
             message = ''
             if new_x_adv is not None:
@@ -208,10 +201,8 @@ class AttackCtx(object):
                             index, message, p_spherical, n_spherical, p_step, n_step
                         ))
 
-            last_queries = queries
             if queries == self.max_queries:
                 xs_batch[index] = x_adv
-                dist_per_query[self.index][last_queries:min(queries + 1, self.max_queries + 1)] = dist
                 return
 
 
@@ -227,7 +218,19 @@ class Boundary(BatchAttack):
     [1] https://arxiv.org/abs/1712.04248
     '''
 
-    def __init__(self, model, batch_size, goal, session, dimension_reduction=None):
+    def __init__(self, model, batch_size, goal, session, dimension_reduction=None, iteration_callback=None):
+        '''
+        Initialize Boundary.
+        :param model: The model to attack. A `realsafe.model.Classifier` instance.
+        :param batch_size: Batch size for the `batch_attack()` method.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param dimension_reduction: `(height, width)`.
+        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
+            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
+            runned after each iteration, and its return value would be yielded back to the caller. By default,
+            `iteration_callback` is `None`.
+        '''
         self.model, self.batch_size, self.goal, self._session = model, batch_size, goal, session
         self.dimension_reduction = dimension_reduction
 
@@ -235,7 +238,12 @@ class Boundary(BatchAttack):
         self.labels = self.model.labels(self.xs_ph)
 
         self.logger = None
-        self.details = {}
+
+        self.iteration_callback = None
+        if iteration_callback is not None:
+            self.xs_var = tf.Variable(tf.zeros_like(self.xs_ph))
+            self.setup_xs = self.xs_var.assign(self.xs_ph)
+            self.iteration_callback = iteration_callback(self.xs_var, self.xs_ph)
 
     def config(self, **kwargs):
         '''
@@ -266,15 +274,20 @@ class Boundary(BatchAttack):
         if 'logger' in kwargs:
             self.logger = kwargs['logger']
 
-    def batch_attack(self, xs, ys=None, ys_target=None):
+    def _batch_attack_generator(self, xs, ys, ys_target):
+        '''
+        Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after each
+        iteration (query) if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        '''
+        if self.iteration_callback is not None:
+            self._session.run(self.setup_xs, feed_dict={self.xs_ph: xs})
+
         mp = multiprocessing.get_context('spawn')
 
         xs_batch_array = mp.RawArray(ctypes.c_byte, np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).nbytes)
         xs_shape = (self.batch_size, *self.model.x_shape)
         xs_batch = np.frombuffer(xs_batch_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(xs_shape)
         xs_batch[:] = xs
-        self.details['dist_per_query'] = np.zeros((self.batch_size, self.max_queries + 1), dtype=np.float)
-        dist_array = mp.RawArray(ctypes.c_byte, self.details['dist_per_query'].nbytes)
 
         lbs = ys_target if ys is None else ys
         ys_batch_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
@@ -284,8 +297,8 @@ class Boundary(BatchAttack):
         workers = []
         for index in range(self.batch_size):
             local, remote = mp.Pipe()
-            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, dist_array,
-                            self.starting_points, ys, ys_target, remote)
+            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array,
+                            self.starting_points[index], ys, ys_target, remote)
             worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
             if self.logger:
                 self.logger.info('Starting worker {}...'.format(index))
@@ -309,12 +322,28 @@ class Boundary(BatchAttack):
                         pipe.close()
                     else:
                         flag = True
+            if self.iteration_callback is not None:
+                yield self._session.run(self.iteration_callback, feed_dict={self.xs_ph: xs_batch})
             if not flag:
                 break
-        
+
         for worker, _ in workers:
             worker.join()
 
-        dist_per_query = np.frombuffer(dist_array, dtype=np.float).reshape((self.batch_size, -1))
-        np.copyto(self.details['dist_per_query'], dist_per_query)
         return xs_batch.copy()
+
+    def batch_attack(self, xs, ys=None, ys_target=None):
+        '''
+        Attack a batch of examples.
+        :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
+            `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
+            each iteration and returns the generated adversarial exampeles.
+        '''
+        g = self._batch_attack_generator(xs, ys, ys_target)
+        if self.iteration_callback is None:
+            try:
+                next(g)
+            except StopIteration as exp:
+                return exp.value
+        else:
+            return g
