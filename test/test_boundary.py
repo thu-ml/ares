@@ -10,7 +10,7 @@ from realsafe.model.loader import load_model_from_path
 logger = tf.get_logger()
 logger.setLevel(tf.logging.INFO)
 
-batch_size = 100
+batch_size = 200
 
 session = tf.Session()
 
@@ -25,12 +25,18 @@ ys_test = ys_test.reshape(len(ys_test))
 xs_ph = tf.placeholder(model.x_dtype, shape=(1, *model.x_shape))
 lgs, lbs = model.logits_and_labels(xs_ph)
 
+
+def iteration_callback(xs, xs_adv):
+    delta = xs_adv - xs
+    return tf.linalg.norm(tf.reshape(delta, (delta.shape[0], -1)), axis=1)
+
+
 attack = Boundary(
     model=model,
     batch_size=batch_size,
     goal='ut',
     session=session,
-    dimension_reduction=(24, 24),
+    iteration_callback=iteration_callback,
 )
 attack.config(
     max_directions=25,
@@ -38,6 +44,7 @@ attack.config(
     spherical_step=1e-2,
     source_step=1e-2,
     step_adaptation=1.5,
+    maxprocs=50,
     logger=logger,
 )
 
@@ -55,7 +62,13 @@ for y in ys:
             break
 starting_points = np.stack(starting_points)
 attack.config(starting_points=starting_points)
-xs_adv = attack.batch_attack(xs, ys=ys)
+try:
+    g = attack.batch_attack(xs, ys=ys)
+    while True:
+        dists = next(g)
+        print(dists.min(), dists.max(), dists.mean())
+except StopIteration as exp:
+    xs_adv = exp.value
 
 lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
 lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})

@@ -1,3 +1,4 @@
+import math
 import tensorflow as tf
 import numpy as np
 
@@ -88,3 +89,21 @@ def scale(x, dst_min, dst_max, src_min, src_max):
     k = (dst_max - dst_min) / (src_max - src_min)
     b = dst_min - k * src_min
     return k * x + b
+
+
+def split_trunks(xs, n):
+    N = len(xs)
+    trunks = []
+    trunk_size = N // n
+    if N % n == 0:
+        for rank in range(n):
+            start = rank * trunk_size
+            trunks.append(xs[start:start + trunk_size])
+    else:
+        for rank in range(N % n):
+            start = rank * (trunk_size + 1)
+            trunks.append(xs[start:start + trunk_size + 1])
+        for rank in range(N % n, n):
+            start = rank * trunk_size + (N % n)
+            trunks.append(xs[start:start + trunk_size])
+    return trunks

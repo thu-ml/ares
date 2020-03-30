@@ -1,209 +1,12 @@
+import os
+import sys
+import tempfile
+
 import tensorflow as tf
 import numpy as np
-import ctypes
-import collections
-import multiprocessing
 
 from realsafe.attack.base import BatchAttack
-from realsafe.attack.utils import mean_square_distance
-
-
-class AttackCtx(object):
-    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, starting_point, ys, ys_target, pipe):
-        self.x_dtype, self.y_dtype = attacker.model.x_dtype.as_numpy_dtype, attacker.model.y_dtype.as_numpy_dtype
-        self.batch_size, self.x_shape = attacker.batch_size, attacker.model.x_shape
-        self.goal = attacker.goal
-        self.index = index
-        self.x_min, self.x_max = attacker.model.x_min, attacker.model.x_max
-        self.y = None if ys is None else ys[index]
-        self.y_target = None if ys_target is None else ys_target[index]
-        self.spherical_step = attacker.spherical_step
-        self.source_step = attacker.source_step
-        self.step_adaptation = attacker.step_adaptation
-        self.max_queries, self.max_directions = attacker.max_queries, attacker.max_directions
-        self.pipe = pipe
-        self.starting_point = starting_point
-        self.dimension_reduction = attacker.dimension_reduction
-
-        self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
-
-        self.logs = [] if attacker.logger else None
-
-    def _is_adversarial(self, label):
-        if self.goal == 'ut' or self.goal == 'tm':
-            return label != self.y
-        else:
-            return label == self.y_target
-
-    def worker(self):
-        task = self.run()
-        next(task)
-
-        while True:
-            self.pipe.recv()
-            try:
-                next(task)
-                self.pipe.send((False, self.logs.copy() if self.logs else []))
-                self.logs = [] if self.logs is not None else None
-            except StopIteration:
-                self.pipe.send((True, self.logs.copy() if self.logs else []))
-                self.pipe.close()
-                return
-
-    def run(self):
-        import cv2
-
-        index = self.index
-        xs_batch = np.frombuffer(self._xs_batch_array, dtype=self.x_dtype).reshape((self.batch_size, *self.x_shape))
-        ys_batch = np.frombuffer(self._ys_batch_array, dtype=self.y_dtype).reshape((self.batch_size,))
-
-        x = xs_batch[index].copy()
-
-        yield
-        if self._is_adversarial(ys_batch[index]):
-            if self.logs is not None:
-                self.logs.append('{}: The original image is already adversarial'.format(index))
-            return
-
-        x_adv = self.starting_point
-        dist = mean_square_distance(x_adv, x, self.x_min, self.x_max)
-        stats_spherical_adversarial = collections.deque(maxlen=100)
-        stats_step_adversarial = collections.deque(maxlen=30)
-
-        xs_batch[index] = x_adv
-        yield
-        x_adv_label = ys_batch[index]
-
-        if self.logs is not None:
-            self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-                index, 0, dist, x_adv_label, self.spherical_step, self.source_step, ''
-            ))
-
-        step, queries = 0, 0
-        while True:
-            step += 1
-
-            unnormalized_source_direction = x - x_adv
-            source_norm = np.linalg.norm(unnormalized_source_direction)
-            source_direction = unnormalized_source_direction / source_norm
-
-            do_spherical = (step % 10 == 0)
-
-            for _ in range(self.max_directions):
-                if self.dimension_reduction:
-                    assert len(self.x_shape) == 3
-                    perturbation_shape = (*self.dimension_reduction, self.x_shape[2])
-                    perturbation = np.random.normal(0.0, 1.0, perturbation_shape).astype(self.x_dtype)
-                    perturbation = cv2.resize(perturbation, self.x_shape[:2])
-                else:
-                    perturbation = np.random.normal(0.0, 1.0, self.x_shape).astype(self.x_dtype)
-                dot = np.vdot(perturbation, source_direction)
-                perturbation -= dot * source_direction
-                perturbation *= self.spherical_step * source_norm / np.linalg.norm(perturbation)
-
-                D = 1 / np.sqrt(self.spherical_step ** 2.0 + 1)
-                direction = perturbation - unnormalized_source_direction
-                spherical_candidate = np.clip(x + D * direction, self.x_min, self.x_max)
-
-                new_source_direction = x - spherical_candidate
-                new_source_direction_norm = np.linalg.norm(new_source_direction)
-                length = self.source_step * source_norm
-
-                deviation = new_source_direction_norm - source_norm
-                length = max(0, length + deviation) / new_source_direction_norm
-                candidate = np.clip(spherical_candidate + length * new_source_direction, self.x_min, self.x_max)
-
-                if do_spherical:
-                    xs_batch[index] = spherical_candidate
-                    yield
-                    spherical_is_adversarial = self._is_adversarial(ys_batch[index])
-
-                    queries += 1
-                    if queries == self.max_queries:
-                        xs_batch[index] = x_adv
-                        return
-                    stats_spherical_adversarial.appendleft(spherical_is_adversarial)
-
-                    if not spherical_is_adversarial:
-                        continue
-
-                xs_batch[index] = candidate
-                yield
-                is_adversarial = self._is_adversarial(ys_batch[index])
-
-                queries += 1
-                if queries == self.max_queries:
-                    xs_batch[index] = x_adv
-                    return
-
-                if do_spherical:
-                    stats_step_adversarial.appendleft(is_adversarial)
-
-                if not is_adversarial:
-                    continue
-
-                new_x_adv = candidate
-                new_dist = mean_square_distance(new_x_adv, x, self.x_min, self.x_max)
-                break
-            else:
-                new_x_adv = None
-
-            message = ''
-            if new_x_adv is not None:
-                abs_improvement = dist - new_dist
-                rel_improvement = abs_improvement / dist
-                message = 'd. reduced by {:.2f}% ({:.4e})'.format(rel_improvement * 100, abs_improvement)
-                x_adv_label, x_adv, dist = ys_batch[index], new_x_adv, new_dist
-
-            if self.logs is not None:
-                self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-                    index, step, dist, x_adv_label, self.spherical_step, self.source_step, message
-                ))
-
-            if len(stats_step_adversarial) == stats_step_adversarial.maxlen and \
-                    len(stats_spherical_adversarial) == stats_spherical_adversarial.maxlen:
-                p_spherical = np.mean(stats_spherical_adversarial)
-                p_step = np.mean(stats_step_adversarial)
-                n_spherical = len(stats_spherical_adversarial)
-                n_step = len(stats_step_adversarial)
-
-                if p_spherical > 0.5:
-                    message = 'Boundary too linear, increasing steps:'
-                    self.spherical_step *= self.step_adaptation
-                    self.source_step *= self.step_adaptation
-                elif p_spherical < 0.2:
-                    message = 'Boundary too non-linear, decreasing steps:'
-                    self.spherical_step /= self.step_adaptation
-                    self.source_step /= self.step_adaptation
-                else:
-                    message = None
-
-                if message is not None:
-                    stats_spherical_adversarial.clear()
-                    if self.logs is not None:
-                        self.logs.append('{}: {} {:.2f} ({:3d}), {:.2f} ({:3d})'.format(
-                            index, message, p_spherical, n_spherical, p_step, n_step
-                        ))
-
-                if p_step > 0.5:
-                    message = 'Success rate too high, increasing source step:'
-                    self.source_step *= self.step_adaptation
-                elif p_step < 0.2:
-                    message = 'Success rate too low, decreasing source step:'
-                    self.source_step /= self.step_adaptation
-                else:
-                    message = None
-
-                if message is not None:
-                    stats_step_adversarial.clear()
-                    if self.logs is not None:
-                        self.logs.append('{}: {} {:.2f} ({:3d}), {:.2f} ({:3d})'.format(
-                            index, message, p_spherical, n_spherical, p_step, n_step
-                        ))
-
-            if queries == self.max_queries:
-                xs_batch[index] = x_adv
-                return
+from realsafe.attack.utils import split_trunks
 
 
 class Boundary(BatchAttack):
@@ -232,18 +35,23 @@ class Boundary(BatchAttack):
             `iteration_callback` is `None`.
         '''
         self.model, self.batch_size, self.goal, self._session = model, batch_size, goal, session
+
         self.dimension_reduction = dimension_reduction
+        if self.dimension_reduction is not None:
+            # to avoid import tensorflow in other processes, we cast the dimension to basic type
+            self.dimension_reduction = (int(self.dimension_reduction[0]), int(self.dimension_reduction[1]))
 
-        self.xs_ph = tf.placeholder(model.x_dtype, (self.batch_size, *self.model.x_shape))
-        self.labels = self.model.labels(self.xs_ph)
-
-        self.logger = None
+        self.xs_ph = tf.placeholder(self.model.x_dtype, shape=(self.batch_size, *self.model.x_shape))
+        self.xs_ph_labels = self.model.labels(self.xs_ph)
 
         self.iteration_callback = None
         if iteration_callback is not None:
+            # store the original examples in GPU
             self.xs_var = tf.Variable(tf.zeros_like(self.xs_ph))
-            self.setup_xs = self.xs_var.assign(self.xs_ph)
+            self.setup_xs_var = self.xs_var.assign(self.xs_ph)
             self.iteration_callback = iteration_callback(self.xs_var, self.xs_ph)
+
+        self.logger = None
 
     def config(self, **kwargs):
         '''
@@ -254,6 +62,7 @@ class Boundary(BatchAttack):
         :param spherical_step: A float number.
         :param source_step: A float number.
         :param step_adaptation: A float number.
+        :param maxprocs: Max number of processes to run MPI tasks. An Integer.
         :param logger: A standard logger for logging verbose information during attacking.
         '''
         if 'starting_points' in kwargs:
@@ -263,13 +72,15 @@ class Boundary(BatchAttack):
             self.max_queries = kwargs['max_queries']
         if 'max_directions' in kwargs:
             self.max_directions = kwargs['max_directions']
-
         if 'spherical_step' in kwargs:
             self.spherical_step = kwargs['spherical_step']
         if 'source_step' in kwargs:
             self.source_step = kwargs['source_step']
         if 'step_adaptation' in kwargs:
             self.step_adaptation = kwargs['step_adaptation']
+
+        if 'maxprocs' in kwargs:
+            self.maxprocs = kwargs['maxprocs']
 
         if 'logger' in kwargs:
             self.logger = kwargs['logger']
@@ -280,57 +91,88 @@ class Boundary(BatchAttack):
         iteration (query) if the `iteration_callback` is not `None`, and returns the adversarial examples.
         '''
         if self.iteration_callback is not None:
-            self._session.run(self.setup_xs, feed_dict={self.xs_ph: xs})
-
-        mp = multiprocessing.get_context('spawn')
-
-        xs_batch_array = mp.RawArray(ctypes.c_byte, np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).nbytes)
-        xs_shape = (self.batch_size, *self.model.x_shape)
-        xs_batch = np.frombuffer(xs_batch_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(xs_shape)
-        xs_batch[:] = xs
-
-        lbs = ys_target if ys is None else ys
-        ys_batch_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
-        ys_batch_shape = (self.batch_size,)
-        ys_batch = np.frombuffer(ys_batch_array, dtype=self.model.y_dtype.as_numpy_dtype).reshape(ys_batch_shape)
-
-        workers = []
-        for index in range(self.batch_size):
-            local, remote = mp.Pipe()
-            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array,
-                            self.starting_points[index], ys, ys_target, remote)
-            worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
+            self._session.run(self.setup_xs_var, feed_dict={self.xs_ph: xs})
+        # use named memmap to speed up IPC
+        xs_shm_file = tempfile.NamedTemporaryFile(prefix='/dev/shm/realsafe_boundary_xs_')
+        xs_adv_shm_file = tempfile.NamedTemporaryFile(prefix='/dev/shm/realsafe_boundary_xs_adv_')
+        xs_shm = np.memmap(xs_shm_file.name, dtype=self.model.x_dtype.as_numpy_dtype, mode='w+',
+                           shape=(self.batch_size, *self.model.x_shape))
+        xs_adv_shm = np.memmap(xs_adv_shm_file.name, dtype=self.model.x_dtype.as_numpy_dtype, mode='w+',
+                               shape=(self.batch_size, *self.model.x_shape))
+        # use MPI Spawn to start workers
+        from mpi4py import MPI
+        # use a proper number of processes
+        nprocs = self.batch_size if self.batch_size <= self.maxprocs else self.maxprocs
+        # since we use memmap here, run everything on localhost
+        info = MPI.Info.Create()
+        info.Set("host", "localhost")
+        # spawn workers
+        worker = os.path.abspath(os.path.join(os.path.dirname(__file__), './boundary_worker.py'))
+        comm = MPI.COMM_SELF.Spawn(sys.executable, maxprocs=nprocs, info=info,
+                                   args=[worker, xs_shm_file.name, xs_adv_shm_file.name, str(self.batch_size)])
+        # prepare shared arguments
+        shared_args = {
+            'x_dtype': self.model.x_dtype.as_numpy_dtype,  # avoid importing tensorflow in workers
+            'x_shape': self.model.x_shape,
+            'x_min': float(self.model.x_min),
+            'x_max': float(self.model.x_max),
+            'goal': self.goal,
+            'spherical_step': float(self.spherical_step),
+            'source_step': float(self.source_step),
+            'step_adaptation': float(self.step_adaptation),
+            'max_queries': self.max_queries,
+            'max_directions': self.max_directions,
+            'dimension_reduction': self.dimension_reduction,
+        }
+        # prepare tasks
+        all_tasks = []
+        for i in range(self.batch_size):
+            all_tasks.append({
+                'index': i,
+                'x': xs[i],
+                'starting_point': self.starting_points[i],
+                'y': None if ys is None else ys[i],
+                'y_target': None if ys_target is None else ys_target[i],
+            })
+        # split tasks into trunks for each worker
+        trunks = split_trunks(all_tasks, nprocs)
+        # send arguments to workers
+        comm.bcast(shared_args, root=MPI.ROOT)
+        comm.scatter(trunks, root=MPI.ROOT)
+        # the main loop
+        for q in range(self.max_queries + 1):  # the first query is used to check the original examples
+            # collect log from workers
+            reqs = comm.gather(None, root=MPI.ROOT)
             if self.logger:
-                self.logger.info('Starting worker {}...'.format(index))
-            worker.start()
-            remote.close()
-            workers.append((worker, local))
-
-        while True:
-            ys_batch[:] = self._session.run(self.labels, feed_dict={self.xs_ph: xs_batch})
-            for _, pipe in workers:
-                if not pipe.closed:
-                    pipe.send(())
-            flag = False
-            for _, pipe in workers:
-                if not pipe.closed:
-                    stop, logs = pipe.recv()
-                    if self.logger:
+                for logs in reqs:
+                    for log in logs:
+                        self.logger.info(log)
+            # yield back iteration_callback return value
+            if self.iteration_callback is not None and q >= 1:
+                yield self._session.run(self.iteration_callback, feed_dict={self.xs_ph: xs_adv_shm})
+            if q == self.max_queries:
+                # send a None to all workers, so that they could exit
+                comm.scatter([None for _ in range(nprocs)], root=MPI.ROOT)
+                reqs = comm.gather(None, root=MPI.ROOT)
+                if self.logger:
+                    for logs in reqs:
                         for log in logs:
                             self.logger.info(log)
-                    if stop:
-                        pipe.close()
-                    else:
-                        flag = True
-            if self.iteration_callback is not None:
-                yield self._session.run(self.iteration_callback, feed_dict={self.xs_ph: xs_batch})
-            if not flag:
-                break
+            else:  # run predictions for xs_shm
+                xs_ph_labels = self._session.run(self.xs_ph_labels, feed_dict={self.xs_ph: xs_shm})
+                xs_ph_labels = xs_ph_labels.tolist()  # avoid pickle overhead of numpy array
+                comm.scatter(split_trunks(xs_ph_labels, nprocs), root=MPI.ROOT)  # send predictions to workers
+        # disconnect from MPI Spawn
+        comm.Disconnect()
+        # copy the xs_adv
+        xs_adv = xs_adv_shm.copy()
+        # explicitly delete the temp files
+        del xs_shm
+        del xs_adv_shm
+        xs_shm_file.close()
+        xs_adv_shm_file.close()
 
-        for worker, _ in workers:
-            worker.join()
-
-        return xs_batch.copy()
+        return xs_adv
 
     def batch_attack(self, xs, ys=None, ys_target=None):
         '''
