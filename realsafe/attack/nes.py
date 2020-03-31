@@ -21,6 +21,17 @@ class NES(Attack):
 
     def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None,
                  dimension_reduction=None):
+        '''
+        Initialize NES.
+        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param samples_per_draw: Number of points to sample for each gradient estimation.
+        :param samples_batch_size: Batch size for sampling.
+        :param dimension_reduction: `(height, width)`.
+        '''
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric
 
@@ -124,6 +135,7 @@ class NES(Attack):
             return label == y_target
 
     def attack(self, x, y=None, y_target=None):
+        ''' Attack one example. '''
         self._session.run(self.setup_x_step, feed_dict={self.x_ph: x})
         self._session.run(self.setup_ys_step, feed_dict={
             self.ys_ph: np.repeat(y if self.goal == 'ut' else y_target, self.samples_batch_size)
