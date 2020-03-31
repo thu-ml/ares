@@ -171,14 +171,13 @@ def main():
 
     # receive shared parameters
     shared_args = pcomm.bcast(None, root=0)
-    # receive private parameters
-    tasks = pcomm.scatter(None, root=0)
-
     # create memmaps
     x_shape = shared_args['x_shape']
     x_dtype = shared_args['x_dtype']
     xs_shm = np.memmap(xs_shm_file, dtype=x_dtype, mode='r+', offset=0, shape=(batch_size, *x_shape))
     xs_adv_shm = np.memmap(xs_adv_shm_file, dtype=x_dtype, mode='r+', offset=0, shape=(batch_size, *x_shape))
+    # receive private parameters
+    tasks = pcomm.scatter(None, root=0)
 
     logs = []
     attackers = []
