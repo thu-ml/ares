@@ -9,7 +9,7 @@ from realsafe.loss import CWLoss
 class CW(BatchAttack):
     '''
     Carlini & Wagner Attack (C&W)
-    A white-box iterative optmization-based method. Require a differentiable logits.
+    A white-box iterative optimization-based method. Require a differentiable logits.
 
     Supported distance metric: `l_2`
     Supported goal: `t`, `tm`, `ut`
@@ -20,6 +20,17 @@ class CW(BatchAttack):
 
     def __init__(self, model, batch_size, goal, distance_metric, session,
                  cw_loss_c=99999.0, confidence=0.0, learning_rate=0.01):
+        '''
+        Initialize CW.
+        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param batch_size: Batch size for the `batch_attack()` method.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param cw_loss_c: The `c` parameter for `realsafe.loss.CWLoss`.
+        :param confidence: The minimum margin between the target logit and the second largest logit that we consider the
+            example as adversarial.
+        :param learning_rate: Learning rate for the `AdamOptimizer`.
+        '''
         self.model, self.batch_size, self._session = model, batch_size, session
         self.goal, self.distance_metric = goal, distance_metric
         self.confidence = confidence
@@ -47,12 +58,12 @@ class CW(BatchAttack):
         elif self.goal == 'ut':
             self.score = tf.maximum(0.0, tf.negative(cw_loss) + confidence)
         else:
-            raise NotImplemented
+            raise NotImplementedError
         # the distance term
         if self.distance_metric == 'l_2':
             self.dists = tf.reduce_sum(tf.square(self.xs_adv - xs_var), axis=1)
         else:
-            raise NotImplemented
+            raise NotImplementedError
         # the loss
         loss = self.dists + cs_var * self.score
         # minimize the loss using Adam
@@ -95,6 +106,7 @@ class CW(BatchAttack):
             self.logger = kwargs['logger']
 
     def batch_attack(self, xs, ys=None, ys_target=None):
+        ''' Attack a batch of examples. '''
         ys_input = ys_target if self.goal == 't' or self.goal == 'tm' else ys
 
         # create numpy index for fetching the original label's logit value
