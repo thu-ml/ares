@@ -2,23 +2,34 @@ import tensorflow as tf
 import numpy as np
 
 from realsafe.attack.base import BatchAttack
-from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
+from realsafe.attack.utils import get_xs_ph, get_ys_ph
 
 
 class DeepFool(BatchAttack):
-    """
+    '''
     DeepFool
     A white-box iterative optimization method. It needs to calculate the Jacobian of the logits with relate to input,
-    so that it only applies to tasks with small number of classification class (This method does not use loss function).
+    so that it only applies to tasks with small number of classification class. It supports only untargeted attack.
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `ut`
 
     References:
     [1] https://arxiv.org/abs/1511.04599
-    """
+    '''
 
-    def __init__(self, model, batch_size, goal, distance_metric, session):
+    def __init__(self, model, batch_size, distance_metric, session, iteration_callback=None):
+        '''
+        Initialize DeepFool.
+        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param batch_size: Batch size for the `batch_attack()` method.
+        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
+            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
+            runned after each iteration, and its return value would be yielded back to the caller. By default,
+            `iteration_callback` is `None`.
+        '''
         self.model, self.batch_size, self._session = model, batch_size, session
         self.overshot = tf.Variable(0.02)
         self.overshot_ph = tf.placeholder(tf.float32)
@@ -81,6 +92,12 @@ class DeepFool(BatchAttack):
         ]
         self.setup_overshot = self.overshot.assign(self.overshot_ph)
 
+        self.iteration_callback = None
+        if iteration_callback is not None:
+            xs_model = tf.reshape(self.xs_var, (self.batch_size, *self.model.x_shape))
+            xs_adv_model = tf.reshape(self.xs_adv_var, (self.batch_size, *self.model.x_shape))
+            self.iteration_callback = iteration_callback(xs_model, xs_adv_model)
+
         self.iteration = None
 
     def config(self, **kwargs):
@@ -93,13 +110,35 @@ class DeepFool(BatchAttack):
         if 'overshot' in kwargs:
             self._session.run(self.setup_overshot, feed_dict={self.overshot_ph: kwargs['overshot']})
 
-    def batch_attack(self, xs, ys=None, ys_target=None):
-        self._session.run(self.setup, feed_dict={ self.xs_ph: xs, self.ys_ph: ys })
+    def _batch_attack_generator(self, xs, ys, ys_target):
+        '''
+        Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after each
+        iteration if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        '''
+        self._session.run(self.setup, feed_dict={self.xs_ph: xs, self.ys_ph: ys})
 
         for _ in range(self.iteration):
             self._session.run(self.update_xs_adv_step)
             flag = self._session.run(self.flag)
+            if self.iteration_callback is not None:
+                yield self._session.run(self.iteration_callback)
             if not flag:
                 break
 
         return self._session.run(self.xs_adv_var).reshape((self.batch_size,) + self.model.x_shape)
+
+    def batch_attack(self, xs, ys=None, ys_target=None):
+        '''
+        Attack a batch of examples.
+        :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
+            `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
+            each iteration and returns the generated adversarial exampeles.
+        '''
+        g = self._batch_attack_generator(xs, ys, ys_target)
+        if self.iteration_callback is None:
+            try:
+                next(g)
+            except StopIteration as exp:
+                return exp.value
+        else:
+            return g

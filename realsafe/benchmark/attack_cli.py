@@ -51,6 +51,7 @@ if __name__ == '__main__':
     PARSER.add_argument('--step-adaptation', type=float)
     PARSER.add_argument('--mu', type=float)
     PARSER.add_argument('--c', type=float)
+    PARSER.add_argument('--maxprocs', type=int)
     PARSER.add_argument('--logger', action='store_true', default=False)
 
     args = PARSER.parse_args()
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     config_kwargs = dict()
     for kwarg in ('iteration', 'max_queries', 'magnitude', 'alpha', 'rand_init_magnitude', 'decay_factor', 'cs',
                   'search_steps', 'binsearch_steps', 'overshot', 'sigma', 'lr', 'min_lr', 'lr_tuning', 'plateau_length',
-                  'max_directions', 'spherical_step', 'source_step', 'step_adaptation', 'mu', 'c'):
+                  'max_directions', 'spherical_step', 'source_step', 'step_adaptation', 'mu', 'c', 'maxprocs'):
         attr = getattr(args, kwarg)
         if attr is not None:
             config_kwargs[kwarg] = attr
