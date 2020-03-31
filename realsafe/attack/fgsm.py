@@ -17,6 +17,15 @@ class FGSM(BatchAttack):
     '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
+        '''
+        Initialize FGSM.
+        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param batch_size: Batch size for the `batch_attack()` method.
+        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        '''
         self.model, self.batch_size, self._session = model, batch_size, session
         self.loss, self.goal, self.distance_metric = loss, goal, distance_metric
         # placeholder for batch_attack's input
@@ -57,6 +66,7 @@ class FGSM(BatchAttack):
             self._session.run(self.config_eps_step, feed_dict={self.eps_ph: eps})
 
     def batch_attack(self, xs, ys=None, ys_target=None):
+        ''' Attack a batch of examples. '''
         labels = ys if self.goal == 'ut' else ys_target
         return self._session.run(self.xs_adv, feed_dict={
             self.xs_ph: xs,
