@@ -8,7 +8,9 @@ def pytorch_classifier_with_logits(n_class, x_min, x_max, x_shape, x_dtype, y_dt
     '''
     A decorator for wrapping a pytorch model class into a `ClassifierWithLogits`. The parameters provide metadata for
     the classifier, which are passed to the `ClassifierWithLogits` interface. The decorated pytorch class should be an
-    instance of `torch.nn.Module`, which provides both forward and backward capacity.
+    instance of `torch.nn.Module`, which provides both forward and backward capacity. However, due to some limitation
+    (or bug) of `@tf.custom_gradient`, we cannot backpropagate multiple gradients through the wrapped model in one
+    `session.run()`, even though pytorch support this feature via the `retain_graph` parameter.
     :param n_class: A `int` number. Number of class of the classifier.
     :param x_min: A `float` number. Min value for the classifier's input.
     :param x_max: A `float` number. Max value for the classifier's input.
@@ -27,13 +29,16 @@ def pytorch_classifier_with_logits(n_class, x_min, x_max, x_shape, x_dtype, y_dt
                 # required. Or we need to run the forward pass both in calculating the logits and calculating the logits
                 # gradients with relate to the input.
                 @tf.custom_gradient
-                def eager_tf_logits(xs):  # xs is an eager tensor
-                    xs_np = xs.numpy()
+                def eager_tf_logits(xs_tf):  # xs_tf is an eager tensor
+                    xs_np = xs_tf.numpy()
                     xs_torch = torch.autograd.Variable(torch.from_numpy(xs_np), requires_grad=True)
                     logits_torch = self._inner(xs_torch)  # the forward pass
 
-                    def eager_tf_logits_grad(d_output):   # d_output is an eager tensor
-                        logits_torch.backward(torch.from_numpy(d_output.numpy()))  # the backward pass
+                    def eager_tf_logits_grad(d_output_tf):   # d_output_tf is an eager tensor
+                        # We do NOT use retain_graph=True here, since the @tf.custom_gradient for eager function does
+                        # NOT support running multiple backward pass. This (bug) brings some limitation on this wrapper:
+                        # we cannot backpropagate multiple gradients through this model in one session.run().
+                        logits_torch.backward(torch.from_numpy(d_output_tf.numpy()))  # the backward pass
                         return tf.convert_to_tensor(xs_torch.grad.data.detach().numpy())
 
                     return tf.convert_to_tensor(logits_torch.detach().numpy()), eager_tf_logits_grad
