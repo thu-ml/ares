@@ -20,6 +20,17 @@ class SPSA(Attack):
 
     def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None,
                  dimension_reduction=None):
+        '''
+        Initialize SPSA.
+        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param samples_per_draw: Number of points to sample for each gradient estimation.
+        :param samples_batch_size: Batch size for sampling.
+        :param dimension_reduction: `(height, width)`.
+        '''
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric
 
@@ -43,7 +54,7 @@ class SPSA(Attack):
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
 
-        # pertubations
+        # perturbations
         if dimension_reduction:
             assert len(self.model.x_shape) == 3
             perts_shape = (self.samples_batch_size // 2, *dimension_reduction, self.model.x_shape[2])
@@ -103,7 +114,7 @@ class SPSA(Attack):
         :param magnitude: Max distortion, should be a float number.
         :param max_queries: Max number of queries, should be an integer.
         :param sigma: Sampling variance (perturbation size) in gradient estimation, should be a float number.
-        :param lr: Learning rate of Amam optimizer, should be a float number.
+        :param lr: Learning rate of Adam optimizer, should be a float number.
         :param beta1: First-order momentum of Adam optimizer, should be a float number.
         :param beta2: Second-order momentum of Adam optimizer, should be a float number.
         :param epsilon: A small float number to prevent division by zero in Adam.

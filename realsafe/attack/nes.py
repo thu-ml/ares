@@ -55,7 +55,7 @@ class NES(Attack):
 
         self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
 
-        # pertubations
+        # perturbations
         if dimension_reduction:
             assert len(self.model.x_shape) == 3
             perts = tf.random.normal(shape=(self.samples_batch_size // 2, *dimension_reduction, self.model.x_shape[2]),

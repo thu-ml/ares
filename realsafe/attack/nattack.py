@@ -58,7 +58,7 @@ class NAttack(Attack):
         # the mu parameter for the Gaussian
         self.mu_var = tf.Variable(tf.zeros(dtype=self.model.x_dtype, shape=perts_shape))
         mu_var_resized = image_resize(self.mu_var, *self.model.x_shape[:2])
-        # sample pertubations from a normal distribution
+        # sample perturbations from a normal distribution
         perts = tf.random.normal(shape=(self.samples_batch_size, *perts_shape), dtype=self.model.x_dtype)
         mu_perts = self.mu_var + self.sigma.var * perts
         if dimension_reduction:

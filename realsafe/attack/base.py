@@ -27,7 +27,7 @@ class BatchAttack(metaclass=ABCMeta):
         :param xs: The original examples.
         :param ys: The original examples' ground truth labels, could be `None`.
         :param ys_target: The targeted labels, could be `None`.
-        :return: Adversarial examples. Other detail informations could be returned by storing in its `details` property.
+        :return: Adversarial examples. Other detail information could be returned by storing in its `details` property.
         '''
 
 
@@ -55,5 +55,5 @@ class Attack(metaclass=ABCMeta):
         :param x: The original example.
         :param y: The original example's ground truth label, could be `None`.
         :param y_target: The targeted label, could be `None`.
-        :return: Adversarial example. Other detail informations could be returned by storing in its `details` property.
+        :return: Adversarial example. Other detail information could be returned by storing in its `details` property.
         '''

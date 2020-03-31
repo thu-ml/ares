@@ -7,12 +7,12 @@ import importlib
 
 def load_model_from_path(path):
     '''
-    Load a python file at `path` as a model. A function `load(session)` should be defined insided the python file, which
+    Load a python file at `path` as a model. A function `load(session)` should be defined inside the python file, which
     load the model into the `session` and returns the model instance.
     '''
     path = os.path.abspath(path)
 
-    # to support relative import, we add the directory for the target file to path.
+    # to support relative import, we add the directory of the target file to path.
     path_dir = os.path.dirname(path)
     if path_dir not in sys.path:
         need_remove = True
