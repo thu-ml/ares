@@ -1,9 +1,11 @@
-from realsafe.model.cifar10 import ResNet56
-from realsafe import Evolutionary
-from keras.datasets.cifar10 import load_data
-from os.path import expanduser
 import numpy as np
 import tensorflow as tf
+import os
+
+from keras.datasets.cifar10 import load_data
+
+from realsafe import Evolutionary
+from realsafe.model.loader import load_model_from_path
 
 logger = tf.get_logger()
 logger.setLevel(tf.logging.INFO)
@@ -11,8 +13,10 @@ logger.setLevel(tf.logging.INFO)
 batch_size = 100
 
 session = tf.Session()
-model = ResNet56()
-model.load(session, model_path=expanduser('~/.realsafe/cifar10/resnet56.ckpt'))
+
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../example/cifar10/resnet56.py')
+rs_model = load_model_from_path(model_path)
+model = rs_model.load(session)
 
 _, (xs_test, ys_test) = load_data()
 xs_test = (xs_test / 255.0) * (model.x_max - model.x_min) + model.x_min
@@ -21,12 +25,19 @@ ys_test = ys_test.reshape(len(ys_test))
 xs_ph = tf.placeholder(model.x_dtype, shape=(1, *model.x_shape))
 lgs, lbs = model.logits_and_labels(xs_ph)
 
+
+def iteration_callback(xs, xs_adv):
+    delta = tf.abs(xs_adv - xs)
+    return tf.reduce_max(tf.reshape(delta, (xs.shape[0], -1)), axis=1)
+
+
 attack = Evolutionary(
     model=model,
     batch_size=batch_size,
     goal='ut',
     session=session,
     dimension_reduction=(24, 24),
+    iteration_callback=iteration_callback,
 )
 attack.config(
     max_queries=20000,
@@ -34,6 +45,7 @@ attack.config(
     sigma=3e-2,
     decay_factor=0.99,
     c=0.001,
+    maxprocs=26,
     logger=logger,
 )
 
@@ -51,7 +63,13 @@ for y in ys:
             break
 starting_points = np.stack(starting_points)
 attack.config(starting_points=starting_points)
-xs_adv = attack.batch_attack(xs, ys=ys)
+try:
+    g = attack.batch_attack(xs, ys=ys)
+    while True:
+        dists = next(g)
+        print(dists.min(), dists.max(), dists.mean())
+except StopIteration as exp:
+    xs_adv = exp.value
 
 lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
 lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})

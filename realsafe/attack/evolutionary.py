@@ -1,158 +1,12 @@
+import os
+import sys
+import tempfile
+
 import tensorflow as tf
 import numpy as np
-import multiprocessing
-import ctypes
-import collections
-import cv2
 
 from realsafe.attack.base import BatchAttack
-from realsafe.attack.utils import mean_square_distance
-
-
-class AttackCtx(object):
-    def __init__(self, attacker, index, xs_batch_array, ys_batch_array, dist_array,
-                 starting_points, ys, ys_target, pipe):
-        self.x_dtype, self.y_dtype = attacker.model.x_dtype.as_numpy_dtype, attacker.model.y_dtype.as_numpy_dtype
-        self.batch_size, self.x_shape = attacker.batch_size, attacker.model.x_shape
-        self.goal = attacker.goal
-        self.index = index
-        self.x_min, self.x_max = attacker.model.x_min, attacker.model.x_max
-        self.y = None if ys is None else ys[index]
-        self.y_target = None if ys_target is None else ys_target[index]
-        self.mu = attacker.mu
-        self.sigma = attacker.sigma
-        self.decay_factor = attacker.decay_factor
-        self.c = attacker.c
-        self.max_queries = attacker.max_queries
-        self.pipe = pipe
-        self.starting_point = starting_points[index]
-        self.dimension_reduction = attacker.dimension_reduction
-
-        self._xs_batch_array, self._ys_batch_array = xs_batch_array, ys_batch_array
-        self._dist_array = dist_array
-
-        self.logs = [] if attacker.logger else None
-
-    def _is_adversarial(self, label):
-        if self.goal == 'ut' or self.goal == 'tm':
-            return label != self.y
-        else:
-            return label == self.y_target
-
-    def worker(self):
-        task = self.run()
-        next(task)
-
-        while True:
-            self.pipe.recv()
-            try:
-                next(task)
-                self.pipe.send((False, self.logs.copy() if self.logs else []))
-                self.logs = [] if self.logs is not None else None
-            except StopIteration:
-                self.pipe.send((True, self.logs.copy() if self.logs else []))
-                self.pipe.close()
-                return
-
-    def run(self):
-        index = self.index
-        xs_batch = np.frombuffer(self._xs_batch_array, dtype=self.x_dtype).reshape((self.batch_size, *self.x_shape))
-        ys_batch = np.frombuffer(self._ys_batch_array, dtype=self.y_dtype).reshape((self.batch_size,))
-
-        x = xs_batch[index].copy()
-
-        yield
-        if self._is_adversarial(ys_batch[index]):
-            if self.logs is not None:
-                self.logs.append('{}: The original image is already adversarial'.format(index))
-            return
-
-        x_adv = self.starting_point
-        dist = mean_square_distance(x, x_adv, self.x_min, self.x_max)
-        dist_per_query = np.frombuffer(self._dist_array, dtype=np.float).reshape((self.batch_size, -1))
-        stats_adversarial = collections.deque(maxlen=30)
-
-        if self.dimension_reduction:
-            assert len(self.x_shape) == 3
-            pert_shape = (*self.dimension_reduction, self.x_shape[2])
-        else:
-            pert_shape = self.x_shape
-
-        N = np.prod(pert_shape)
-        K = int(N / 20)
-
-        evolution_path = np.zeros(pert_shape, dtype=self.x_dtype)
-        diagonal_covariance = np.ones(pert_shape, dtype=self.x_dtype)
-
-        xs_batch[self.index] = x_adv
-        yield
-        x_adv_label = ys_batch[self.index]
-
-        if self.logs is not None:
-            self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-                self.index, 0, dist, x_adv_label, self.sigma, self.mu, ''
-            ))
-
-        dist_per_query[self.index][0] = dist
-
-        for step in range(1, self.max_queries + 1):
-            unnormalized_source_direction = x - x_adv
-            source_norm = np.linalg.norm(unnormalized_source_direction)
-
-            selection_probability = diagonal_covariance.reshape(-1) / np.sum(diagonal_covariance)
-            selected_indices = np.random.choice(N, K, replace=False, p=selection_probability)
-
-            perturbation = np.random.normal(0.0, 1.0, pert_shape).astype(self.x_dtype)
-            factor = np.zeros([N], dtype=self.x_dtype)
-            factor[selected_indices] = 1
-            perturbation *= factor.reshape(pert_shape) * np.sqrt(diagonal_covariance)
-
-            if self.dimension_reduction:
-                perturbation_large = cv2.resize(perturbation, self.x_shape[:2])
-            else:
-                perturbation_large = perturbation
-
-            biased = x_adv + self.mu * unnormalized_source_direction
-            candidate = biased + self.sigma * source_norm * perturbation_large / np.linalg.norm(perturbation_large)
-            candidate = x - (x - candidate) / np.linalg.norm(x - candidate) * np.linalg.norm(x - biased)
-            candidate = np.clip(candidate, self.x_min, self.x_max)
-
-            xs_batch[self.index] = candidate
-            yield
-            is_adversarial = self._is_adversarial(ys_batch[self.index])
-            stats_adversarial.appendleft(is_adversarial)
-
-            if is_adversarial:
-                new_x_adv = candidate
-                new_dist = mean_square_distance(new_x_adv, x, self.x_min, self.x_max)
-                evolution_path = self.decay_factor * evolution_path + np.sqrt(1 - self.decay_factor ** 2) * perturbation
-                diagonal_covariance = (1 - self.c) * diagonal_covariance + self.c * (evolution_path ** 2)
-            else:
-                new_x_adv = None
-
-            message = ''
-            if new_x_adv is not None:
-                abs_improvement = dist - new_dist
-                rel_improvement = abs_improvement / dist
-                message = 'd. reduced by {:.2f}% ({:.4e})'.format(rel_improvement * 100, abs_improvement)
-
-                x_adv, dist = new_x_adv, new_dist
-                x_adv_label = ys_batch[self.index]
-
-            dist_per_query[self.index][step] = dist
-
-            if self.logs is not None:
-                self.logs.append('{}: step {}, {:.5e}, prediction={}, stepsizes={:.1e}/{:.1e}: {}'.format(
-                    self.index, step, dist, x_adv_label, self.sigma, self.mu, message
-                ))
-
-            if len(stats_adversarial) == stats_adversarial.maxlen:
-                p_step = np.mean(stats_adversarial)
-                self.mu *= np.exp(p_step - 0.2)
-                stats_adversarial.clear()
-
-        xs_batch[self.index] = x_adv
-        return
+from realsafe.attack.utils import split_trunks
 
 
 class Evolutionary(BatchAttack):
@@ -167,13 +21,35 @@ class Evolutionary(BatchAttack):
     [1] https://arxiv.org/abs/1904.04433
     '''
 
-    def __init__(self, model, batch_size, goal, session, dimension_reduction=None):
+    def __init__(self, model, batch_size, goal, session, dimension_reduction=None, iteration_callback=None):
+        '''
+        Initialize Evolutionary.
+        :param model: The model to attack. A `realsafe.model.Classifier` instance.
+        :param batch_size: Batch size for the `batch_attack()` method.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param dimension_reduction: `(height, width)`.
+        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
+            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
+            runned after each iteration, and its return value would be yielded back to the caller. By default,
+            `iteration_callback` is `None`.
+        '''
         self.model, self.batch_size, self.goal, self._session = model, batch_size, goal, session
-        self.dimension_reduction = dimension_reduction
 
-        self.xs_ph = tf.placeholder(model.x_dtype, (self.batch_size, *self.model.x_shape))
-        self.labels = self.model.labels(self.xs_ph)
-        self.details = {}
+        self.dimension_reduction = dimension_reduction
+        if self.dimension_reduction is not None:
+            # to avoid import tensorflow in other processes, we cast the dimension to basic type
+            self.dimension_reduction = (int(self.dimension_reduction[0]), int(self.dimension_reduction[1]))
+
+        self.xs_ph = tf.placeholder(self.model.x_dtype, shape=(self.batch_size, *self.model.x_shape))
+        self.xs_ph_labels = self.model.labels(self.xs_ph)
+
+        self.iteration_callback = None
+        if iteration_callback is not None:
+            # store the original examples in GPU
+            self.xs_var = tf.Variable(tf.zeros_like(self.xs_ph))
+            self.setup_xs_var = self.xs_var.assign(self.xs_ph)
+            self.iteration_callback = iteration_callback(self.xs_var, self.xs_ph)
 
         self.logger = None
 
@@ -186,6 +62,7 @@ class Evolutionary(BatchAttack):
         :param sigma: A hyper-parameter controlling the variance of the Gaussian distribution. A float number.
         :param decay_factor: The decay factor for the evolution path. A float number.
         :param c: The decay factor for the covariance matrix. A float number.
+        :param maxprocs: Max number of processes to run MPI tasks. An Integer.
         :param logger: A standard logger for logging verbose information during attacking.
         '''
         if 'starting_points' in kwargs:
@@ -203,60 +80,113 @@ class Evolutionary(BatchAttack):
         if 'c' in kwargs:
             self.c = kwargs['c']
 
+        if 'maxprocs' in kwargs:
+            self.maxprocs = kwargs['maxprocs']
+
         if 'logger' in kwargs:
             self.logger = kwargs['logger']
 
-    def batch_attack(self, xs, ys=None, ys_target=None):
-        mp = multiprocessing.get_context('spawn')
-
-        xs_batch_array = mp.RawArray(ctypes.c_byte, np.array(xs).astype(self.model.x_dtype.as_numpy_dtype).nbytes)
-        xs_shape = (self.batch_size, *self.model.x_shape)
-        xs_batch = np.frombuffer(xs_batch_array, dtype=self.model.x_dtype.as_numpy_dtype).reshape(xs_shape)
-        xs_batch[:] = xs
-        self.details['dist_per_query'] = np.zeros((self.batch_size, self.max_queries + 1), dtype=np.float)
-        dist_array = mp.RawArray(ctypes.c_byte, self.details['dist_per_query'].nbytes)
-
-        lbs = ys_target if ys is None else ys
-        ys_batch_array = mp.RawArray(ctypes.c_byte, np.array(lbs).astype(self.model.y_dtype.as_numpy_dtype).nbytes)
-        ys_batch_shape = (self.batch_size,)
-        ys_batch = np.frombuffer(ys_batch_array, dtype=self.model.y_dtype.as_numpy_dtype).reshape(ys_batch_shape)
-
-        workers = []
-        for index in range(self.batch_size):
-            local, remote = mp.Pipe()
-            ctx = AttackCtx(self, index, xs_batch_array, ys_batch_array, dist_array,
-                            self.starting_points, ys, ys_target, remote)
-            worker = mp.Process(target=AttackCtx.worker, args=(ctx,))
+    def _batch_attack_generator(self, xs, ys, ys_target):
+        '''
+        Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after each
+        iteration (query) if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        '''
+        if self.iteration_callback is not None:
+            self._session.run(self.setup_xs_var, feed_dict={self.xs_ph: xs})
+        # use named memmap to speed up IPC
+        xs_shm_file = tempfile.NamedTemporaryFile(prefix='/dev/shm/realsafe_evolutionary_')
+        xs_adv_shm_file = tempfile.NamedTemporaryFile(prefix='/dev/shm/realsafe_evolutionary_xs_adv_')
+        xs_shm = np.memmap(xs_shm_file.name, dtype=self.model.x_dtype.as_numpy_dtype, mode='w+',
+                           shape=(self.batch_size, *self.model.x_shape))
+        xs_adv_shm = np.memmap(xs_adv_shm_file.name, dtype=self.model.x_dtype.as_numpy_dtype, mode='w+',
+                               shape=(self.batch_size, *self.model.x_shape))
+        # use MPI Spawn to start workers
+        from mpi4py import MPI
+        # use a proper number of processes
+        nprocs = self.batch_size if self.batch_size <= self.maxprocs else self.maxprocs
+        # since we use memmap here, run everything on localhost
+        info = MPI.Info.Create()
+        info.Set("host", "localhost")
+        # spawn workers
+        worker = os.path.abspath(os.path.join(os.path.dirname(__file__), './evolutionary_worker.py'))
+        comm = MPI.COMM_SELF.Spawn(sys.executable, maxprocs=nprocs, info=info,
+                                   args=[worker, xs_shm_file.name, xs_adv_shm_file.name, str(self.batch_size)])
+        # prepare shared arguments
+        shared_args = {
+            'x_dtype': self.model.x_dtype.as_numpy_dtype,  # avoid importing tensorflow in workers
+            'x_shape': self.model.x_shape,
+            'x_min': float(self.model.x_min),
+            'x_max': float(self.model.x_max),
+            'mu': float(self.mu),
+            'sigma': float(self.sigma),
+            'decay_factor': float(self.decay_factor),
+            'c': float(self.c),
+            'goal': self.goal,
+            'dimension_reduction': self.dimension_reduction,
+        }
+        # prepare tasks
+        all_tasks = []
+        for i in range(self.batch_size):
+            all_tasks.append({
+                'index': i,
+                'x': xs[i],
+                'starting_point': self.starting_points[i],
+                'y': None if ys is None else ys[i],
+                'y_target': None if ys_target is None else ys_target[i],
+            })
+        # split tasks into trunks for each worker
+        trunks = split_trunks(all_tasks, nprocs)
+        # send arguments to workers
+        comm.bcast(shared_args, root=MPI.ROOT)
+        comm.scatter(trunks, root=MPI.ROOT)
+        # delete the temp file
+        xs_shm_file.close()
+        xs_adv_shm_file.close()
+        # the main loop
+        for q in range(self.max_queries + 1):  # the first query is used to check the original examples
+            # collect log from workers
+            reqs = comm.gather(None, root=MPI.ROOT)
             if self.logger:
-                self.logger.info('Starting worker {}...'.format(index))
-            worker.start()
-            remote.close()
-            workers.append((worker, local))
-
-        i = 0
-        while True:
-            i += 1
-            ys_batch[:] = self._session.run(self.labels, feed_dict={self.xs_ph: xs_batch})
-            for _, pipe in workers:
-                if not pipe.closed:
-                    pipe.send(())
-            flag = False
-            for _, pipe in workers:
-                if not pipe.closed:
-                    stop, logs = pipe.recv()
-                    if self.logger:
+                for logs in reqs:
+                    for log in logs:
+                        self.logger.info(log)
+            # yield back iteration_callback return value
+            if self.iteration_callback is not None and q >= 1:
+                yield self._session.run(self.iteration_callback, feed_dict={self.xs_ph: xs_adv_shm})
+            if q == self.max_queries:
+                # send a None to all workers, so that they could exit
+                comm.scatter([None for _ in range(nprocs)], root=MPI.ROOT)
+                reqs = comm.gather(None, root=MPI.ROOT)
+                if self.logger:
+                    for logs in reqs:
                         for log in logs:
                             self.logger.info(log)
-                    if stop:
-                        pipe.close()
-                    else:
-                        flag = True
-            if not flag:
-                break
+            else:  # run predictions for xs_shm
+                xs_ph_labels = self._session.run(self.xs_ph_labels, feed_dict={self.xs_ph: xs_shm})
+                xs_ph_labels = xs_ph_labels.tolist()  # avoid pickle overhead of numpy array
+                comm.scatter(split_trunks(xs_ph_labels, nprocs), root=MPI.ROOT)  # send predictions to workers
+        # disconnect from MPI Spawn
+        comm.Disconnect()
+        # copy the xs_adv
+        xs_adv = xs_adv_shm.copy()
 
-        for worker, _ in workers:
-            worker.join()
+        del xs_shm
+        del xs_adv_shm
 
-        dist_per_query = np.frombuffer(dist_array, dtype=np.float).reshape((self.batch_size, -1))
-        np.copyto(self.details['dist_per_query'], dist_per_query)
-        return xs_batch.copy()
+        return xs_adv
+
+    def batch_attack(self, xs, ys=None, ys_target=None):
+        '''
+        Attack a batch of examples.
+        :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
+            `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
+            each iteration and returns the generated adversarial examples.
+        '''
+        g = self._batch_attack_generator(xs, ys, ys_target)
+        if self.iteration_callback is None:
+            try:
+                next(g)
+            except StopIteration as exp:
+                return exp.value
+        else:
+            return g
