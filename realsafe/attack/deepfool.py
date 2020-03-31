@@ -48,17 +48,19 @@ class DeepFool(BatchAttack):
         # get the adversarial example's logits and labels
         logits, self.labels = self.model.logits_and_labels(
             xs=tf.reshape(self.xs_adv_var, (batch_size,) + self.model.x_shape))
-        # calculating a jocobian would construct a large graph
-        grads = [tf.gradients(logits[:, i], self.xs_adv_var)[0] for i in range(self.model.n_class)]
-        grads = tf.stack(grads, axis=0)
-        grads = tf.transpose(grads, (1, 0, 2))
+        # we need to calculate the jacobian step by step
+        self.grads_var = tf.Variable(tf.zeros((self.batch_size, self.model.n_class, np.prod(self.model.x_shape)),
+                                              dtype=self.model.x_dtype))
+        # calculating jacobian would construct a large graph
+        self.assign_grads = [self.grads_var[:, i, :].assign(tf.gradients(logits[:, i], self.xs_adv_var)[0])
+                             for i in range(self.model.n_class)]
         # get the target label's logits and jacobian
         k0s = tf.stack((tf.range(self.batch_size), self.ys_var), axis=1)
         yk0s = tf.expand_dims(tf.gather_nd(logits, k0s), axis=1)
-        gradk0s = tf.expand_dims(tf.gather_nd(grads, k0s), axis=1)
+        gradk0s = tf.expand_dims(tf.gather_nd(self.grads_var, k0s), axis=1)
 
         fs = tf.abs(yk0s - logits)
-        ws = grads - gradk0s
+        ws = self.grads_var - gradk0s
 
         ws_norm = tf.norm(ws, axis=-1)
         # for index = k0, ws_norm = 0.0, fs = 0.0, ls = 0.0 / 0.0 = NaN, and tf.argmin would ignore NaN
@@ -77,15 +79,16 @@ class DeepFool(BatchAttack):
         else:
             raise NotImplementedError
 
+        # if the xs_adv is adversarial, we do early stop.
         eqs = tf.equal(self.labels, self.ys_var)
         self.flag = tf.reduce_any(eqs)
         flags = tf.reshape(tf.cast(eqs, self.model.x_dtype) * (1 + self.overshot), (self.batch_size, 1))
-
         xs_adv_next = self.xs_adv_var + flags * rs
         xs_adv_next = tf.clip_by_value(xs_adv_next, self.model.x_min, self.model.x_max)
 
         self.update_xs_adv_step = self.xs_adv_var.assign(xs_adv_next)
         self.setup = [
+            self.grads_var.initializer,
             self.xs_var.assign(tf.reshape(self.xs_ph, self.xs_var.shape)),
             self.xs_adv_var.assign(tf.reshape(self.xs_ph, self.xs_adv_var.shape)),
             self.ys_var.assign(self.ys_ph),
@@ -110,7 +113,7 @@ class DeepFool(BatchAttack):
         if 'overshot' in kwargs:
             self._session.run(self.setup_overshot, feed_dict={self.overshot_ph: kwargs['overshot']})
 
-    def _batch_attack_generator(self, xs, ys, ys_target):
+    def _batch_attack_generator(self, xs, ys, _):
         '''
         Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after each
         iteration if the `iteration_callback` is not `None`, and returns the adversarial examples.
@@ -118,11 +121,13 @@ class DeepFool(BatchAttack):
         self._session.run(self.setup, feed_dict={self.xs_ph: xs, self.ys_ph: ys})
 
         for _ in range(self.iteration):
+            for assign_grad in self.assign_grads:
+                self._session.run(assign_grad)
             self._session.run(self.update_xs_adv_step)
             flag = self._session.run(self.flag)
             if self.iteration_callback is not None:
                 yield self._session.run(self.iteration_callback)
-            if not flag:
+            if not flag:  # early stop
                 break
 
         return self._session.run(self.xs_adv_var).reshape((self.batch_size,) + self.model.x_shape)
