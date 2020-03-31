@@ -179,7 +179,7 @@ class Boundary(BatchAttack):
         Attack a batch of examples.
         :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
             `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
-            each iteration and returns the generated adversarial exampeles.
+            each iteration and returns the generated adversarial examples.
         '''
         g = self._batch_attack_generator(xs, ys, ys_target)
         if self.iteration_callback is None:

@@ -22,6 +22,12 @@ ys_test = ys_test.reshape(len(ys_test))
 xs_ph = tf.placeholder(model.x_dtype, shape=(batch_size, *model.x_shape))
 lgs, lbs = model.logits_and_labels(xs_ph)
 
+
+def iteration_callback(xs, xs_adv):
+    delta = tf.abs(xs_adv - xs)
+    return tf.reduce_max(tf.reshape(delta, (xs.shape[0], -1)), axis=1)
+
+
 loss = CrossEntropyLoss(model)
 attack = MIM(
     model=model,
@@ -29,7 +35,8 @@ attack = MIM(
     loss=loss,
     goal='ut',
     distance_metric='l_inf',
-    session=session
+    session=session,
+    iteration_callback=iteration_callback,
 )
 attack.config(
     iteration=10,
@@ -42,7 +49,12 @@ for lo in range(0, batch_size, batch_size):
     xs = xs_test[lo:lo + batch_size]
     ys = ys_test[lo:lo + batch_size]
 
-    xs_adv = attack.batch_attack(xs, ys=ys)
+    try:
+        g = attack.batch_attack(xs, ys=ys)
+        while True:
+            print(next(g))
+    except StopIteration as e:
+        xs_adv = e.value
 
     lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
     lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})
@@ -63,7 +75,12 @@ for lo in range(0, batch_size, batch_size):
     xs = xs_test[lo:lo + batch_size]
     ys = ys_test[lo:lo + batch_size]
 
-    xs_adv = attack.batch_attack(xs, ys=ys)
+    try:
+        g = attack.batch_attack(xs, ys=ys)
+        while True:
+            print(next(g))
+    except StopIteration as e:
+        xs_adv = e.value
 
     lbs_pred = session.run(lbs, feed_dict={xs_ph: xs})
     lbs_adv = session.run(lbs, feed_dict={xs_ph: xs_adv})

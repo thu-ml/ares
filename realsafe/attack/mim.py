@@ -17,7 +17,20 @@ class MIM(BatchAttack):
     [1] https://arxiv.org/abs/1710.06081
     '''
 
-    def __init__(self, model, batch_size, loss, goal, distance_metric, session):
+    def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
+        '''
+        Initialize MIM.
+        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param batch_size: Batch size for the `batch_attack()` method.
+        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
+            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
+            runned after each iteration, and its return value would be yielded back to the caller. By default,
+            `iteration_callback` is `None`.
+        '''
         self.model, self.batch_size, self._session = model, batch_size, session
         self.loss, self.goal, self.distance_metric = loss, goal, distance_metric
         # placeholder for batch_attack's input
@@ -86,6 +99,11 @@ class MIM(BatchAttack):
         self.setup_g = tf.variables_initializer([self.g_var])
         self.iteration = None
 
+        self.iteration_callback = None
+        if iteration_callback is not None:
+            xs_model = tf.reshape(self.xs_var, (self.batch_size, *self.model.x_shape))
+            self.iteration_callback = iteration_callback(xs_model, self.xs_adv_model)
+
     def config(self, **kwargs):
         '''
         :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
@@ -107,7 +125,7 @@ class MIM(BatchAttack):
         if 'iteration' in kwargs:
             self.iteration = kwargs['iteration']
 
-    def batch_attack(self, xs, ys=None, ys_target=None):
+    def _batch_attack_generator(self, xs, ys, ys_target):
         labels = ys if self.goal == 'ut' else ys_target
         self._session.run(self.setup_xs, feed_dict={self.xs_ph: xs})
         self._session.run(self.setup_ys, feed_dict={self.ys_ph: labels})
@@ -115,4 +133,22 @@ class MIM(BatchAttack):
         for _ in range(self.iteration):
             self._session.run(self.update_g_step)
             self._session.run(self.update_xs_adv_step)
+            if self.iteration_callback is not None:
+                yield self._session.run(self.iteration_callback)
         return self._session.run(self.xs_adv_model)
+
+    def batch_attack(self, xs, ys=None, ys_target=None):
+        '''
+        Attack a batch of examples.
+        :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
+            `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
+            each iteration and returns the generated adversarial examples.
+        '''
+        g = self._batch_attack_generator(xs, ys, ys_target)
+        if self.iteration_callback is None:
+            try:
+                next(g)
+            except StopIteration as exp:
+                return exp.value
+        else:
+            return g
