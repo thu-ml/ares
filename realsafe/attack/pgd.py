@@ -17,7 +17,20 @@ class PGD(BIM):
     [1] https://arxiv.org/abs/1706.06083
     '''
 
-    def __init__(self, model, batch_size, loss, goal, distance_metric, session):
+    def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
+        '''
+        Initialize PGD.
+        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param batch_size: Batch size for the `batch_attack()` method.
+        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
+        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
+        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
+            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
+            runned after each iteration, and its return value would be yielded back to the caller. By default,
+            `iteration_callback` is `None`.
+        '''
         super().__init__(model, batch_size, loss, goal, distance_metric, session)
         # random init magnitude
         self.rand_init_eps_ph = tf.placeholder(self.model.x_dtype, (self.batch_size,))
