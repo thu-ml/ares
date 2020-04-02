@@ -8,7 +8,8 @@ from realsafe.attack.utils import maybe_to_array, uniform_l_2_noise, uniform_l_i
 class PGD(BIM):
     '''
     Projected Gradient Descent (PGD)
-    A white-box iterative constraint-based method. Require a differentiable loss function.
+    A white-box iterative constraint-based method. Require a differentiable loss function and a
+    `realsafe.model.Classifier` model.
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
@@ -20,7 +21,7 @@ class PGD(BIM):
     def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
         '''
         Initialize PGD.
-        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.

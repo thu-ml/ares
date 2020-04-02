@@ -21,7 +21,7 @@ class NAttack(Attack):
                  samples_batch_size=None, init_distortion=0.001, dimension_reduction=None):
         '''
         Initialize NAttack.
-        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
         :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
@@ -93,7 +93,7 @@ class NAttack(Attack):
         clipped_delta = clip_eta(delta, self.eps.var, self.distance_metric)
         self.x_adv = self.x_var + clipped_delta
 
-        self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv, (1, *self.model.x_shape)))[1][0]
+        self.label_pred = self.model.labels(tf.reshape(self.x_adv, (1, *self.model.x_shape)))[0]
 
         self.setup_mu_step = [self.mu_var.assign(tf.random.normal(perts_shape, stddev=init_distortion))]
         self.setup_x_step = self.x_var.assign(self.x_ph)

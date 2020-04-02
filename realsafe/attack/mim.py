@@ -8,7 +8,8 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 class MIM(BatchAttack):
     '''
     Momentum Iterative Method (MIM)
-    A white-box iterative constraint-based method. Require a differentiable loss function.
+    A white-box iterative constraint-based method. Require a differentiable loss function and a
+    `realsafe.model.Classifier` model.
 
     Supported distance metric: `l_2`, `l_inf`
     Supported goal: `t`, `tm`, `ut`
@@ -20,7 +21,7 @@ class MIM(BatchAttack):
     def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
         '''
         Initialize MIM.
-        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.

@@ -23,7 +23,7 @@ class NES(Attack):
                  dimension_reduction=None):
         '''
         Initialize NES.
-        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
+        :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
         :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
@@ -53,7 +53,7 @@ class NES(Attack):
         self.sigma = ConfigVar(shape=None, dtype=tf.float32)
         self.lr = ConfigVar(shape=None, dtype=tf.float32)
 
-        self.label_pred = self.model.logits_and_labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[1][0]
+        self.label_pred = self.model.labels(tf.reshape(self.x_adv_var, (1, *self.model.x_shape)))[0]
 
         # perturbations
         if dimension_reduction:
