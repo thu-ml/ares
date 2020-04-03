@@ -11,10 +11,10 @@ from realsafe.attack.boundary import Boundary
 from realsafe.attack.evolutionary import Evolutionary
 
 from realsafe.model.base import Classifier, ClassifierWithLogits
-from realsafe.loss import CrossEntropyLoss, EnsembleCrossEntropyLoss, CWLoss
+from realsafe.loss import CrossEntropyLoss, EnsembleCrossEntropyLoss, EnsembleRandomnessCrossEntropyLoss, CWLoss
 
 __all__ = [
     'FGSM', 'BIM', 'PGD', 'MIM', 'CW', 'DeepFool', 'NES', 'SPSA', 'NAttack', 'Boundary', 'Evolutionary',
     'Classifier', 'ClassifierWithLogits',
-    'CrossEntropyLoss', 'EnsembleCrossEntropyLoss', 'CWLoss',
+    'CrossEntropyLoss', 'EnsembleCrossEntropyLoss', 'EnsembleRandomnessCrossEntropyLoss', 'CWLoss',
 ]

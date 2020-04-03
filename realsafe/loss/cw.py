@@ -15,7 +15,7 @@ class CWLoss(Loss):
         self.c = c
 
     def __call__(self, xs, ys):
-        logits, _ = self.model.logits_and_labels(xs)
+        logits = self.model.logits(xs)
         logits_mask = tf.one_hot(ys, self.model.n_class)
         logit_this = tf.reduce_sum(logits_mask * logits, axis=-1)
         logit_that = tf.reduce_max(logits - self.c * logits_mask, axis=-1)
