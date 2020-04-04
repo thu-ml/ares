@@ -19,7 +19,7 @@ class CrossEntropyLoss(Loss):
 
 
 class EnsembleCrossEntropyLoss(Loss):
-    ''' Ensemble multiple models' logits, and then calculate the cross entropy loss from this ensemble logits. '''
+    ''' Ensemble multiple models' cross entropy loss. '''
 
     def __init__(self, models, weights):
         '''
