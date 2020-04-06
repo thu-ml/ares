@@ -32,7 +32,7 @@ class PGD(BIM):
             runned after each iteration, and its return value would be yielded back to the caller. By default,
             `iteration_callback` is `None`.
         '''
-        super().__init__(model, batch_size, loss, goal, distance_metric, session)
+        super().__init__(model, batch_size, loss, goal, distance_metric, session, iteration_callback)
         # random init magnitude
         self.rand_init_eps_ph = tf.placeholder(self.model.x_dtype, (self.batch_size,))
         self.rand_init_eps_var = tf.Variable(tf.zeros((self.batch_size,), dtype=self.model.x_dtype))
