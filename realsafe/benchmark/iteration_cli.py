@@ -1,4 +1,5 @@
 if __name__ == '__main__':
+    import sys
     import argparse
     import numpy as np
     import tensorflow as tf
@@ -17,6 +18,9 @@ if __name__ == '__main__':
     PARSER.add_argument('--offset', help='Dataset offset.', type=int, required=True)
     PARSER.add_argument('--count', help='Number of examples to attack.', type=int, required=True)
     PARSER.add_argument('--output', help='Path to save benchmark result.', type=str, required=True)
+    PARSER.add_argument('--iteration', type=int, help='Iteration count for the benchmark on white-box attacks.')
+    PARSER.add_argument('--max-queries', type=int, help='Max queries for the benchmark on black-box attacks.')
+    PARSER.add_argument('--cw-n-points', type=int, help='Number of times to run the C&W attack.', default=10)
 
     PARSER.add_argument('model', help='Path to the model\'s python source file.')
 
@@ -31,8 +35,6 @@ if __name__ == '__main__':
     PARSER.add_argument('--dimension-reduction-height', type=int)
     PARSER.add_argument('--dimension-reduction-width', type=int)
 
-    PARSER.add_argument('--iteration', type=int)
-    PARSER.add_argument('--max-queries', type=int)
     PARSER.add_argument('--magnitude', type=float)
     PARSER.add_argument('--alpha', type=float)
     PARSER.add_argument('--rand-init-magnitude', type=float)
@@ -57,8 +59,17 @@ if __name__ == '__main__':
 
     args = PARSER.parse_args()
 
+    if args.method in ('bim', 'pgd', 'mim', 'cw', 'deepfool'):
+        iteration = args.iteration
+        if iteration is None:
+            PARSER.error('White-box attacks require the --iteration parameter.')
+    else:
+        iteration = args.max_queries
+        if iteration is None:
+            PARSER.error('Black-box attacks require the --max-queries parameter.')
+
     config_kwargs = dict()
-    for kwarg in ('iteration', 'max_queries', 'magnitude', 'alpha', 'rand_init_magnitude', 'decay_factor', 'cs',
+    for kwarg in ('magnitude', 'alpha', 'rand_init_magnitude', 'decay_factor', 'cs',
                   'search_steps', 'binsearch_steps', 'overshot', 'sigma', 'lr', 'min_lr', 'lr_tuning', 'plateau_length',
                   'max_directions', 'spherical_step', 'source_step', 'step_adaptation', 'mu', 'c', 'maxprocs'):
         attr = getattr(args, kwarg)
@@ -103,8 +114,8 @@ if __name__ == '__main__':
     elif attack_name in ('nes', 'spsa', 'nattack'):
         kwargs['loss'] = CWLoss(model)
 
-    benchmark = IterationBenchmark(attack_name, model, batch_size, dataset_name, goal, distance_metric, session,
-                                   **kwargs)
+    benchmark = IterationBenchmark(iteration, attack_name, model, batch_size, dataset_name, goal, distance_metric,
+                                   session, cw_n_points=args.cw_n_points, **kwargs)
 
     print('Configuring attack...')
     benchmark.config(**config_kwargs)
@@ -113,4 +124,11 @@ if __name__ == '__main__':
     rs = benchmark.run(dataset, logger)
 
     print('Saving benchmark result...')
-    np.save(args.output, rs)
+    np.save(args.output, {
+        'type': 'iteration',
+        'method': attack_name,
+        'goal': goal,
+        'distance_metric': distance_metric,
+        'cmdline': ' '.join(sys.argv[:]),
+        'result': rs
+    })

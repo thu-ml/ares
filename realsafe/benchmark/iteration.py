@@ -8,8 +8,12 @@ from realsafe.dataset import dataset_to_iterator
 class IterationBenchmark(object):
     ''' Iteration benchmark. '''
 
-    def __init__(self, attack_name, model, batch_size, dataset_name, goal, distance_metric, session, **kwargs):
+    def __init__(self, iteration, attack_name, model, batch_size, dataset_name, goal, distance_metric, session,
+                 cw_n_points=10, **kwargs):
         '''
+        :param iteration: The iteration count. For 'bim', 'pgd', 'mim', 'cw', 'deepfool' attack, it would be passed to
+            the attack as the `iteration` configuration parameter. For 'nes', 'spsa', 'nattack', 'boundary',
+            'evolutionary' attack, it would be passed to the attack as the `max_queries` configuration parameter.
         :param attack_name: The attack method's name. All valid values are 'bim', 'pgd', 'mim', 'cw', 'deepfool', 'nes',
             'spsa', 'nattack', 'boundary', 'evolutionary'.
         :param model: The classifier model to run the attack on.
@@ -20,8 +24,14 @@ class IterationBenchmark(object):
         :param distance_metric: The adversarial distance metric for the attack method. All valid values are 'l_2' and
             'l_inf'.
         :param session: The `tf.Session` instance for the attack to run in.
+        :param cw_n_points: How many times should we run 'cw' attack for the benchmark. To get the benchmark result for
+            'cw' attack, we need to run it for each iteration parameter we are interested in. Since the computation cost
+            for C&W attack is huge, we select `cw_n_points` numbers between 0 and `iteration` uniformly as the iteration
+            parameter to reduce the computation cost.
         :param kwargs: Other keyword arguments to pass to the attack method's initialization function.
         '''
+        self.iteration = iteration
+
         def iteration_callback(xs, xs_adv):
             labels = model.labels(xs_adv)
 
@@ -47,11 +57,19 @@ class IterationBenchmark(object):
         self.attack_name, self.dataset_name = attack_name, dataset_name
         self.batch_size, self.goal, self.distance_metric = batch_size, goal, distance_metric
         self.attack = load_attack(attack_name, init_kwargs)
+        self.cw_n_points = cw_n_points
 
         self._session = session
 
         if self.attack_name in ('bim', 'pgd', 'mim'):
             self._run = self._run_basic
+        elif self.attack_name == 'cw':
+            self._xs_ph = tf.placeholder(self.model.x_dtype, shape=(self.batch_size, *self.model.x_shape))
+            self._xs_adv_ph = tf.placeholder(self.model.x_dtype, shape=(self.batch_size, *self.model.x_shape))
+            self._cw_data = iteration_callback(self._xs_ph, self._xs_adv_ph)
+            self._run = self._run_cw
+        elif self.attack_name == 'deepfool':
+            self._run = self._run_deepfool
         else:
             raise NotImplementedError
 
@@ -60,6 +78,10 @@ class IterationBenchmark(object):
         (Re)config the attack method.
         :param kwargs: The key word arguments for the attack method's `config()` method.
         '''
+        if self.attack_name in ('bim', 'pgd', 'mim', 'cw', 'deepfool'):
+            kwargs['iteration'] = self.iteration
+        else:
+            kwargs['max_queries'] = self.iteration
         self.attack.config(**kwargs)
 
     def _run_basic(self, dataset, logger):
@@ -91,6 +113,59 @@ class IterationBenchmark(object):
 
         return rs
 
+    def _run_cw(self, dataset, logger):
+        ''' The `run` method for 'cw'. '''
+        # the attack is already configured in `config()`
+        iterations = [int(self.iteration * i / self.cw_n_points) for i in range(1, self.cw_n_points + 1)]
+        rs = {step: ([], []) for step in iterations}
+
+        iterator = dataset_to_iterator(dataset.batch(self.batch_size), self._session)
+        for i_batch, (_, xs, ys, ys_target) in enumerate(iterator):
+            for iteration in iterations:
+                self.attack.config(iteration=iteration)
+                xs_adv = self.attack.batch_attack(xs, ys, ys_target)
+                labels, dists = self._session.run(self._cw_data, feed_dict={self._xs_ph: xs, self._xs_adv_ph: xs_adv})
+                rs[iteration][0].append(labels)
+                rs[iteration][1].append(dists)
+                if logger:
+                    begin = i_batch * len(xs)
+                    logger.info('n={}..{}: iteration={}'.format(begin, begin + len(xs) - 1, iteration))
+
+        for key in rs.keys():
+            rs[key] = (np.concatenate(rs[key][0]), np.concatenate(rs[key][1]))
+
+        return rs
+
+    def _run_deepfool(self, dataset, logger):
+        ''' The `run` method for 'deepfool'. '''
+        # the attack is already configured in `config()`
+        rs = {step: ([], []) for step in range(1, self.attack.iteration + 1)}
+
+        iterator = dataset_to_iterator(dataset.batch(self.batch_size), self._session)
+        for i_batch, (_, xs, ys, ys_target) in enumerate(iterator):
+            g = self.attack.batch_attack(xs, ys, ys_target)
+            try:
+                step = 0
+                while True:
+                    step += 1
+                    labels, dists = next(g)
+                    rs[step][0].append(labels)
+                    rs[step][1].append(dists)
+                    if logger:
+                        begin = i_batch * len(xs)
+                        logger.info('n={}..{}: iteration={}'.format(begin, begin + len(xs) - 1, step))
+            except StopIteration:
+                # DeepFool would early stop. Padding the remaining steps with the last step's data.
+                labels, dists = rs[step - 1][0][-1], rs[step - 1][1][-1]
+                for remain_step in range(step, self.attack.iteration + 1):
+                    rs[remain_step][0].append(labels)
+                    rs[remain_step][1].append(dists)
+
+        for key in rs.keys():
+            rs[key] = (np.concatenate(rs[key][0]), np.concatenate(rs[key][1]))
+
+        return rs
+
     def run(self, dataset, logger=None):
         '''
         Run the attack on the dataset.
@@ -98,6 +173,8 @@ class IterationBenchmark(object):
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.
         :param logger: A standard logger.
-        :return: TODO
+        :return: A dictionary, whose keys are iteration number, values are a tuple of two numpy array. The first element
+            of the tuple is the prediction labels for the adversarial examples. The second element of the tuple is the
+            distance between the adversarial examples and the original examples.
         '''
         return self._run(dataset, logger)
