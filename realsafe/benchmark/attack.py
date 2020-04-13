@@ -25,6 +25,7 @@ class AttackBenchmark(object):
         init_kwargs = dict()
         init_kwargs['model'] = model
         init_kwargs['batch_size'] = batch_size
+        init_kwargs['samples_batch_size'] = batch_size  # use same batch_size for nes, spsa, nattack's samples
         init_kwargs['goal'] = goal
         init_kwargs['distance_metric'] = distance_metric
         init_kwargs['session'] = session
