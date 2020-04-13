@@ -71,6 +71,14 @@ class IterationBenchmark(object):
             self._run = self._run_cw
         elif self.attack_name == 'deepfool':
             self._run = self._run_deepfool
+        elif self.attack_name in ('nes', 'spsa', 'nattack'):
+            self._x_ph = tf.placeholder(self.model.x_dtype, shape=self.model.x_shape)
+            self._x_adv_ph = tf.placeholder(self.model.x_dtype, shape=self.model.x_shape)
+            self._score_based_data = iteration_callback(
+                tf.reshape(self._x_ph, (1, *self.model.x_shape)),
+                tf.reshape(self._x_adv_ph, (1, *self.model.x_shape)),
+            )
+            self._run = self._run_score_based
         else:
             raise NotImplementedError
 
@@ -167,6 +175,26 @@ class IterationBenchmark(object):
 
         return rs
 
+    def _run_score_based(self, dataset, logger):
+        ''' The `run` method for 'nes', 'spsa', 'nattack'. '''
+        # the attack is already configured in `config()`
+        iterator = dataset_to_iterator(dataset, self._session)
+
+        ts = []
+        for i, (_, x, y, y_target) in enumerate(iterator):
+            x_adv = self.attack.attack(x, y, y_target)
+            labels, dists = self._session.run(self._score_based_data, feed_dict={self._x_ph: x, self._x_adv_ph: x_adv})
+            label, dist, queries = labels[0], dists[0], self.attack.details['queries']
+            ts.append((label, dist, queries))
+            if logger:
+                logger.info('{}'.format(self.attack.details))
+
+        labels = np.array([x[0] for x in ts])
+        dists = np.array([x[1] for x in ts])
+        queries = np.array([x[2] for x in ts])
+
+        return labels, dists, queries
+
     def run(self, dataset, logger=None):
         '''
         Run the attack on the dataset.
@@ -174,8 +202,12 @@ class IterationBenchmark(object):
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.
         :param logger: A standard logger.
-        :return: A dictionary, whose keys are iteration number, values are a tuple of two numpy array. The first element
-            of the tuple is the prediction labels for the adversarial examples. The second element of the tuple is the
-            distance between the adversarial examples and the original examples.
+        :return:
+            - For 'nes', 'spsa', 'nattack': Three numpy array. The first one is the labels of the adversarial examples.
+              The second one is the distance between the adversarial examples and the original examples. The third one
+              is queries used for attacking each examples.
+            - Others: A dictionary, whose keys are iteration number, values are a tuple of two numpy array. The first
+              element of the tuple is the prediction labels for the adversarial examples. The second element of the
+              tuple is the distance between the adversarial examples and the original examples.
         '''
         return self._run(dataset, logger)
