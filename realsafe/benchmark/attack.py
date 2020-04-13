@@ -102,7 +102,7 @@ class AttackBenchmark(object):
             for _, x, y, t in iterator:
                 x_adv = self.attack.attack(x, y, t)
                 x_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: [x]})[0]
-                x_adv_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: [x]})[0]
+                x_adv_pred = self.session.run(self.xs_label, feed_dict={self.xs_ph: [x_adv]})[0]
                 xs, xs_adv, ys, ts = np.array([x]), np.array([x_adv]), np.array([y]), np.array([t])
                 xs_pred, xs_adv_pred = np.array([x_pred]), np.array([x_adv_pred])
                 update(*self._batch_info(xs, xs_adv, ys, ts, xs_pred, xs_adv_pred))
