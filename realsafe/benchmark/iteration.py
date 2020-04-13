@@ -79,6 +79,10 @@ class IterationBenchmark(object):
                 tf.reshape(self._x_adv_ph, (1, *self.model.x_shape)),
             )
             self._run = self._run_score_based
+        elif self.attack_name in ('boundary', 'evolutionary'):
+            self._xs_ph = tf.placeholder(model.x_dtype, shape=(None, *model.x_shape))
+            self._xs_label = model.labels(self._xs_ph)
+            self._run = self._run_decision_based
         else:
             raise NotImplementedError
 
@@ -187,13 +191,51 @@ class IterationBenchmark(object):
             label, dist, queries = labels[0], dists[0], self.attack.details['queries']
             ts.append((label, dist, queries))
             if logger:
-                logger.info('{}'.format(self.attack.details))
+                logger.info('n={}, {}'.format(i, self.attack.details))
 
         labels = np.array([x[0] for x in ts])
         dists = np.array([x[1] for x in ts])
         queries = np.array([x[2] for x in ts])
 
         return labels, dists, queries
+
+    def _run_decision_based(self, dataset, logger):
+        ''' The `run` method for 'boundary', 'evolutionary'. '''
+        # the attack is already configured in `config()`
+        iterator = dataset_to_iterator(dataset.batch(self.batch_size), self._session)
+
+        def pred_fn(xs):
+            return self._session.run(self._xs_label, feed_dict={self._xs_ph: xs})
+
+        cache = dict()
+
+        rs = dict()
+        for i_batch, (_, xs, ys, ys_target) in enumerate(iterator):
+            starting_points = gen_starting_points(
+                self.model, ys, ys_target, self.goal, self.dataset_name, self._session, pred_fn, cache)
+            self.attack.config(starting_points=starting_points)
+
+            g = self.attack.batch_attack(xs, ys, ys_target)
+            try:
+                step = 0
+                while True:
+                    step += 1
+                    labels, dists = next(g)
+                    if step in rs:
+                        rs[step][0].append(labels)
+                        rs[step][1].append(dists)
+                    else:
+                        rs[step] = ([labels], [dists])
+                    if logger:
+                        begin = i_batch * len(xs)
+                        logger.info('n={}..{}: iteration={}'.format(begin, begin + len(xs) - 1, step))
+            except StopIteration:
+                pass
+
+        for key in rs.keys():
+            rs[key] = (np.concatenate(rs[key][0]), np.concatenate(rs[key][1]))
+
+        return rs
 
     def run(self, dataset, logger=None):
         '''
