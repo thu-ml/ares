@@ -1,7 +1,6 @@
 '''
 This file provides a wrapper class for step L.L. on ensemble of 4 models
-(https://github.com/tensorflow/models/blob/master/research/adv_imagenet_models/README.md) for ImageNet dataset. It use
-same graph definition as inception_v3_*.py, so they would override each other if using in same graph.
+(https://github.com/tensorflow/models/blob/master/research/adv_imagenet_models/README.md) for ImageNet dataset.
 '''
 
 import sys
@@ -38,7 +37,19 @@ def download(model_path):
         for file_name in file_names:
             tar.extract(file_name, model_path)
 
-        os.remove(os.path.join(model_path, 'ens4_adv_inception_v3_2017_08_18.tar.gz'))
+        session = tf.Session(config=tf.ConfigProto(device_count={'GPU': 0}))
+        reader = tf.train.load_checkpoint(os.path.join(model_path, 'ens4_adv_inception_v3.ckpt'))
+        var_list = list(reader.get_variable_to_dtype_map().keys())
+        for var in var_list:
+            tf.Variable(reader.get_tensor(var), name=var.replace('InceptionV3', 'Ens4InceptionV3'))
+        session.run(tf.global_variables_initializer())
+
+        import shutil
+        shutil.rmtree(model_path)
+        os.makedirs(model_path)
+
+        saver = tf.train.Saver()
+        saver.save(session, os.path.join(model_path, 'ens4_adv_inception_v3.ckpt'))
 
 
 class Ens4AdvInceptionV3(ClassifierWithLogits):
@@ -49,15 +60,17 @@ class Ens4AdvInceptionV3(ClassifierWithLogits):
         xs_ph = xs_ph * 2.0 - 1.0
         with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
             logits, end_points = inception_v3.inception_v3(xs_ph, num_classes=self.n_class,
-                                                           is_training=False, reuse=tf.AUTO_REUSE)
+                                                           is_training=False, reuse=tf.AUTO_REUSE,
+                                                           scope='Ens4InceptionV3')
             predicted_labels = tf.cast(tf.argmax(end_points['Predictions'], 1), tf.int32)
         return logits, predicted_labels
 
     def load(self, session, model_path):
         x_input = tf.placeholder(self.x_dtype, shape=(None,) + self.x_shape)
         with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
-            inception_v3.inception_v3(x_input, num_classes=self.n_class, is_training=False, reuse=tf.AUTO_REUSE)
-        saver = tf.train.Saver(slim.get_model_variables(scope='InceptionV3'))
+            inception_v3.inception_v3(x_input, num_classes=self.n_class, is_training=False, reuse=tf.AUTO_REUSE,
+                                      scope='Ens4InceptionV3')
+        saver = tf.train.Saver(slim.get_model_variables(scope='Ens4InceptionV3'))
         saver.restore(session, os.path.join(model_path, 'ens4_adv_inception_v3.ckpt'))
 
 
