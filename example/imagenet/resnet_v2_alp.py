@@ -1,15 +1,17 @@
 import sys
 import os
-THIRD_PARTY_PATH = '../../third_party/models/research/slim'
-THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), THIRD_PARTY_PATH))
-sys.path.append(THIRD_PARTY_PATH)
+
+THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../third_party'))
+if THIRD_PARTY_PATH not in sys.path:
+    sys.path.append(THIRD_PARTY_PATH)
+MODULE_PATH = os.path.join(THIRD_PARTY_PATH, 'models/research/slim')
+if MODULE_PATH not in sys.path:
+    sys.path.append(MODULE_PATH)
 
 import tensorflow as tf
 import numpy as np
 
-import urllib
-
-from nets import resnet_v2
+import models.research.slim.nets.resnet_v2 as resnet_v2
 
 from realsafe import ClassifierWithLogits
 from realsafe.utils import get_res_path, download_res
@@ -53,7 +55,7 @@ class ResnetV2ALP(ClassifierWithLogits):
         x_input = tf.placeholder(tf.float32, shape=(None, *self.x_shape))
         with tf.contrib.framework.arg_scope(resnet_v2.resnet_arg_scope()):
             _, _ = resnet_v2.resnet_v2_50(x_input, self.n_class, is_training=False, reuse=tf.AUTO_REUSE)
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='resnet_v2_50'))
         saver.restore(session, model_path)
 
 

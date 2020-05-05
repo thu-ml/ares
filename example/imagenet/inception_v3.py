@@ -5,14 +5,17 @@ This file provides a wrapper class for InceptionV3 model
 
 import sys
 import os
-THIRD_PARTY_PATH = '../../third_party/models/research/slim'
-THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), THIRD_PARTY_PATH))
-sys.path.append(THIRD_PARTY_PATH)
 
+THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../third_party'))
+if THIRD_PARTY_PATH not in sys.path:
+    sys.path.append(THIRD_PARTY_PATH)
+MODULE_PATH = os.path.join(THIRD_PARTY_PATH, 'models/research/slim')
+if MODULE_PATH not in sys.path:
+    sys.path.append(MODULE_PATH)
 
 import tensorflow as tf
 
-from nets import inception_v3
+import models.research.slim.nets.inception_v3 as inception_v3
 
 from realsafe import ClassifierWithLogits
 from realsafe.utils import get_res_path, download_res

@@ -5,14 +5,18 @@ ImageNet dataset.
 
 import sys
 import os
-THIRD_PARTY_PATH = '../../third_party/ImageNet-Adversarial-Training'
-THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), THIRD_PARTY_PATH))
-sys.path.append(THIRD_PARTY_PATH)
+
+THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../third_party'))
+if THIRD_PARTY_PATH not in sys.path:
+    sys.path.append(THIRD_PARTY_PATH)
+MODULE_PATH = os.path.join(THIRD_PARTY_PATH, 'iat')
+if MODULE_PATH not in sys.path:
+    sys.path.append(MODULE_PATH)
 
 import tensorflow as tf
-import nets
+import iat.nets
 
-ResNetDenoiseModel = nets.ResNetDenoiseModel
+ResNetDenoiseModel = iat.nets.ResNetDenoiseModel
 
 from tensorpack import TowerContext
 from tensorpack.tfutils import get_model_loader

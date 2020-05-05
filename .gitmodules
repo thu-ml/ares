@@ -1,8 +1,8 @@
 [submodule "third_party/ImageNet-Adversarial-Training"]
-	path = third_party/ImageNet-Adversarial-Training
+	path = third_party/iat
 	url = https://github.com/facebookresearch/ImageNet-Adversarial-Training
 [submodule "third_party/TRADES"]
-	path = third_party/TRADES
+	path = third_party/trades
 	url = https://github.com/yaodongyu/TRADES/
 [submodule "third_party/models"]
 	path = third_party/models
