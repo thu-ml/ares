@@ -7,3 +7,6 @@
 [submodule "third_party/models"]
 	path = third_party/models
 	url = https://github.com/tensorflow/models.git
+[submodule "third_party/cifar10_challenge"]
+	path = third_party/cifar10_challenge
+	url = https://github.com/MadryLab/cifar10_challenge
