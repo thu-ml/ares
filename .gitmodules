@@ -10,3 +10,6 @@
 [submodule "third_party/cifar10_challenge"]
 	path = third_party/cifar10_challenge
 	url = https://github.com/MadryLab/cifar10_challenge
+[submodule "third_party/deepdefense"]
+	path = third_party/deepdefense_pytorch
+	url = https://github.com/ZiangYan/deepdefense.pytorch.git
