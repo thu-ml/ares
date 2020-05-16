@@ -16,3 +16,6 @@
 [submodule "third_party/convex_adversarial"]
 	path = third_party/convex_adversarial_pytorch
 	url = https://github.com/locuslab/convex_adversarial.git
+[submodule "third_party/bayesian_defense"]
+	path = third_party/bayesian_defense
+	url = https://github.com/xuanqing94/BayesianDefense.git
