@@ -13,3 +13,6 @@
 [submodule "third_party/deepdefense"]
 	path = third_party/deepdefense_pytorch
 	url = https://github.com/ZiangYan/deepdefense.pytorch.git
+[submodule "third_party/convex_adversarial"]
+	path = third_party/convex_adversarial_pytorch
+	url = https://github.com/locuslab/convex_adversarial.git
