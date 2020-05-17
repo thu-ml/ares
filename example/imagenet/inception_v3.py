@@ -35,7 +35,13 @@ def download(model_path):
     if not os.path.exists(model_path):
         if not os.path.exists(os.path.dirname(model_path)):
             os.makedirs(os.path.dirname(model_path))
-        download_res('http://ml.cs.tsinghua.edu.cn/~yinpeng/downloads/inception_v3.ckpt', model_path)
+        gz_path = os.path.join(os.path.dirname(model_path), 'inception_v3_2016_08_28.tar.gz')
+        if not os.path.exists(gz_path):
+            download_res('http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz', gz_path)
+        import tarfile
+        with tarfile.open(gz_path) as tar:
+            tar.extractall(os.path.dirname(model_path))
+        os.remove(gz_path)
 
 
 class InceptionV3(ClassifierWithLogits):
