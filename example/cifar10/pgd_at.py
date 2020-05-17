@@ -100,10 +100,14 @@ class PgdAT(ClassifierWithLogits):
         return logits, labels
 
     def load(self, session, model_path):
+        var_list_pre = set(tf.global_variables())
         self._build_model(tf.placeholder(tf.float32, (None, *self.x_shape)), tf.AUTO_REUSE)
-        saver = tf.train.Saver()
-        checkpoint = tf.train.latest_checkpoint(os.path.join(model_path, 'models/adv_trained/'))
-        saver.restore(session, checkpoint)
+        var_list_post = set(tf.global_variables())
+        var_list = list(var_list_post - var_list_pre)
+        if len(var_list) > 0:
+            checkpoint = tf.train.latest_checkpoint(os.path.join(model_path, 'models/adv_trained/'))
+            saver = tf.train.Saver(var_list=var_list)
+            saver.restore(session, checkpoint)
 
 
 if __name__ == '__main__':

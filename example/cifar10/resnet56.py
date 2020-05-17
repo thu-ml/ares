@@ -208,10 +208,14 @@ class ResNet56(ClassifierWithLogits):
         return logits, predicted_labels
 
     def load(self, model_path, session):
+        var_list_pre = set(tf.global_variables())
         x_input = tf.placeholder(tf.float32, shape=(None,) + self.x_shape)
-        self.model.inference(x_input, self.num_residual_blocks, reuse=False)
-        saver = tf.train.Saver(var_list=tf.global_variables())
-        saver.restore(session, model_path)
+        self.model.inference(x_input, self.num_residual_blocks, reuse=tf.AUTO_REUSE)
+        var_list_post = set(tf.global_variables())
+        var_list = list(var_list_post - var_list_pre)
+        if len(var_list) > 0:
+            saver = tf.train.Saver(var_list=var_list)
+            saver.restore(session, model_path)
 
 
 if __name__ == '__main__':

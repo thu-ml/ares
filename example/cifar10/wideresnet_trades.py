@@ -2,9 +2,10 @@
 
 import sys
 import os
-THIRD_PARTY_PATH = '../../third_party/TRADES/models'
-THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), THIRD_PARTY_PATH))
-sys.path.append(THIRD_PARTY_PATH)
+
+THIRD_PARTY_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../third_party'))
+if THIRD_PARTY_PATH not in sys.path:
+    sys.path.append(THIRD_PARTY_PATH)
 
 import torch
 import tensorflow as tf
@@ -12,8 +13,7 @@ import tensorflow as tf
 from realsafe.model.pytorch_wrapper import pytorch_classifier_with_logits
 from realsafe.utils import get_res_path
 
-import wideresnet
-WideResNet = wideresnet.WideResNet
+from trades.models.wideresnet import WideResNet
 
 MODEL_PATH = get_res_path('./cifar10/wrn.pt')
 
