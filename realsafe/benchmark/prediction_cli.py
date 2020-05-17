@@ -57,6 +57,7 @@ if __name__ == '__main__':
     rs['ys'] = np.concatenate(rs['ys'])
     rs['ys_target'] = np.concatenate(rs['ys_target'])
     rs['predictions'] = np.concatenate(rs['predictions'])
+    logger.info('acc={:3f}'.format((rs['predictions'] == rs['ys']).astype(np.float).mean()))
 
     print('Saving results...')
     np.save(args.output, rs)
