@@ -14,12 +14,12 @@ session = tf.Session(config=config)
 
 MODELS = [
     '../example/imagenet/inception_v3.py',
-    '../example/imagenet/inception_v3_bit.py',
-    '../example/imagenet/inception_v3_jpeg.py',
-    '../example/imagenet/inception_v3_rand.py',
     '../example/imagenet/ens4_adv_inception_v3.py',
-    '../example/imagenet/resnet152_fd.py',
     '../example/imagenet/resnet_v2_alp.py',
+    '../example/imagenet/resnet152_fd.py',
+    '../example/imagenet/inception_v3_jpeg.py',
+    '../example/imagenet/inception_v3_bit.py',
+    '../example/imagenet/inception_v3_rand.py',
     '../example/imagenet/inception_v3_randmix.py',
 ]
 
@@ -33,11 +33,12 @@ for model_path_short in MODELS:
     labels = model.labels(xs_ph)
 
     accs = []
-    for i_batch, (_, xs, ys, ys_target) in enumerate(dataset_to_iterator(dataset.batch(batch_size), session)):
-        predictions = session.run(labels, feed_dict={xs_ph: xs})
-        acc = np.equal(predictions, ys).astype(np.float32).mean()
-        accs.append(acc)
-        print('n={}..{} acc={:3f}'.format(i_batch * batch_size, i_batch * batch_size + batch_size - 1, acc))
+    for _ in range(10):
+        for i_batch, (_, xs, ys, ys_target) in enumerate(dataset_to_iterator(dataset.batch(batch_size), session)):
+            predictions = session.run(labels, feed_dict={xs_ph: xs})
+            acc = np.equal(predictions, ys).astype(np.float32).mean()
+            accs.append(acc)
+            print('n={}..{} acc={:3f}'.format(i_batch * batch_size, i_batch * batch_size + batch_size - 1, acc))
     rs[model_path_short] = np.mean(accs)
     print('{} acc={:f}'.format(model_path, rs[model_path_short]))
 

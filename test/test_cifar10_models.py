@@ -13,14 +13,14 @@ config.gpu_options.allow_growth = True
 session = tf.Session(config=config)
 
 MODELS = [
-    '../example/cifar10/adp.py',
-    '../example/cifar10/convex.py',
-    '../example/cifar10/deepdefense.py',
-    '../example/cifar10/pgd_at.py',
-    '../example/cifar10/resnet56_jpeg.py',
     '../example/cifar10/resnet56.py',
-    '../example/cifar10/rse.py',
+    '../example/cifar10/pgd_at.py',
+    '../example/cifar10/deepdefense.py',
     '../example/cifar10/wideresnet_trades.py',
+    '../example/cifar10/convex.py',
+    '../example/cifar10/resnet56_jpeg.py',
+    '../example/cifar10/rse.py',
+    '../example/cifar10/adp.py',
 ]
 
 rs = dict()
@@ -33,11 +33,12 @@ for model_path_short in MODELS:
     labels = model.labels(xs_ph)
 
     accs = []
-    for i_batch, (_, xs, ys, ys_target) in enumerate(dataset_to_iterator(dataset.batch(batch_size), session)):
-        predictions = session.run(labels, feed_dict={xs_ph: xs})
-        acc = np.equal(predictions, ys).astype(np.float32).mean()
-        accs.append(acc)
-        print('n={}..{} acc={:3f}'.format(i_batch * batch_size, i_batch * batch_size + batch_size - 1, acc))
+    for _ in range(10):
+        for i_batch, (_, xs, ys, ys_target) in enumerate(dataset_to_iterator(dataset.batch(batch_size), session)):
+            predictions = session.run(labels, feed_dict={xs_ph: xs})
+            acc = np.equal(predictions, ys).astype(np.float32).mean()
+            accs.append(acc)
+            print('n={}..{} acc={:3f}'.format(i_batch * batch_size, i_batch * batch_size + batch_size - 1, acc))
     rs[model_path_short] = np.mean(accs)
     print('{} acc={:f}'.format(model_path, rs[model_path_short]))
 
