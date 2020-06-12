@@ -6,23 +6,20 @@ from realsafe.attack.utils import ConfigVar, Expectation, clip_eta, image_resize
 
 
 class NES(Attack):
-    '''
-    Natural Evolution Strategies (NES)
-    A black-box constraint-based method. Use NES as gradient estimation technique and employ PGD with this estimated
-    gradient to generate the adversarial example.
+    ''' Natural Evolution Strategies (NES). A black-box constraint-based method. Use NES as gradient estimation
+    technique and employ PGD with this estimated gradient to generate the adversarial example.
 
-    Supported distance metric: `l_2`, `l_inf`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1804.08598
-    [2] http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf
+    - Supported distance metric: `l_2`, `l_inf`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References:
+      1. https://arxiv.org/abs/1804.08598.
+      2. http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf.
     '''
 
     def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None,
                  dimension_reduction=None):
-        '''
-        Initialize NES.
+        ''' Initialize NES.
+
         :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
@@ -98,7 +95,8 @@ class NES(Attack):
         self.details = {}
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param magnitude: Max distortion, should be a float number.
         :param max_queries: Max number of queries, should be an integer.
         :param sigma: Sampling variance (perturbation size) in gradient estimation, should be a float number.
@@ -135,7 +133,10 @@ class NES(Attack):
             return label == y_target
 
     def attack(self, x, y=None, y_target=None):
-        ''' Attack one example. '''
+        ''' Attack one example.
+
+        :return: The generated adversarial example.
+        '''
         self._session.run(self.setup_x_step, feed_dict={self.x_ph: x})
         self._session.run(self.setup_ys_step, feed_dict={
             self.ys_ph: np.repeat(y if self.goal == 'ut' else y_target, self.samples_batch_size)

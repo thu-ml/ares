@@ -1,3 +1,5 @@
+''' Provide a command line tool to call AttackBenchmark directly. '''
+
 if __name__ == '__main__':
     import argparse
     import numpy as np

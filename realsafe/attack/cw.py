@@ -7,21 +7,17 @@ from realsafe.loss import CWLoss
 
 
 class CW(BatchAttack):
-    '''
-    Carlini & Wagner Attack (C&W)
-    A white-box iterative optimization-based method. Require a differentiable logits.
+    ''' Carlini & Wagner Attack (C&W). A white-box iterative optimization-based method. Require a differentiable logits.
 
-    Supported distance metric: `l_2`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/pdf/1608.04644.pdf
+    - Supported distance metric: `l_2`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References: https://arxiv.org/pdf/1608.04644.pdf.
     '''
 
     def __init__(self, model, batch_size, goal, distance_metric, session,
                  cw_loss_c=99999.0, confidence=0.0, learning_rate=0.01):
-        '''
-        Initialize CW.
+        ''' Initialize CW.
+
         :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
@@ -85,7 +81,8 @@ class CW(BatchAttack):
         self.logger = None
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param cs: Initial c, could be either a float number or a numpy float number array with shape of
             `(self.batch_size,)`.
         :param iteration: An integer, represent iteration count for each search step and binary search step.
@@ -106,7 +103,10 @@ class CW(BatchAttack):
             self.logger = kwargs['logger']
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        ''' Attack a batch of examples. '''
+        ''' Attack a batch of examples.
+
+        :return: The generated adversarial examples.
+        '''
         ys_input = ys_target if self.goal == 't' or self.goal == 'tm' else ys
 
         # create numpy index for fetching the original label's logit value

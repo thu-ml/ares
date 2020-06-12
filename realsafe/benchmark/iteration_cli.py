@@ -1,3 +1,5 @@
+''' Provide a command line tool to call IterationBenchmark directly. '''
+
 if __name__ == '__main__':
     import sys
     import argparse

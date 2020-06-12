@@ -6,21 +6,17 @@ from realsafe.attack.utils import maybe_to_array, uniform_l_2_noise, uniform_l_i
 
 
 class PGD(BIM):
-    '''
-    Projected Gradient Descent (PGD)
-    A white-box iterative constraint-based method. Require a differentiable loss function and a
-    `realsafe.model.Classifier` model.
+    ''' Projected Gradient Descent (PGD). A white-box iterative constraint-based method. Require a differentiable loss
+    function and a `realsafe.model.Classifier` model.
 
-    Supported distance metric: `l_2`, `l_inf`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1706.06083
+    - Supported distance metric: `l_2`, `l_inf`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References: https://arxiv.org/abs/1706.06083.
     '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
-        '''
-        Initialize PGD.
+        ''' Initialize PGD.
+
         :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
@@ -52,7 +48,8 @@ class PGD(BIM):
         self.config_rand_init_eps = self.rand_init_eps_var.assign(self.rand_init_eps_ph)
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param rand_init_magnitude: Random init max distortion, could be either a float number or a numpy float number
             array with shape of `(self.batch_size,)`.
         :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of

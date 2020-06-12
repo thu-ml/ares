@@ -13,12 +13,13 @@ PATH_TARGET_TXT = get_res_path('./imagenet/target.txt')
 
 
 def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_label=None, clip=True):
-    '''
-    Get an ImageNet dataset in tf.data.Dataset format. The first element of the dataset is the filename, the second one
-    is the image tensor with shape of the classifier's `x_shape` in the classifier's `x_dtype`, the third one is the
-    label in the classifier's `y_dtype`. If `load_target` is true, the target label would be returned as the fourth
-    element of the dataset. It would automatically handle `n_class == 1000` and `n_class == 1001` case (assume the empty
-    class is labeled 0).
+    ''' Get an ImageNet dataset in tf.data.Dataset format.
+
+    The first element of the dataset is the filename, the second one is the image tensor with shape of the classifier's
+    `x_shape` in the classifier's `x_dtype`, the third one is the label in the classifier's `y_dtype`. If `load_target`
+    is true, the target label would be returned as the fourth element of the dataset. It would automatically handle
+    `n_class == 1000` and `n_class == 1001` case (assume the empty class is labeled 0).
+
     :param offset: Ignore the first `offset` images.
     :param load_target: Whether to load the target label.
     :param target_label: If it is a integer, the returned dataset would only include data points with this label.
@@ -42,10 +43,12 @@ def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_
 
 def load_dataset(height, width, offset=0, label_dtype=tf.int32, load_target=False, target_label=None, clip=True,
                  label_offset=0):
-    '''
-    Get an ImageNet dataset in tf.data.Dataset format. The first element of the dataset is the filename, the second one
-    is the image tensor with shape of (height, width, 3) in `tf.uint8`, the third one is the label. If `load_target` is
-    true, the target label would be returned as the fourth element of the dataset.
+    ''' Get an ImageNet dataset in tf.data.Dataset format.
+    
+    The first element of the dataset is the filename, the second one is the image tensor with shape of
+    (height, width, 3) in `tf.uint8`, the third one is the label. If `load_target` is true, the target label would be
+    returned as the fourth element of the dataset.
+
     :param height: The target height.
     :param width: The target width.
     :param offset: Ignore the first `offset` images.

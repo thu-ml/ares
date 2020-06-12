@@ -21,9 +21,9 @@ ATTACKS = {
 
 
 def load_attack(attack_name, init_kwargs):
-    '''
-    Load attack method by name. The initialization function for the attack would be called by finding necessary
+    ''' Load attack method by name. The initialization function for the attack would be called by finding necessary
     parameters from `init_kwargs`.
+
     :param attack_name: The attack method's name. All valid values are 'fgsm', 'bim', 'pgd', 'mim', 'cw', 'deepfool',
         'nes', 'spsa', 'nattack', 'boundary', 'evolutionary'.
     :param init_kwargs: Keyword arguments for initialize the attack.
@@ -38,8 +38,8 @@ def load_attack(attack_name, init_kwargs):
 
 
 def gen_starting_points(model, ys, ys_target, goal, dataset_name, session, pred_fn, cache=None):
-    '''
-    Generate starting points which are already adversarial according to the adversarial goal.
+    ''' Generate starting points which are already adversarial according to the adversarial goal.
+
     :param model: The model.
     :param ys: True labels.
     :param ys_target: Targetted labels.

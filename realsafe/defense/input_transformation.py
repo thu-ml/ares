@@ -4,8 +4,8 @@ from realsafe.model.base import Classifier, ClassifierWithLogits
 
 
 def input_transformation(rs_class, transform, args_fn, kwargs_fn):
-    '''
-    Apply input transformation to `rs_class` to get a new classifier.
+    ''' Apply input transformation to `rs_class` to get a new classifier.
+
     :param rs_class: the classifier class to apply the input transformation, which should be subclass of Classifier.
         When the logits is available, the returned new classifier would implement the ClassifierWithLogits interface.
     :param transform: The transformation to apply to the classifier's input. It should be a function, whose first

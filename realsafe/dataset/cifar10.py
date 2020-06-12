@@ -11,11 +11,12 @@ PATH_TARGET = get_res_path('cifar10/target.npy')
 
 
 def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_label=None):
-    '''
-    Get an CIFAR-10 dataset in tf.data.Dataset format. The first element of the dataset is the index, the second one is
-    the image tensor with shape of the classifier's `x_shape` in the classifier's `x_dtype`, the third one is the label
-    in the classifier's `y_dtype`. If `load_target` is true, the target label would be returned as the fourth element of
-    the dataset.
+    ''' Get an CIFAR-10 dataset in tf.data.Dataset format.
+    
+    The first element of the dataset is the index, the second one is the image tensor with shape of the classifier's
+    `x_shape` in the classifier's `x_dtype`, the third one is the label in the classifier's `y_dtype`. If `load_target`
+    is true, the target label would be returned as the fourth element of the dataset.
+
     :param offset: Ignore the first `offset` images.
     :param load_target: Whether to load the target label.
     :param target_label: If it is a integer, the returned dataset would only include data points with this label.
@@ -34,10 +35,11 @@ def load_dataset_for_classifier(classifier, offset=0, load_target=False, target_
 
 
 def load_dataset(offset=0, label_dtype=tf.int32, load_target=False, target_label=None):
-    '''
-    Get a CIFAR-10 dataset in tf.data.Dataset format. The first element of the dataset is the index, the second one is
-    the image tensor with shape of (32, 32, 3) in `tf.uint8`. If `load_target` is true, the target label would be
-    returned as the fourth element of the dataset.
+    ''' Get a CIFAR-10 dataset in tf.data.Dataset format.
+
+    The first element of the dataset is the index, the second one is the image tensor with shape of (32, 32, 3) in
+    `tf.uint8`. If `load_target` is true, the target label would be returned as the fourth element of the dataset.
+
     :param offset: Ignore the first `offset` images.
     :param label_dtype: Label's data type.
     :param load_target: Whether to load the target label.

@@ -6,21 +6,17 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class MIM(BatchAttack):
-    '''
-    Momentum Iterative Method (MIM)
-    A white-box iterative constraint-based method. Require a differentiable loss function and a
-    `realsafe.model.Classifier` model.
+    ''' Momentum Iterative Method (MIM). A white-box iterative constraint-based method. Require a differentiable loss
+    function and a `realsafe.model.Classifier` model.
 
-    Supported distance metric: `l_2`, `l_inf`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1710.06081
+    - Supported distance metric: `l_2`, `l_inf`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References: https://arxiv.org/abs/1710.06081.
     '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
-        '''
-        Initialize MIM.
+        ''' Initialize MIM.
+
         :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
@@ -106,7 +102,8 @@ class MIM(BatchAttack):
             self.iteration_callback = iteration_callback(xs_model, self.xs_adv_model)
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
             `(self.batch_size,)`.
         :param alpha: Step size for each iteration, could be either a float number or a numpy float number array with
@@ -139,8 +136,8 @@ class MIM(BatchAttack):
         return self._session.run(self.xs_adv_model)
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        '''
-        Attack a batch of examples.
+        ''' Attack a batch of examples.
+
         :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
             `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
             each iteration and returns the generated adversarial examples.

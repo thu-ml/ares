@@ -6,21 +6,17 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class BIM(BatchAttack):
-    '''
-    Basic Iterative Method (BIM).
-    A white-box iterative constraint-based method. Require a differentiable loss function and a
-    `realsafe.model.Classifier` model.
+    ''' Basic Iterative Method (BIM). A white-box iterative constraint-based method. Require a differentiable loss
+    function and a `realsafe.model.Classifier` model.
 
-    Supported distance metric: `l_2`, `l_inf`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1607.02533
+    - Supported distance metric: `l_2`, `l_inf`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References: https://arxiv.org/abs/1607.02533.
     '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
-        '''
-        Initialize BIM.
+        ''' Initialize BIM.
+
         :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
@@ -94,7 +90,8 @@ class BIM(BatchAttack):
             self.iteration_callback = iteration_callback(xs_model, self.xs_adv_model)
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
             (batch_size,).
         :param alpha: Step size for each iteration, could be either a float number or a numpy float number array with
@@ -111,9 +108,8 @@ class BIM(BatchAttack):
             self.iteration = kwargs['iteration']
 
     def _batch_attack_generator(self, xs, ys, ys_target):
-        '''
-        Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after each
-        iteration if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        ''' Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after
+        each iteration if the `iteration_callback` is not `None`, and returns the adversarial examples.
         '''
         labels = ys if self.goal == 'ut' else ys_target
         self._session.run(self.setup_xs, feed_dict={self.xs_ph: xs})
@@ -125,8 +121,8 @@ class BIM(BatchAttack):
         return self._session.run(self.xs_adv_model)
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        '''
-        Attack a batch of examples.
+        ''' Attack a batch of examples.
+
         :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
             `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
             each iteration and returns the generated adversarial examples.

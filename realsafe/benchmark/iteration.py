@@ -10,7 +10,8 @@ class IterationBenchmark(object):
 
     def __init__(self, iteration, attack_name, model, batch_size, dataset_name, goal, distance_metric, session,
                  cw_n_points=10, **kwargs):
-        '''
+        ''' Initialize IterationBenchmark.
+
         :param iteration: The iteration count. For 'bim', 'pgd', 'mim', 'cw', 'deepfool' attack, it would be passed to
             the attack as the `iteration` configuration parameter. For 'nes', 'spsa', 'nattack', 'boundary',
             'evolutionary' attack, it would be passed to the attack as the `max_queries` configuration parameter.
@@ -87,8 +88,8 @@ class IterationBenchmark(object):
             raise NotImplementedError
 
     def config(self, **kwargs):
-        '''
-        (Re)config the attack method.
+        ''' (Re)config the attack.
+
         :param kwargs: The key word arguments for the attack method's `config()` method.
         '''
         if self.attack_name in ('bim', 'pgd', 'mim', 'cw', 'deepfool'):
@@ -238,8 +239,8 @@ class IterationBenchmark(object):
         return rs
 
     def run(self, dataset, logger=None):
-        '''
-        Run the attack on the dataset.
+        ''' Run the attack on the dataset.
+
         :param dataset: A `tf.data.Dataset` instance, whose first element is the unique identifier for the data point,
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.

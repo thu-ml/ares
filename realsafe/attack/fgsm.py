@@ -5,21 +5,17 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 
 class FGSM(BatchAttack):
-    '''
-    Fast Gradient Sign Method (FGSM)
-    A white-box single-step constraint-based method. Require a differentiable loss function and a
-    `realsafe.model.Classifier` model.
+    ''' Fast Gradient Sign Method (FGSM). A white-box single-step constraint-based method. Require a differentiable loss
+    function and a `realsafe.model.Classifier` model.
 
-    Supported distance metric: `l_2`, `l_inf`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1412.6572
+    - Supported distance metric: `l_2`, `l_inf`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References: https://arxiv.org/abs/1412.6572.
     '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
-        '''
-        Initialize FGSM.
+        ''' Initialize FGSM.
+
         :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
@@ -58,7 +54,8 @@ class FGSM(BatchAttack):
         self.config_eps_step = self.eps_var.assign(self.eps_ph)
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
             `(self.batch_size,)`.
         '''
@@ -67,7 +64,10 @@ class FGSM(BatchAttack):
             self._session.run(self.config_eps_step, feed_dict={self.eps_ph: eps})
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        ''' Attack a batch of examples. '''
+        ''' Attack a batch of examples.
+
+        :return: The generated adversarial examples.
+        '''
         labels = ys if self.goal == 'ut' else ys_target
         return self._session.run(self.xs_adv, feed_dict={
             self.xs_ph: xs,

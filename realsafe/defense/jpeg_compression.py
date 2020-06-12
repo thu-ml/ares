@@ -6,8 +6,8 @@ from realsafe.defense.input_transformation import input_transformation
 
 
 def jpeg_compress(xs, x_min, x_max, quality=95):
-    '''
-    Run jpeg compress on xs.
+    ''' Run jpeg compress on xs.
+
     :param xs: A batch of images to compress.
     :param x_min: The minimum value of xs.
     :param x_max: The maximum value of xs.
@@ -31,10 +31,11 @@ def jpeg_compress(xs, x_min, x_max, quality=95):
 
 
 def jpeg_compression(quality=95):
-    '''
-    A decorator to add jpeg compress input transformation to a Classifier or a ClassifierWithLogits. It would leave
-    the original classifier's logits' gradient untouched, so that white box attacks could still be applied to the new
-    classifier.
+    ''' A decorator to add jpeg compress input transformation to a Classifier or a ClassifierWithLogits.
+    
+    It would leave the original classifier's logits' gradient untouched, so that white box attacks could still be
+    applied to the new classifier.
+
     :param quality: The jpeg compression quality.
     '''
     def args_fn(model):

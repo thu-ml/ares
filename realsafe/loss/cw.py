@@ -7,7 +7,8 @@ class CWLoss(Loss):
     ''' C&W loss. '''
 
     def __init__(self, model, c=99999.0):
-        '''
+        ''' Initialize CWLoss.
+
         :param model: an instance of `ClassifierWithLogits`.
         :param c: a large float number.
         '''
@@ -26,7 +27,8 @@ class EnsembleCWLoss(Loss):
     ''' Ensemble multiple models' C&W loss. '''
 
     def __init__(self, models, weights, c=99999.0):
-        '''
+        ''' Initialize EnsembleCWLoss.
+
         :param model: A list of `ClassifierWithLogits`.
         :param weights: Weights for ensemble these models.
         :param c: A large float number.
@@ -51,7 +53,8 @@ class EnsembleRandomnessCWLoss(Loss):
     ''' Ensemble a random model's C&W loss. '''
 
     def __init__(self, model, n, session, c=99999.0):
-        '''
+        ''' Initialize EnsembleRandomnessCWLoss.
+
         :param model: An instance of `ClassifierWithLogits`.
         :param n: Number of samples to ensemble.
         :param session: `tf.Session`.

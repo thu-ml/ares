@@ -7,8 +7,8 @@ from realsafe.defense.input_transformation import input_transformation
 
 
 def bit_depth_reduce(xs, x_min, x_max, step_num, alpha=1e6):
-    '''
-    Run bit depth reduce on xs.
+    ''' Run bit depth reduce on xs.
+
     :param xs: A batch of images to apply bit depth reduction.
     :param x_min: The minimum value of xs.
     :param x_max: The maximum value of xs.
@@ -36,10 +36,11 @@ def bit_depth_reduce(xs, x_min, x_max, step_num, alpha=1e6):
 
 
 def bit_depth_reduction(step_num, alpha=1e6):
-    '''
-    A decorator to add bit depth reduce input transformation to a Classifier or a ClassifierWithLogits. It would leave
-    the original classifier's logits' gradient untouched, so that white box attacks could still be applied to the new
-    classifier.
+    ''' A decorator to add bit depth reduce input transformation to a Classifier or a ClassifierWithLogits.
+
+    It would leave the original classifier's logits' gradient untouched, so that white box attacks could still be
+    applied to the new classifier.
+
     :param step_num: Step number for bit depth reduction.
     :param alpha: Alpha for bit depth reduction.
     '''

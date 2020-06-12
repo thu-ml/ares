@@ -6,21 +6,17 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph
 
 
 class DeepFool(BatchAttack):
-    '''
-    DeepFool
-    A white-box iterative optimization method. It needs to calculate the Jacobian of the logits with relate to input,
-    so that it only applies to tasks with small number of classification class. It supports only untargeted attack.
+    ''' DeepFool. A white-box iterative optimization method. It needs to calculate the Jacobian of the logits with
+    relate to input, so that it only applies to tasks with small number of classification class.
 
-    Supported distance metric: `l_2`, `l_inf`
-    Supported goal: `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1511.04599
+    - Supported distance metric: `l_2`, `l_inf`.
+    - Supported goal: `ut`.
+    - References: https://arxiv.org/abs/1511.04599.
     '''
 
     def __init__(self, model, batch_size, distance_metric, session, iteration_callback=None):
-        '''
-        Initialize DeepFool.
+        ''' Initialize DeepFool.
+
         :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
@@ -104,7 +100,8 @@ class DeepFool(BatchAttack):
         self.iteration = None
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param iteration: Iteration count. An integer.
         :param overshot: Overshot rate. A float number. Set to 0.02 by default.
         '''
@@ -114,9 +111,8 @@ class DeepFool(BatchAttack):
             self._session.run(self.setup_overshot, feed_dict={self.overshot_ph: kwargs['overshot']})
 
     def _batch_attack_generator(self, xs, ys, _):
-        '''
-        Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after each
-        iteration if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        ''' Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after
+        each iteration if the `iteration_callback` is not `None`, and returns the adversarial examples.
         '''
         self._session.run(self.setup, feed_dict={self.xs_ph: xs, self.ys_ph: ys})
 
@@ -133,8 +129,8 @@ class DeepFool(BatchAttack):
         return self._session.run(self.xs_adv_var).reshape((self.batch_size,) + self.model.x_shape)
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        '''
-        Attack a batch of examples.
+        ''' Attack a batch of examples.
+
         :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
             `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
             each iteration and returns the generated adversarial examples.

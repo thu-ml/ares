@@ -6,22 +6,18 @@ from realsafe.attack.utils import ConfigVar, Expectation, clip_eta, image_resize
 
 
 class SPSA(Attack):
-    '''
-    Simultaneous Perturbation Stochastic Approximation (SPSA)
-    A black-box constraint-based method. Use SPSA as gradient estimation technique and employ Adam with this estimated
-    gradient to generate the adversarial example.
+    ''' Simultaneous Perturbation Stochastic Approximation (SPSA). A black-box constraint-based method. Use SPSA as
+    gradient estimation technique and employ Adam with this estimated gradient to generate the adversarial example.
 
-    Supported distance metric: `l_2`, `l_inf`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1802.05666
+    - Supported distance metric: `l_2`, `l_inf`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References: https://arxiv.org/abs/1802.05666.
     '''
 
     def __init__(self, model, loss, goal, distance_metric, session, samples_per_draw, samples_batch_size=None,
                  dimension_reduction=None):
-        '''
-        Initialize SPSA.
+        ''' Initialize SPSA.
+
         :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
@@ -110,7 +106,8 @@ class SPSA(Attack):
         self.details = {}
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param magnitude: Max distortion, should be a float number.
         :param max_queries: Max number of queries, should be an integer.
         :param sigma: Sampling variance (perturbation size) in gradient estimation, should be a float number.
@@ -146,6 +143,10 @@ class SPSA(Attack):
             return label == y_target
 
     def attack(self, x, y=None, y_target=None):
+        ''' Attack one example.
+
+        :return: The generated adversarial example.
+        '''
         self._session.run(self.setup_x_step, feed_dict={self.x_ph: x})
         self._session.run(self.setup_ys_step, feed_dict={
             self.ys_ph: np.repeat(y if self.goal == 'ut' else y_target, self.samples_batch_size)

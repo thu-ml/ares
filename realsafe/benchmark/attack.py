@@ -9,7 +9,8 @@ class AttackBenchmark(object):
     ''' Run an attack on some model and report results. '''
 
     def __init__(self, attack_name, model, batch_size, dataset_name, goal, distance_metric, session, **kwargs):
-        '''
+        ''' Initialize AttackBenchmark.
+
         :param attack_name: The attack method's name. All valid values are 'fgsm', 'bim', 'pgd', 'mim', 'cw',
             'deepfool', 'nes', 'spsa', 'nattack', 'boundary', 'evolutionary'.
         :param model: The classifier model to run the attack on.
@@ -41,15 +42,15 @@ class AttackBenchmark(object):
         self.xs_label = model.labels(self.xs_ph)
 
     def config(self, **kwargs):
-        '''
-        (Re)config the attack method.
+        ''' (Re)config the attack.
+
         :param config_kwargs: The key word arguments for the attack method's `config()` method.
         '''
         self.attack.config(**kwargs)
 
     def run(self, dataset, logger):
-        '''
-        Run the attack on the dataset.
+        ''' Run the attack on the dataset.
+
         :param dataset: A `tf.data.Dataset` instance, whose first element is the unique identifier for the data point,
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.

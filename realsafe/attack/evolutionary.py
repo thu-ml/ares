@@ -10,20 +10,16 @@ from realsafe.attack.utils import split_trunks
 
 
 class Evolutionary(BatchAttack):
-    '''
-    Evolutionary
-    A black-box decision-based method.
+    ''' Evolutionary. A black-box decision-based method.
 
-    Supported distance metric: `l_2`
-    Supported goal: `t`, `tm`, `ut`
-
-    References:
-    [1] https://arxiv.org/abs/1904.04433
+    - Supported distance metric: `l_2`.
+    - Supported goal: `t`, `tm`, `ut`.
+    - References: https://arxiv.org/abs/1904.04433.
     '''
 
     def __init__(self, model, batch_size, goal, session, dimension_reduction=None, iteration_callback=None):
-        '''
-        Initialize Evolutionary.
+        ''' Initialize Evolutionary.
+
         :param model: The model to attack. A `realsafe.model.Classifier` instance.
         :param batch_size: Batch size for the `batch_attack()` method.
         :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
@@ -54,7 +50,8 @@ class Evolutionary(BatchAttack):
         self.logger = None
 
     def config(self, **kwargs):
-        '''
+        ''' (Re)config the attack.
+
         :param starting_points: Starting points which are already adversarial. A numpy array with data type of
             `self.x_dtype`, with shape of `(self.batch_size, *self.x_shape)`.
         :param max_queries: Max queries. An integer.
@@ -87,9 +84,8 @@ class Evolutionary(BatchAttack):
             self.logger = kwargs['logger']
 
     def _batch_attack_generator(self, xs, ys, ys_target):
-        '''
-        Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after each
-        iteration (query) if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        ''' Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after
+        each iteration (query) if the `iteration_callback` is not `None`, and returns the adversarial examples.
         '''
         if self.iteration_callback is not None:
             self._session.run(self.setup_xs_var, feed_dict={self.xs_ph: xs})
@@ -176,8 +172,8 @@ class Evolutionary(BatchAttack):
         return xs_adv
 
     def batch_attack(self, xs, ys=None, ys_target=None):
-        '''
-        Attack a batch of examples.
+        ''' Attack a batch of examples.
+
         :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
             `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
             each iteration and returns the generated adversarial examples.

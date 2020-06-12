@@ -10,8 +10,8 @@ class EnsembleModel(Classifier):
     ''' Ensemble multiple `ClassifierWithLogits` by averaging theirs output probabilities for each label. '''
 
     def __init__(self, models, weights):
-        '''
-        Initialize EnsembleModel.
+        ''' Initialize EnsembleModel.
+
         :param models: A list of `ClassifierWithLogits` to ensemble.
         :param weights: Weight for averaging these models' outputs.
         '''
@@ -28,8 +28,8 @@ class EnsembleRandomnessModel(Classifier):
     ''' Ensemble a random `ClassifierWithLogits` by averaging its output probabilities for each label. '''
 
     def __init__(self, model, n, session):
-        '''
-        Initialize EnsembleRandomnessModel.
+        ''' Initialize EnsembleRandomnessModel.
+
         :param model: A `ClassifierWithLogits` to ensemble.
         :param n: Number of samples per input.
         :param session: `tf.Session`.
