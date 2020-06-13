@@ -9,11 +9,12 @@ class DistortionBenchmark(object):
     ''' Distortion benchmark. '''
 
     def __init__(self, attack_name, model, batch_size, dataset_name, goal, distance_metric, session, init_distortion,
-                 confidence, search_steps=5, binsearch_steps=10, **kwargs):
-        ''' TODO
+                 confidence=0.0, search_steps=5, binsearch_steps=10,
+                 nes_lr_factor=None, nes_min_lr_factor=None, spsa_lr_factor=None, **kwargs):
+        ''' Initialize DistortionBenchmark.
 
-        :param attack_name: The attack method's name. All valid values are 'bim', 'pgd', 'mim', 'cw', 'deepfool', 'nes',
-            'spsa', 'nattack', 'boundary', 'evolutionary'.
+        :param attack_name: The attack method's name. All valid values are 'fgsm', 'bim', 'pgd', 'mim', 'cw',
+            'deepfool', 'nes', 'spsa', 'nattack'.
         :param model: The classifier model to run the attack on.
         :param batch_size: Batch size for attack.
         :param dataset_name: The dataset's name. All valid values are 'cifar10' and 'imagenet'.
@@ -22,7 +23,15 @@ class DistortionBenchmark(object):
         :param distance_metric: The adversarial distance metric for the attack method. All valid values are 'l_2' and
             'l_inf'.
         :param session: The `tf.Session` instance for the attack to run in.
-        :param init_distortion: TODO
+        :param init_distortion: Initial distortion. When doing search on attack magnitude, it is used as the starting
+            point.
+        :param confidence: For white box attacks, consider the adversarial as succeed only when the margin between top-2
+            logits is larger than the confidence.
+        :param search_steps: Search steps for finding an initial adversarial distortion.
+        :param binsearch_steps: Binary search steps for refining the initial adversarial distortion.
+        :param nes_lr_factor: The nes attack's `lr` parameter is set to `nes_lr_factor * magnitude`.
+        :param nes_min_lr_factor: The nes attack's `min_lr` parameter is set to `nes_min_lr_factor * magnitude`.
+        :param spsa_lr_factor: The spsa attack's `lr` parameter is set to `spsa_lr_factor * magnitude`.
         :param kwargs: Other keyword arguments to pass to the attack method's initialization function.
         '''
         self.init_distortion = init_distortion
@@ -45,6 +54,8 @@ class DistortionBenchmark(object):
         self.attack_name, self.dataset_name = attack_name, dataset_name
         self.batch_size, self.goal, self.distance_metric = batch_size, goal, distance_metric
         self.attack = load_attack(attack_name, init_kwargs)
+        self.nes_lr_factor, self.nes_min_lr_factor = nes_lr_factor, nes_min_lr_factor
+        self.spsa_lr_factor = spsa_lr_factor
 
         self._session = session
 
@@ -58,6 +69,9 @@ class DistortionBenchmark(object):
             self._run = self._run_binsearch_alpha
         elif self.attack_name in ('cw', 'deepfool'):
             self._run = self._run_optimized
+        elif self.attack_name in ('nes', 'spsa', 'nattack'):
+            self._logits = self.model.logits(self._xs_ph)
+            self._run = self._run_binsearch_nes_family
         else:
             raise NotImplementedError
 
@@ -281,6 +295,67 @@ class DistortionBenchmark(object):
                         rs.append(np.max(np.abs(x_adv - x)))
                     else:
                         rs.append(np.sqrt(np.sum((x_adv - x)**2)))
+
+        return np.array(rs)
+
+    def _run_binsearch_nes_family(self, dataset, logger):
+        ''' The `run` method for 'nes', 'spsa' & 'nattack'. '''
+        # the attack is already configured in `config()`
+        self.attack.config(logger=logger)
+
+        rs = []
+
+        iterator = dataset_to_iterator(dataset, self._session)
+        for n, (_, x, y, y_target) in enumerate(iterator):
+            found = False
+            lo = 0.0
+            hi = self.init_distortion
+            x_result = np.zeros_like(x)
+
+            for i in range(self.search_steps):
+                if self.attack_name == 'nes':
+                    self.attack.config(magnitude=hi, lr=hi * self.nes_lr_factor, min_lr=hi * self.nes_min_lr_factor)
+                elif self.attack_name == 'spsa':
+                    self.attack.config(magnitude=hi, lr=hi * self.spsa_lr_factor)
+                else:  # self.attack_name == 'nattack':
+                    self.attack.config(magnitude=hi)
+                x_adv = self.attack.attack(x, y, y_target)
+                succ = self.attack.details['success']
+                if logger:
+                    logger.info('search n={}: i={}, success={}'.format(n, i, succ))
+                if succ:
+                    found = True
+                    x_result = x_adv
+                    break
+                lo = hi
+                hi *= 2.0
+
+            for i in range(self.binsearch_steps):
+                mi = (lo + hi) / 2
+                if self.attack_name == 'nes':
+                    self.attack.config(magnitude=mi, lr=mi * self.nes_lr_factor, min_lr=mi * self.nes_min_lr_factor)
+                elif self.attack_name == 'spsa':
+                    self.attack.config(magnitude=mi, lr=mi * self.spsa_lr_factor)
+                else:  # self.attack_name == 'nattack':
+                    self.attack.config(magnitude=mi)
+                x_adv = self.attack.attack(x, y, y_target)
+                succ = self.attack.details['success']
+                if succ:
+                    hi = mi
+                    found = True
+                    x_result = x_adv
+                else:
+                    lo = mi
+                if logger:
+                    logger.info('binsearch n={}: i={}, success={}'.format(n, i, succ))
+
+            if not found:  # all attacks failed
+                rs.append(np.nan)
+            else:
+                if self.distance_metric == 'l_inf':
+                    rs.append(np.max(np.abs(x_result - x)))
+                else:
+                    rs.append(np.sqrt(np.sum((x_result - x)**2)))
 
         return np.array(rs)
 
