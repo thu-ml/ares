@@ -76,9 +76,8 @@ class DeepFool(BatchAttack):
             raise NotImplementedError
 
         # if the xs_adv is adversarial, we do early stop.
-        eqs = tf.equal(self.labels, self.ys_var)
-        self.flag = tf.reduce_any(eqs)
-        flags = tf.reshape(tf.cast(eqs, self.model.x_dtype) * (1 + self.overshot), (self.batch_size, 1))
+        self.eqs = tf.equal(self.labels, self.ys_var)
+        flags = tf.reshape(tf.cast(self.eqs, self.model.x_dtype) * (1 + self.overshot), (self.batch_size, 1))
         xs_adv_next = self.xs_adv_var + flags * rs
         xs_adv_next = tf.clip_by_value(xs_adv_next, self.model.x_min, self.model.x_max)
 
@@ -98,6 +97,7 @@ class DeepFool(BatchAttack):
             self.iteration_callback = iteration_callback(xs_model, xs_adv_model)
 
         self.iteration = None
+        self.details = {}
 
     def config(self, **kwargs):
         ''' (Re)config the attack.
@@ -120,11 +120,13 @@ class DeepFool(BatchAttack):
             for assign_grad in self.assign_grads:
                 self._session.run(assign_grad)
             self._session.run(self.update_xs_adv_step)
-            flag = self._session.run(self.flag)
+            succ = np.logical_not(self._session.run(self.eqs))
             if self.iteration_callback is not None:
                 yield self._session.run(self.iteration_callback)
-            if not flag:  # early stop
+            if np.all(succ):  # early stop
                 break
+
+        self.details['success'] = succ
 
         return self._session.run(self.xs_adv_var).reshape((self.batch_size,) + self.model.x_shape)
 
