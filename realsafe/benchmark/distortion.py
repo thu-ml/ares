@@ -9,7 +9,7 @@ class DistortionBenchmark(object):
     ''' Distortion benchmark. '''
 
     def __init__(self, attack_name, model, batch_size, dataset_name, goal, distance_metric, session, init_distortion,
-                 confidence, search_step=None, binsearch_step=None, **kwargs):
+                 confidence, search_steps=5, binsearch_steps=10, **kwargs):
         ''' TODO
 
         :param attack_name: The attack method's name. All valid values are 'bim', 'pgd', 'mim', 'cw', 'deepfool', 'nes',
@@ -27,8 +27,8 @@ class DistortionBenchmark(object):
         '''
         self.init_distortion = init_distortion
         self.confidence = confidence
-        self.search_step = 5
-        self.binsearch_step = 10
+        self.search_steps = search_steps
+        self.binsearch_steps = binsearch_steps
         self.distance_metric = distance_metric
 
         init_kwargs = dict()
@@ -56,6 +56,8 @@ class DistortionBenchmark(object):
         elif self.attack_name in ('bim', 'mim'):
             self._logits = self.model.logits(self._xs_ph)
             self._run = self._run_binsearch_alpha
+        elif self.attack_name in ('cw', 'deepfool'):
+            self._run = self._run_optimized
         else:
             raise NotImplementedError
 
@@ -89,8 +91,8 @@ class DistortionBenchmark(object):
             # The attack would be run with magnitude of:
             # [ init_distortion * 1, init_distortion * 2, ..., init_distortion * (2**search_steps) ].
             # The 2**search_steps here intends to archive the similar sematic as exponential search.
-            for i in range(2**self.search_step):
-                magnitude = self.init_distortion * (2**self.search_step - i)
+            for i in range(2**self.search_steps):
+                magnitude = self.init_distortion * (2**self.search_steps - i)
                 # config the attack
                 self.attack.config(magnitude=magnitude)
                 # run the attack
@@ -114,7 +116,7 @@ class DistortionBenchmark(object):
                 hi[succ] = magnitude
                 if logger:
                     begin = i_batch * len(xs)
-                    logger.info('linear search n={}..{}: i={}, succ={:.3f}'.format(
+                    logger.info('linsearch n={}..{}: i={}, success_rate={:.3f}'.format(
                         begin, begin + len(xs) - 1, i, succ.astype(np.float).mean()))
                 if np.all(succ):
                     break
@@ -122,7 +124,7 @@ class DistortionBenchmark(object):
             lo = hi - self.init_distortion
 
             # run binsearch to find the minimal adversarial magnitude
-            for i in range(self.binsearch_step):
+            for i in range(self.binsearch_steps):
                 # config the attack
                 mi = (lo + hi) / 2
                 self.attack.config(magnitude=mi)
@@ -149,7 +151,7 @@ class DistortionBenchmark(object):
                 lo[not_succ] = mi[not_succ]
                 if logger:
                     begin = i_batch * len(xs)
-                    logger.info('binary search n={}..{}: i={}, succ={:.3f}'.format(
+                    logger.info('binsearch n={}..{}: i={}, success_rate={:.3f}'.format(
                         begin, begin + len(xs) - 1, i, succ.astype(np.float).mean()))
 
             for x, x_result in zip(xs, xs_result):
@@ -185,7 +187,7 @@ class DistortionBenchmark(object):
             xs_result = np.zeros_like(xs)
 
             # use exponential search to find an adversarial magnitude
-            for i in range(self.search_step):
+            for i in range(self.search_steps):
                 # config the attack
                 self.attack.config(magnitude=hi, alpha=hi * 1.5 / iteration)
                 # run the attack
@@ -211,13 +213,13 @@ class DistortionBenchmark(object):
                 hi[not_succ] *= 2
                 if logger:
                     begin = i_batch * len(xs)
-                    logger.info('exponential search n={}..{}: i={}, succ={:.3f}'.format(
+                    logger.info('search n={}..{}: i={}, success_rate={:.3f}'.format(
                         begin, begin + len(xs) - 1, i, succ.astype(np.float).mean()))
                 if np.all(succ):
                     break
 
             # run binsearch to find the minimal adversarial magnitude
-            for i in range(self.binsearch_step):
+            for i in range(self.binsearch_steps):
                 # config the attack
                 mi = (lo + hi) / 2
                 self.attack.config(magnitude=mi, alpha=mi * 1.5 / iteration)
@@ -244,7 +246,7 @@ class DistortionBenchmark(object):
                 lo[not_succ] = mi[not_succ]
                 if logger:
                     begin = i_batch * len(xs)
-                    logger.info('binary search n={}..{}: i={}, succ={:.3f}'.format(
+                    logger.info('binsearch n={}..{}: i={}, success_rate={:.3f}'.format(
                         begin, begin + len(xs) - 1, i, succ.astype(np.float).mean()))
 
             for x, x_result in zip(xs, xs_result):
@@ -255,6 +257,30 @@ class DistortionBenchmark(object):
                         rs.append(np.max(np.abs(x_result - x)))
                     else:
                         rs.append(np.sqrt(np.sum((x_result - x)**2)))
+
+        return np.array(rs)
+
+    def _run_optimized(self, dataset, logger):
+        ''' The `run` method for 'cw' and 'deepfool'. '''
+        # the attack is already configured in `config()`
+        self.attack.config(logger=logger)
+
+        rs = []
+
+        iterator = dataset_to_iterator(dataset.batch(self.batch_size), self._session)
+        for i_batch, (_, xs, ys, ys_target) in enumerate(iterator):
+            if logger:
+                begin = i_batch * len(xs)
+                logger.info('n={}..{}: i={}'.format(begin, begin + len(xs) - 1, i_batch))
+            xs_adv = self.attack.batch_attack(xs, ys, ys_target)
+            for x, x_adv, success in zip(xs, xs_adv, self.attack.details['success']):
+                if not success:
+                    rs.append(np.nan)
+                else:
+                    if self.distance_metric == 'l_inf':
+                        rs.append(np.max(np.abs(x_adv - x)))
+                    else:
+                        rs.append(np.sqrt(np.sum((x_adv - x)**2)))
 
         return np.array(rs)
 
