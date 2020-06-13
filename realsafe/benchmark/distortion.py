@@ -116,6 +116,8 @@ class DistortionBenchmark(object):
                     begin = i_batch * len(xs)
                     logger.info('linear search n={}..{}: i={}, succ={:.3f}'.format(
                         begin, begin + len(xs) - 1, i, succ.astype(np.float).mean()))
+                if np.all(succ):
+                    break
 
             lo = hi - self.init_distortion
 
@@ -211,6 +213,8 @@ class DistortionBenchmark(object):
                     begin = i_batch * len(xs)
                     logger.info('exponential search n={}..{}: i={}, succ={:.3f}'.format(
                         begin, begin + len(xs) - 1, i, succ.astype(np.float).mean()))
+                if np.all(succ):
+                    break
 
             # run binsearch to find the minimal adversarial magnitude
             for i in range(self.binsearch_step):
