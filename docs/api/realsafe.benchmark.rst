@@ -33,6 +33,14 @@ realsafe.benchmark.iteration\_cli module
    :undoc-members:
    :show-inheritance:
 
+realsafe.benchmark.distortion\_cli module
+----------------------------------------
+
+.. automodule:: realsafe.benchmark.distortion_cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 realsafe.benchmark.attack\_cli module
 -------------------------------------
 

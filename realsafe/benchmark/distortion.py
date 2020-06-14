@@ -8,7 +8,7 @@ from realsafe.dataset import dataset_to_iterator
 class DistortionBenchmark(object):
     ''' Distortion benchmark. '''
 
-    def __init__(self, attack_name, model, batch_size, goal, distance_metric, session, init_distortion,
+    def __init__(self, attack_name, model, batch_size, goal, distance_metric, session, distortion,
                  confidence=0.0, search_steps=5, binsearch_steps=10,
                  nes_lr_factor=None, nes_min_lr_factor=None, spsa_lr_factor=None, **kwargs):
         ''' Initialize DistortionBenchmark.
@@ -22,8 +22,7 @@ class DistortionBenchmark(object):
         :param distance_metric: The adversarial distance metric for the attack method. All valid values are 'l_2' and
             'l_inf'.
         :param session: The `tf.Session` instance for the attack to run in.
-        :param init_distortion: Initial distortion. When doing search on attack magnitude, it is used as the starting
-            point.
+        :param distortion: Initial distortion. When doing search on attack magnitude, it is used as the starting point.
         :param confidence: For white box attacks, consider the adversarial as succeed only when the margin between top-2
             logits is larger than the confidence.
         :param search_steps: Search steps for finding an initial adversarial distortion.
@@ -33,7 +32,7 @@ class DistortionBenchmark(object):
         :param spsa_lr_factor: The spsa attack's `lr` parameter is set to `spsa_lr_factor * magnitude`.
         :param kwargs: Other keyword arguments to pass to the attack method's initialization function.
         '''
-        self.init_distortion = init_distortion
+        self.init_distortion = distortion
         self.confidence = confidence
         self.search_steps = search_steps
         self.binsearch_steps = binsearch_steps
@@ -284,7 +283,7 @@ class DistortionBenchmark(object):
         for i_batch, (_, xs, ys, ys_target) in enumerate(iterator):
             if logger:
                 begin = i_batch * len(xs)
-                logger.info('n={}..{}: i={}'.format(begin, begin + len(xs) - 1, i_batch))
+                logger.info('n={}..{}'.format(begin, begin + len(xs) - 1))
             xs_adv = self.attack.batch_attack(xs, ys, ys_target)
             for x, x_adv, success in zip(xs, xs_adv, self.attack.details['success']):
                 if not success:
