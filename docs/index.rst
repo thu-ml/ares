@@ -1,17 +1,16 @@
-.. realsafe documentation master file, created by
-   sphinx-quickstart on Fri Jun 12 11:42:10 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to realsafe's documentation!
+Welcome to RealSafe's documentation!
 ====================================
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: API Docs
 
-   realsafe
-
+   api/realsafe.model
+   api/realsafe.loss
+   api/realsafe.attack
+   api/realsafe.defense
+   api/realsafe.benchmark
+   api/realsafe.dataset
 
 Indices and tables
 ==================

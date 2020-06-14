@@ -1,9 +1,6 @@
 realsafe.dataset package
 ========================
 
-Submodules
-----------
-
 realsafe.dataset.cifar10 module
 -------------------------------
 
@@ -24,15 +21,6 @@ realsafe.dataset.utils module
 -----------------------------
 
 .. automodule:: realsafe.dataset.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: realsafe.dataset
    :members:
    :undoc-members:
    :show-inheritance:

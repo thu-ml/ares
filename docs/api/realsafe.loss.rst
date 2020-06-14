@@ -1,9 +1,6 @@
 realsafe.loss package
 =====================
 
-Submodules
-----------
-
 realsafe.loss.base module
 -------------------------
 
@@ -24,15 +21,6 @@ realsafe.loss.cw module
 -----------------------
 
 .. automodule:: realsafe.loss.cw
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: realsafe.loss
    :members:
    :undoc-members:
    :show-inheritance:

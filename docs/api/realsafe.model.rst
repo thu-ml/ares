@@ -1,9 +1,6 @@
 realsafe.model package
 ======================
 
-Submodules
-----------
-
 realsafe.model.base module
 --------------------------
 
@@ -32,15 +29,6 @@ realsafe.model.pytorch\_wrapper module
 --------------------------------------
 
 .. automodule:: realsafe.model.pytorch_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: realsafe.model
    :members:
    :undoc-members:
    :show-inheritance:
