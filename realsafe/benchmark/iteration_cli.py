@@ -10,7 +10,7 @@ if __name__ == '__main__':
     from realsafe.model.loader import load_model_from_path
     from realsafe.benchmark.iteration import IterationBenchmark
 
-    PARSER = argparse.ArgumentParser(description='Run attack on a classifier.')
+    PARSER = argparse.ArgumentParser(description='Run iteration benchmark on a classifier.')
 
     PARSER.add_argument(
         '--method', help='Attack method.', required=True,

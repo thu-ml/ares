@@ -1,14 +1,14 @@
 import numpy as np
 import tensorflow as tf
 
-from realsafe.benchmark.utils import load_attack, gen_starting_points
+from realsafe.benchmark.utils import load_attack
 from realsafe.dataset import dataset_to_iterator
 
 
 class DistortionBenchmark(object):
     ''' Distortion benchmark. '''
 
-    def __init__(self, attack_name, model, batch_size, dataset_name, goal, distance_metric, session, init_distortion,
+    def __init__(self, attack_name, model, batch_size, goal, distance_metric, session, init_distortion,
                  confidence=0.0, search_steps=5, binsearch_steps=10,
                  nes_lr_factor=None, nes_min_lr_factor=None, spsa_lr_factor=None, **kwargs):
         ''' Initialize DistortionBenchmark.
@@ -17,7 +17,6 @@ class DistortionBenchmark(object):
             'deepfool', 'nes', 'spsa', 'nattack'.
         :param model: The classifier model to run the attack on.
         :param batch_size: Batch size for attack.
-        :param dataset_name: The dataset's name. All valid values are 'cifar10' and 'imagenet'.
         :param goal: The adversarial goal for the attack method. All valid values are 't' for targeted attack, 'tm' for
             targeted missclassification attack, and 'ut' for untargeted attack.
         :param distance_metric: The adversarial distance metric for the attack method. All valid values are 'l_2' and
@@ -51,7 +50,7 @@ class DistortionBenchmark(object):
             init_kwargs[k] = v
 
         self.model = model
-        self.attack_name, self.dataset_name = attack_name, dataset_name
+        self.attack_name = attack_name
         self.batch_size, self.goal, self.distance_metric = batch_size, goal, distance_metric
         self.attack = load_attack(attack_name, init_kwargs)
         self.nes_lr_factor, self.nes_min_lr_factor = nes_lr_factor, nes_min_lr_factor
@@ -64,7 +63,7 @@ class DistortionBenchmark(object):
         if self.attack_name == 'fgsm':
             self._logits = self.model.logits(self._xs_ph)
             self._run = self._run_binsearch
-        elif self.attack_name in ('bim', 'mim'):
+        elif self.attack_name in ('bim', 'pgd', 'mim'):
             self._logits = self.model.logits(self._xs_ph)
             self._run = self._run_binsearch_alpha
         elif self.attack_name in ('cw', 'deepfool'):
@@ -180,7 +179,7 @@ class DistortionBenchmark(object):
         return np.array(rs)
 
     def _run_binsearch_alpha(self, dataset, logger):
-        ''' The `run` method for 'bim' and 'mim'. '''
+        ''' The `run` method for 'bim', 'pgd' and 'mim'. '''
         # the attack is already configured in `config()`
         iteration = self.attack.iteration
 
