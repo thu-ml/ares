@@ -9,8 +9,8 @@ from realsafe.loss import CWLoss
 class CW(BatchAttack):
     ''' Carlini & Wagner Attack (C&W). A white-box iterative optimization-based method. Require a differentiable logits.
 
-    - Supported distance metric: `l_2`.
-    - Supported goal: `t`, `tm`, `ut`.
+    - Supported distance metric: ``l_2``.
+    - Supported goal: ``t``, ``tm``, ``ut``.
     - References: https://arxiv.org/pdf/1608.04644.pdf.
     '''
 
@@ -18,14 +18,14 @@ class CW(BatchAttack):
                  cw_loss_c=99999.0, confidence=0.0, learning_rate=0.01):
         ''' Initialize CW.
 
-        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
-        :param batch_size: Batch size for the `batch_attack()` method.
-        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
-        :param cw_loss_c: The `c` parameter for `realsafe.loss.CWLoss`.
+        :param model: The model to attack. A ``realsafe.model.ClassifierWithLogits`` instance.
+        :param batch_size: Batch size for the ``batch_attack()`` method.
+        :param goal: Adversarial goals. All supported values are ``'t'``, ``'tm'``, and ``'ut'``.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
+        :param cw_loss_c: The ``c`` parameter for ``realsafe.loss.CWLoss``.
         :param confidence: The minimum margin between the target logit and the second largest logit that we consider the
             example as adversarial.
-        :param learning_rate: Learning rate for the `AdamOptimizer`.
+        :param learning_rate: Learning rate for the ``AdamOptimizer``.
         '''
         self.model, self.batch_size, self._session = model, batch_size, session
         self.goal, self.distance_metric = goal, distance_metric
@@ -84,7 +84,7 @@ class CW(BatchAttack):
         ''' (Re)config the attack.
 
         :param cs: Initial c, could be either a float number or a numpy float number array with shape of
-            `(self.batch_size,)`.
+            ``(self.batch_size,)``.
         :param iteration: An integer, represent iteration count for each search step and binary search step.
         :param search_steps: An integer, the number of times for running initial search for c before binary search.
         :param binsearch_steps: An integer, the number of times for running binary search on c.

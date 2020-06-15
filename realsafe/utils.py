@@ -4,8 +4,8 @@ from urllib.request import urlretrieve
 
 
 def get_res_path(path):
-    ''' Get resource's full path. By default, all resources are downloaded into `~/.realsafe`. This location could be
-    override by the `REALSAFE_RES_DIR` environment variable.
+    ''' Get resource's full path. By default, all resources are downloaded into ``~/.realsafe``. This location could be
+    override by the ``REALSAFE_RES_DIR`` environment variable.
     '''
     prefix = os.environ.get('REALSAFE_RES_DIR')
     if prefix is None:
@@ -14,7 +14,7 @@ def get_res_path(path):
 
 
 def download_res(url, filename, show_progress_bar=True):
-    ''' Download resource at `url` and save it to `path`. If `show_progress_bar` is true, a progress bar would be
+    ''' Download resource at ``url`` and save it to ``path``. If ``show_progress_bar`` is true, a progress bar would be
     displayed.
     '''
     hook = None if not show_progress_bar else _download_res_tqdm_hook(tqdm(unit='B', unit_scale=True))

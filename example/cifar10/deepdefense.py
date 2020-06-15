@@ -36,7 +36,7 @@ def download(model_path):
     tar_path = os.path.abspath(os.path.join(model_path, 'mnist-cifar10-data-model.tar'))
     if not os.path.exists(mat_path):
         if not os.path.exists(os.path.dirname(tar_path)):
-            os.makedirs(os.path.dirname(tar_path))
+            os.makedirs(os.path.dirname(tar_path), exist_ok=True)
         if not os.path.exists(tar_path):
             print('Please download "mnist-cifar10-data-model.tar" from ' +
                   '"https://drive.google.com/open?id=15xoZ-LUbc9GZpTlxmCJmvL_DR2qYEu2J", ' +

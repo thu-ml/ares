@@ -22,10 +22,10 @@ ATTACKS = {
 
 def load_attack(attack_name, init_kwargs):
     ''' Load attack method by name. The initialization function for the attack would be called by finding necessary
-    parameters from `init_kwargs`.
+    parameters from ``init_kwargs``.
 
-    :param attack_name: The attack method's name. All valid values are 'fgsm', 'bim', 'pgd', 'mim', 'cw', 'deepfool',
-        'nes', 'spsa', 'nattack', 'boundary', 'evolutionary'.
+    :param attack_name: The attack method's name. All valid values are ``'fgsm'``, ``'bim'``, ``'pgd'``, ``'mim'``,
+        ``'cw'``, ``'deepfool'``, ``'nes'``, ``'spsa'``, ``'nattack'``, ``'boundary'``, ``'evolutionary'``.
     :param init_kwargs: Keyword arguments for initialize the attack.
     '''
     kwargs = {}
@@ -44,8 +44,8 @@ def gen_starting_points(model, ys, ys_target, goal, dataset_name, session, pred_
     :param ys: True labels.
     :param ys_target: Targetted labels.
     :param goal: Adversarial goal.
-    :param dataset_name: The dataset's name. All valid values are 'cifar10' and 'imagenet'.
-    :param session: `tf.Session` for loading dataset.
+    :param dataset_name: The dataset's name. All valid values are ``'cifar10'`` and ``'imagenet'``.
+    :param session: ``tf.Session`` for loading dataset.
     :param pred_fn: A function which accepts a batch of model inputs as a numpy array and returns the model's
         predictions.
     :param cache: A cache for reusing generated starting points. A dictionary. Same cache shall not be shared between

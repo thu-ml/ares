@@ -8,8 +8,8 @@ from realsafe.attack.utils import ConfigVar, Expectation, clip_eta_batch, clip_e
 class NAttack(Attack):
     ''' NAttack. A black-box constraint-based method. It is motivated by NES.
 
-    - Supported distance metric: `l_2`, `l_inf`.
-    - Supported goal: `t`, `tm`, `ut`.
+    - Supported distance metric: ``l_2``, ``l_inf``.
+    - Supported goal: ``t``, ``tm``, ``ut``.
     - References: https://arxiv.org/abs/1905.00441.
     '''
 
@@ -17,15 +17,15 @@ class NAttack(Attack):
                  samples_batch_size=None, init_distortion=0.001, dimension_reduction=None):
         ''' Initialize NAttack.
 
-        :param model: The model to attack. A `realsafe.model.Classifier` instance.
-        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
-        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
-        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param model: The model to attack. A ``realsafe.model.Classifier`` instance.
+        :param loss: The loss function to optimize. A ``realsafe.loss.Loss`` instance.
+        :param goal: Adversarial goals. All supported values are ``'t'``, ``'tm'``, and ``'ut'``.
+        :param distance_metric: Adversarial distance metric. All supported values are ``'l_2'`` and ``'l_inf'``.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
         :param samples_per_draw: Number of points to sample for each gradient estimation.
         :param samples_batch_size: Batch size for sampling.
         :param init_distortion: Initial distortion for the Gaussian distribution.
-        :param dimension_reduction: `(height, width)`.
+        :param dimension_reduction: ``(height, width)``.
         '''
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric

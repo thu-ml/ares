@@ -16,3 +16,7 @@ def load(session):
 @randomization()
 class InceptionV3Rand(inception_v3.InceptionV3):
     pass
+
+
+if __name__ == '__main__':
+    inception_v3.download(MODEL_PATH)

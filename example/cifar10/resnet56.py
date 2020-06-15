@@ -17,7 +17,7 @@ def load(session):
 def download(model_path):
     if not os.path.exists(model_path):
         if not os.path.exists(os.path.dirname(model_path)):
-            os.makedirs(os.path.dirname(model_path))
+            os.makedirs(os.path.dirname(model_path), exist_ok=True)
         download_res('http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/resnet56-cifar.ckpt', model_path)
 
 

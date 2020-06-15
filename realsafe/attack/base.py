@@ -6,9 +6,10 @@ from abc import ABCMeta, abstractmethod
 class BatchAttack(metaclass=ABCMeta):
     ''' An abstract interface for attack methods which support attacking a batch of input at the same time.
 
-    All the graph construction should be done in the `__init__()` method. The `config()` method shall not create new
+    All the graph construction should be done in the ``__init__()`` method. The ``config()`` method shall not create new
     tensorflow graph node, since it might be invoked lots of times during running benchmarks. If creating new graph node
-    inside the `config()` method, large memory leakage might occur after calling this method tens of thousands of times.
+    inside the ``config()`` method, large memory leakage might occur after calling this method tens of thousands of
+    times.
     '''
 
     @abstractmethod
@@ -25,18 +26,20 @@ class BatchAttack(metaclass=ABCMeta):
         ''' Generate adversarial examples from a batch of examples.
 
         :param xs: The original examples.
-        :param ys: The original examples' ground truth labels, could be `None`.
-        :param ys_target: The targeted labels, could be `None`.
-        :return: Adversarial examples. Other detail information could be returned by storing in its `details` property.
+        :param ys: The original examples' ground truth labels, could be ``None``.
+        :param ys_target: The targeted labels, could be ``None``.
+        :return: Adversarial examples. Other detail information could be returned by storing in its ``details``
+            property.
         '''
 
 
 class Attack(metaclass=ABCMeta):
     ''' An abstract interface for attack methods which support only attacking one input at the same time.
 
-    All the graph construction should be done in the `__init__()` method. The `config()` method shall not create new
+    All the graph construction should be done in the ``__init__()`` method. The ``config()`` method shall not create new
     tensorflow graph node, since it might be invoked lots of times during running benchmarks. If creating new graph node
-    inside the `config()` method, large memory leakage might occur after calling this method tens of thousands of times.
+    inside the ``config()`` method, large memory leakage might occur after calling this method tens of thousands of
+    times.
     '''
 
     @abstractmethod
@@ -53,7 +56,7 @@ class Attack(metaclass=ABCMeta):
         ''' Generate adversarial example from one example.
 
         :param x: The original example.
-        :param y: The original example's ground truth label, could be `None`.
-        :param y_target: The targeted label, could be `None`.
-        :return: Adversarial example. Other detail information could be returned by storing in its `details` property.
+        :param y: The original example's ground truth label, could be ``None``.
+        :param y_target: The targeted label, could be ``None``.
+        :return: Adversarial example. Other detail information could be returned by storing in its ``details`` property.
         '''

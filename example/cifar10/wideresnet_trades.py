@@ -24,7 +24,8 @@ def load(_):
     return model
 
 
-@pytorch_classifier_with_logits(10, 0.0, 1.0, (32, 32, 3), tf.float32, tf.int32)
+@pytorch_classifier_with_logits(n_class=10, x_min=0.0, x_max=1.0,
+                                x_shape=(32, 32, 3), x_dtype=tf.float32, y_dtype=tf.int32)
 class WideResNet_TRADES(torch.nn.Module):
     def __init__(self):
         torch.nn.Module.__init__(self)
@@ -44,6 +45,6 @@ class WideResNet_TRADES(torch.nn.Module):
 if __name__ == '__main__':
     if not os.path.exists(MODEL_PATH):
         if not os.path.exists(os.path.dirname(MODEL_PATH)):
-            os.makedirs(os.path.dirname(MODEL_PATH))
+            os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
         url = 'https://drive.google.com/file/d/10sHvaXhTNZGz618QmD5gSOAjO3rMzV33/view'
         print('Please download "{}" to "{}".'.format(url, MODEL_PATH))

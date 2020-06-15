@@ -11,16 +11,16 @@ class AttackBenchmark(object):
     def __init__(self, attack_name, model, batch_size, dataset_name, goal, distance_metric, session, **kwargs):
         ''' Initialize AttackBenchmark.
 
-        :param attack_name: The attack method's name. All valid values are 'fgsm', 'bim', 'pgd', 'mim', 'cw',
-            'deepfool', 'nes', 'spsa', 'nattack', 'boundary', 'evolutionary'.
+        :param attack_name: The attack method's name. All valid values are ``'fgsm'``, ``'bim'``, ``'pgd'``, ``'mim'``,
+            ``'cw'``, ``'deepfool'``, ``'nes'``, ``'spsa'``, ``'nattack'``, ``'boundary'``, ``'evolutionary'``.
         :param model: The classifier model to run the attack on.
         :param batch_size: Batch size for attack.
-        :param dataset_name: The dataset's name. All valid values are 'cifar10' and 'imagenet'.
-        :param goal: The adversarial goal for the attack method. All valid values are 't' for targeted attack, 'tm' for
-            targeted missclassification attack, and 'ut' for untargeted attack.
-        :param distance_metric: The adversarial distance metric for the attack method. All valid values are 'l_2' and
-            'l_inf'.
-        :param session: The `tf.Session` instance for the attack to run in.
+        :param dataset_name: The dataset's name. All valid values are ``'cifar10'`` and ``'imagenet'``.
+        :param goal: The adversarial goal for the attack method. All valid values are ``'t'`` for targeted attack,
+            ``'tm'`` for targeted missclassification attack, and ``'ut'`` for untargeted attack.
+        :param distance_metric: The adversarial distance metric for the attack method. All valid values are ``'l_2'``
+            and ``'l_inf'``.
+        :param session: The ``tf.Session`` instance for the attack to run in.
         :param kwargs: Other keyword arguments to pass to the attack method's initialization function.
         '''
         init_kwargs = dict()
@@ -44,14 +44,14 @@ class AttackBenchmark(object):
     def config(self, **kwargs):
         ''' (Re)config the attack.
 
-        :param config_kwargs: The key word arguments for the attack method's `config()` method.
+        :param kwargs: The key word arguments for the attack method's ``config()`` method.
         '''
         self.attack.config(**kwargs)
 
     def run(self, dataset, logger):
         ''' Run the attack on the dataset.
 
-        :param dataset: A `tf.data.Dataset` instance, whose first element is the unique identifier for the data point,
+        :param dataset: A ``tf.data.Dataset`` instance, whose first element is the unique identifier for the data point,
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.
         :param logger: A standard logger.

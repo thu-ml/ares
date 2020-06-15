@@ -13,23 +13,23 @@ class DistortionBenchmark(object):
                  nes_lr_factor=None, nes_min_lr_factor=None, spsa_lr_factor=None, **kwargs):
         ''' Initialize DistortionBenchmark.
 
-        :param attack_name: The attack method's name. All valid values are 'fgsm', 'bim', 'pgd', 'mim', 'cw',
-            'deepfool', 'nes', 'spsa', 'nattack'.
+        :param attack_name: The attack method's name. All valid values are ``'fgsm'``, ``'bim'``, ``'pgd'``, ``'mim'``,
+            ``'cw'``, ``'deepfool'``, ``'nes'``, ``'spsa'``, ``'nattack'``.
         :param model: The classifier model to run the attack on.
         :param batch_size: Batch size for attack.
-        :param goal: The adversarial goal for the attack method. All valid values are 't' for targeted attack, 'tm' for
-            targeted missclassification attack, and 'ut' for untargeted attack.
-        :param distance_metric: The adversarial distance metric for the attack method. All valid values are 'l_2' and
-            'l_inf'.
-        :param session: The `tf.Session` instance for the attack to run in.
+        :param goal: The adversarial goal for the attack method. All valid values are ``'t'`` for targeted attack,
+            ``'tm'`` for targeted missclassification attack, and ``'ut'`` for untargeted attack.
+        :param distance_metric: The adversarial distance metric for the attack method. All valid values are ``'l_2'``
+            and ``'l_inf'``.
+        :param session: The ``tf.Session`` instance for the attack to run in.
         :param distortion: Initial distortion. When doing search on attack magnitude, it is used as the starting point.
         :param confidence: For white box attacks, consider the adversarial as succeed only when the margin between top-2
             logits is larger than the confidence.
         :param search_steps: Search steps for finding an initial adversarial distortion.
         :param binsearch_steps: Binary search steps for refining the initial adversarial distortion.
-        :param nes_lr_factor: The nes attack's `lr` parameter is set to `nes_lr_factor * magnitude`.
-        :param nes_min_lr_factor: The nes attack's `min_lr` parameter is set to `nes_min_lr_factor * magnitude`.
-        :param spsa_lr_factor: The spsa attack's `lr` parameter is set to `spsa_lr_factor * magnitude`.
+        :param nes_lr_factor: The nes attack's ``lr`` parameter is set to ``nes_lr_factor * magnitude``.
+        :param nes_min_lr_factor: The nes attack's ``min_lr`` parameter is set to ``nes_min_lr_factor * magnitude``.
+        :param spsa_lr_factor: The spsa attack's ``lr`` parameter is set to ``spsa_lr_factor * magnitude``.
         :param kwargs: Other keyword arguments to pass to the attack method's initialization function.
         '''
         self.init_distortion = distortion
@@ -76,12 +76,12 @@ class DistortionBenchmark(object):
     def config(self, **kwargs):
         ''' (Re)config the attack method.
 
-        :param kwargs: The key word arguments for the attack method's `config()` method.
+        :param kwargs: The key word arguments for the attack method's ``config()`` method.
         '''
         self.attack.config(**kwargs)
 
     def _run_binsearch(self, dataset, logger):
-        ''' The `run` method for 'fgsm'. '''
+        ''' The ``run`` method for fgsm. '''
         # the attack is already configured in `config()`
         rs = []
 
@@ -178,7 +178,7 @@ class DistortionBenchmark(object):
         return np.array(rs)
 
     def _run_binsearch_alpha(self, dataset, logger):
-        ''' The `run` method for 'bim', 'pgd' and 'mim'. '''
+        ''' The ``run`` method for bim, pgd and mim. '''
         # the attack is already configured in `config()`
         iteration = self.attack.iteration
 
@@ -273,7 +273,7 @@ class DistortionBenchmark(object):
         return np.array(rs)
 
     def _run_optimized(self, dataset, logger):
-        ''' The `run` method for 'cw' and 'deepfool'. '''
+        ''' The ``run`` method for cw and deepfool. '''
         # the attack is already configured in `config()`
         self.attack.config(logger=logger)
 
@@ -297,7 +297,7 @@ class DistortionBenchmark(object):
         return np.array(rs)
 
     def _run_binsearch_nes_family(self, dataset, logger):
-        ''' The `run` method for 'nes', 'spsa' & 'nattack'. '''
+        ''' The ``run`` method for nes, spsa & nattack. '''
         # the attack is already configured in `config()`
         self.attack.config(logger=logger)
 
@@ -360,10 +360,11 @@ class DistortionBenchmark(object):
     def run(self, dataset, logger=None):
         ''' Run the attack on the dataset.
 
-        :param dataset: A `tf.data.Dataset` instance, whose first element is the unique identifier for the data point,
+        :param dataset: A ``tf.data.Dataset`` instance, whose first element is the unique identifier for the data point,
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.
         :param logger: A standard logger.
-        :return:
+        :return: An numpy array of minimal distortion value for each input. If the attack method failed to generate
+            adversarial example, the value is set to ``np.nan``.
         '''
         return self._run(dataset, logger)

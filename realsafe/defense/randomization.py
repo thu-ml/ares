@@ -9,8 +9,8 @@ def randomize(xs, scale_min=0.875, pad_value=0.0):
     ''' Apply random rescaling and padding to xs.
 
     :param xs: A batch of inputs for some classifier.
-    :param scale_min: The random rescaling rate would be chosen between `scale_min` and 1.0.
-    :param pad_value: `constant_values` parameter for the `tf.pad` method.
+    :param scale_min: The random rescaling rate would be chosen between ``scale_min`` and 1.0.
+    :param pad_value: ``constant_values`` parameter for the ``tf.pad`` method.
     :return: A new tensor with same shape and dtype as xs.
     '''
     ratio = tf.random.uniform((), minval=scale_min, maxval=1.0)
@@ -31,8 +31,8 @@ def randomize(xs, scale_min=0.875, pad_value=0.0):
 def randomization(scale_min=0.875, pad_value=0.0):
     ''' A decorator to apply randomize rescaling and padding to input of the classifier.
 
-    :param scale_min: The random rescaling rate would be chosen between `scale_min` and 1.0.
-    :param pad_value: `constant_values` parameter for the `tf.pad` method.
+    :param scale_min: The random rescaling rate would be chosen between ``scale_min`` and 1.0.
+    :param pad_value: ``constant_values`` parameter for the ``tf.pad`` method.
     '''
     def args_fn(_):
         return (scale_min, pad_value)

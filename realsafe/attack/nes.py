@@ -9,8 +9,8 @@ class NES(Attack):
     ''' Natural Evolution Strategies (NES). A black-box constraint-based method. Use NES as gradient estimation
     technique and employ PGD with this estimated gradient to generate the adversarial example.
 
-    - Supported distance metric: `l_2`, `l_inf`.
-    - Supported goal: `t`, `tm`, `ut`.
+    - Supported distance metric: ``l_2``, ``l_inf``.
+    - Supported goal: ``t``, ``tm``, ``ut``.
     - References:
       1. https://arxiv.org/abs/1804.08598.
       2. http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf.
@@ -20,14 +20,14 @@ class NES(Attack):
                  dimension_reduction=None):
         ''' Initialize NES.
 
-        :param model: The model to attack. A `realsafe.model.Classifier` instance.
-        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
-        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
-        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param model: The model to attack. A ``realsafe.model.Classifier`` instance.
+        :param loss: The loss function to optimize. A ``realsafe.loss.Loss`` instance.
+        :param goal: Adversarial goals. All supported values are ``'t'``, ``'tm'``, and ``'ut'``.
+        :param distance_metric: Adversarial distance metric. All supported values are ``'l_2'`` and ``'l_inf'``.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
         :param samples_per_draw: Number of points to sample for each gradient estimation.
         :param samples_batch_size: Batch size for sampling.
-        :param dimension_reduction: `(height, width)`.
+        :param dimension_reduction: ``(height, width)``.
         '''
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric
@@ -101,7 +101,7 @@ class NES(Attack):
         :param max_queries: Max number of queries, should be an integer.
         :param sigma: Sampling variance (perturbation size) in gradient estimation, should be a float number.
         :param lr: Learning rate (step size) for each iteration, should be a float number.
-        :param min_lr: Min learning rate if `lr_tuning=True`, should be a float number.
+        :param min_lr: Min learning rate if ``lr_tuning=True``, should be a float number.
         :param lr_tuning: A bool, represents whether or not to decay the learning rate if the loss plateaus.
         :param plateau_length: An integer, represents the number of iterations when the loss plateaus to decay learning
             rate.

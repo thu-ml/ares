@@ -34,7 +34,7 @@ realsafe.benchmark.iteration\_cli module
    :show-inheritance:
 
 realsafe.benchmark.distortion\_cli module
-----------------------------------------
+-----------------------------------------
 
 .. automodule:: realsafe.benchmark.distortion_cli
    :members:

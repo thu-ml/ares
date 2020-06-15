@@ -9,22 +9,22 @@ class DeepFool(BatchAttack):
     ''' DeepFool. A white-box iterative optimization method. It needs to calculate the Jacobian of the logits with
     relate to input, so that it only applies to tasks with small number of classification class.
 
-    - Supported distance metric: `l_2`, `l_inf`.
-    - Supported goal: `ut`.
+    - Supported distance metric: ``l_2``, ``l_inf``.
+    - Supported goal: ``ut``.
     - References: https://arxiv.org/abs/1511.04599.
     '''
 
     def __init__(self, model, batch_size, distance_metric, session, iteration_callback=None):
         ''' Initialize DeepFool.
 
-        :param model: The model to attack. A `realsafe.model.ClassifierWithLogits` instance.
-        :param batch_size: Batch size for the `batch_attack()` method.
-        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
-        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
-            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
-            runned after each iteration, and its return value would be yielded back to the caller. By default,
-            `iteration_callback` is `None`.
+        :param model: The model to attack. A ``realsafe.model.ClassifierWithLogits`` instance.
+        :param batch_size: Batch size for the ``batch_attack()`` method.
+        :param distance_metric: Adversarial distance metric. All supported values are ``'l_2'`` and ``'l_inf'``.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
+        :param iteration_callback: A function accept a ``xs`` ``tf.Tensor`` (the original examples) and a ``xs_adv``
+            ``tf.Tensor`` (the adversarial examples for ``xs``). During ``batch_attack()``, this callback function would
+            be runned after each iteration, and its return value would be yielded back to the caller. By default,
+            ``iteration_callback`` is ``None``.
         '''
         self.model, self.batch_size, self._session = model, batch_size, session
         self.overshot = tf.Variable(0.02)
@@ -111,8 +111,8 @@ class DeepFool(BatchAttack):
             self._session.run(self.setup_overshot, feed_dict={self.overshot_ph: kwargs['overshot']})
 
     def _batch_attack_generator(self, xs, ys, _):
-        ''' Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after
-        each iteration if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        ''' Attack a batch of examples. It is a generator which yields back ``iteration_callback()``'s return value
+        after each iteration if the ``iteration_callback`` is not ``None``, and returns the adversarial examples.
         '''
         self._session.run(self.setup, feed_dict={self.xs_ph: xs, self.ys_ph: ys})
 
@@ -133,9 +133,9 @@ class DeepFool(BatchAttack):
     def batch_attack(self, xs, ys=None, ys_target=None):
         ''' Attack a batch of examples.
 
-        :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
-            `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
-            each iteration and returns the generated adversarial examples.
+        :return: When the ``iteration_callback`` is ``None``, return the generated adversarial examples. When the
+            ``iteration_callback`` is not ``None``, return a generator, which yields back the callback's return value
+            after each iteration and returns the generated adversarial examples.
         '''
         g = self._batch_attack_generator(xs, ys, ys_target)
         if self.iteration_callback is None:

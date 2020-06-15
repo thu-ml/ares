@@ -9,8 +9,8 @@ class SPSA(Attack):
     ''' Simultaneous Perturbation Stochastic Approximation (SPSA). A black-box constraint-based method. Use SPSA as
     gradient estimation technique and employ Adam with this estimated gradient to generate the adversarial example.
 
-    - Supported distance metric: `l_2`, `l_inf`.
-    - Supported goal: `t`, `tm`, `ut`.
+    - Supported distance metric: ``l_2``, ``l_inf``.
+    - Supported goal: ``t``, ``tm``, ``ut``.
     - References: https://arxiv.org/abs/1802.05666.
     '''
 
@@ -18,14 +18,14 @@ class SPSA(Attack):
                  dimension_reduction=None):
         ''' Initialize SPSA.
 
-        :param model: The model to attack. A `realsafe.model.Classifier` instance.
-        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
-        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
+        :param model: The model to attack. A ``realsafe.model.Classifier`` instance.
+        :param loss: The loss function to optimize. A ``realsafe.loss.Loss`` instance.
+        :param goal: Adversarial goals. All supported values are ``'t'``, ``'tm'``, and ``'ut'``.
         :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
         :param samples_per_draw: Number of points to sample for each gradient estimation.
         :param samples_batch_size: Batch size for sampling.
-        :param dimension_reduction: `(height, width)`.
+        :param dimension_reduction: ``(height, width)``.
         '''
         self.model, self._session = model, session
         self.goal, self.distance_metric = goal, distance_metric

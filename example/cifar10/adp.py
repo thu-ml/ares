@@ -21,7 +21,7 @@ def load(session):
 
 def download(model_path):
     if not os.path.exists(model_path):
-        os.makedirs(model_path)
+        os.makedirs(model_path, exist_ok=True)
     h5_name = 'cifar10_ResNet110v2_model.200.h5'
     h5_path = os.path.join(model_path, h5_name)
     if not os.path.exists(h5_path):

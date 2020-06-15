@@ -12,5 +12,5 @@ class Loss(metaclass=ABCMeta):
 
         :param xs: the input examples.
         :param ys: the input examples' labels.
-        :return: a tensor of float number with same shape as `ys`.
+        :return: a tensor of float number with same shape as ``ys``.
         '''

@@ -28,7 +28,7 @@ def download(model_path):
     if not os.path.exists(model_path):
         import tarfile
 
-        os.makedirs(model_path)
+        os.makedirs(model_path, exist_ok=True)
         download_res('http://download.tensorflow.org/models/ens4_adv_inception_v3_2017_08_18.tar.gz',
                      os.path.join(model_path, 'ens4_adv_inception_v3_2017_08_18.tar.gz'))
 
@@ -46,7 +46,7 @@ def download(model_path):
 
         import shutil
         shutil.rmtree(model_path)
-        os.makedirs(model_path)
+        os.makedirs(model_path, exist_ok=True)
 
         saver = tf.train.Saver()
         saver.save(session, os.path.join(model_path, 'ens4_adv_inception_v3.ckpt'))

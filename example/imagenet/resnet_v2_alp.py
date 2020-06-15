@@ -31,7 +31,7 @@ def download(model_path):
     url = 'http://download.tensorflow.org/models/adversarial_logit_pairing/imagenet64_alp025_2018_06_26.ckpt.tar.gz'
     if not os.path.exists(model_path + '.meta'):
         if not os.path.exists(os.path.dirname(model_path)):
-            os.makedirs(os.path.dirname(model_path))
+            os.makedirs(os.path.dirname(model_path), exist_ok=True)
         import tarfile
         download_res(url, model_path + '.tar.gz')
         t = tarfile.open(model_path + '.tar.gz')
