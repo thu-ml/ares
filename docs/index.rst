@@ -3,6 +3,13 @@ Welcome to RealSafe's documentation!
 
 .. toctree::
    :maxdepth: 1
+   :caption: Tutorials
+
+   tutorial/model
+   tutorial/benchmark
+
+.. toctree::
+   :maxdepth: 1
    :caption: API Docs
 
    api/realsafe.model
