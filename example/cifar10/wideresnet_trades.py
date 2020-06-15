@@ -24,7 +24,8 @@ def load(_):
     return model
 
 
-@pytorch_classifier_with_logits(10, 0.0, 1.0, (32, 32, 3), tf.float32, tf.int32)
+@pytorch_classifier_with_logits(n_class=10, x_min=0.0, x_max=1.0,
+                                x_shape=(32, 32, 3), x_dtype=tf.float32, y_dtype=tf.int32)
 class WideResNet_TRADES(torch.nn.Module):
     def __init__(self):
         torch.nn.Module.__init__(self)

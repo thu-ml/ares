@@ -9,7 +9,7 @@ class CrossEntropyLoss(Loss):
     def __init__(self, model):
         ''' Initialize CrossEntropyLoss.
 
-        :param model: An instance of `ClassifierWithLogits`.
+        :param model: An instance of ``ClassifierWithLogits``.
         '''
         self.model = model
 
@@ -25,7 +25,7 @@ class EnsembleCrossEntropyLoss(Loss):
     def __init__(self, models, weights):
         ''' Initialize EnsembleCrossEntropyLoss.
 
-        :param models: A list of `ClassifierWithLogits`.
+        :param models: A list of ``ClassifierWithLogits``.
         :param weights: Weights for ensemble these models.
         '''
         self.models, self.weights = models, weights
@@ -44,9 +44,9 @@ class EnsembleRandomnessCrossEntropyLoss(Loss):
     def __init__(self, model, n, session):
         ''' Initialize EnsembleRandomnessCrossEntropyLoss.
 
-        :param model: An instance of `ClassifierWithLogits`.
+        :param model: An instance of ``ClassifierWithLogits``.
         :param n: Number of samples to ensemble.
-        :param session: `tf.Session`.
+        :param session: ``tf.Session``.
         '''
         assert(n > 1)
 

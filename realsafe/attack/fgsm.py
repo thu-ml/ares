@@ -6,22 +6,22 @@ from realsafe.attack.utils import get_xs_ph, get_ys_ph, maybe_to_array, get_unit
 
 class FGSM(BatchAttack):
     ''' Fast Gradient Sign Method (FGSM). A white-box single-step constraint-based method. Require a differentiable loss
-    function and a `realsafe.model.Classifier` model.
+    function and a ``realsafe.model.Classifier`` model.
 
-    - Supported distance metric: `l_2`, `l_inf`.
-    - Supported goal: `t`, `tm`, `ut`.
+    - Supported distance metric: ``l_2``, ``l_inf``.
+    - Supported goal: ``t``, ``tm``, ``ut``.
     - References: https://arxiv.org/abs/1412.6572.
     '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session):
         ''' Initialize FGSM.
 
-        :param model: The model to attack. A `realsafe.model.Classifier` instance.
-        :param batch_size: Batch size for the `batch_attack()` method.
-        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
-        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
-        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
+        :param model: The model to attack. A ``realsafe.model.Classifier`` instance.
+        :param batch_size: Batch size for the ``batch_attack()`` method.
+        :param loss: The loss function to optimize. A ``realsafe.loss.Loss`` instance.
+        :param goal: Adversarial goals. All supported values are ``'t'``, ``'tm'``, and ``'ut'``.
+        :param distance_metric: Adversarial distance metric. All supported values are ``'l_2'`` and ``'l_inf'``.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
         '''
         self.model, self.batch_size, self._session = model, batch_size, session
         self.loss, self.goal, self.distance_metric = loss, goal, distance_metric
@@ -57,7 +57,7 @@ class FGSM(BatchAttack):
         ''' (Re)config the attack.
 
         :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
-            `(self.batch_size,)`.
+            ``(self.batch_size,)``.
         '''
         if 'magnitude' in kwargs:
             eps = maybe_to_array(kwargs['magnitude'], self.batch_size)

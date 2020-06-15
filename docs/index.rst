@@ -7,6 +7,7 @@ Welcome to RealSafe's documentation!
 
    tutorial/model
    tutorial/benchmark
+   tutorial/attack
 
 .. toctree::
    :maxdepth: 1

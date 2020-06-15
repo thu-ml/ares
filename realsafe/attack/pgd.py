@@ -7,26 +7,26 @@ from realsafe.attack.utils import maybe_to_array, uniform_l_2_noise, uniform_l_i
 
 class PGD(BIM):
     ''' Projected Gradient Descent (PGD). A white-box iterative constraint-based method. Require a differentiable loss
-    function and a `realsafe.model.Classifier` model.
+    function and a ``realsafe.model.Classifier`` model.
 
-    - Supported distance metric: `l_2`, `l_inf`.
-    - Supported goal: `t`, `tm`, `ut`.
+    - Supported distance metric: ``l_2``, ``l_inf``.
+    - Supported goal: ``t``, ``tm``, ``ut``.
     - References: https://arxiv.org/abs/1706.06083.
     '''
 
     def __init__(self, model, batch_size, loss, goal, distance_metric, session, iteration_callback=None):
         ''' Initialize PGD.
 
-        :param model: The model to attack. A `realsafe.model.Classifier` instance.
-        :param batch_size: Batch size for the `batch_attack()` method.
-        :param loss: The loss function to optimize. A `realsafe.loss.Loss` instance.
-        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
-        :param distance_metric: Adversarial distance metric. All supported values are 'l_2' and 'l_inf'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
-        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
-            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
-            runned after each iteration, and its return value would be yielded back to the caller. By default,
-            `iteration_callback` is `None`.
+        :param model: The model to attack. A ``realsafe.model.Classifier`` instance.
+        :param batch_size: Batch size for the ``batch_attack()`` method.
+        :param loss: The loss function to optimize. A ``realsafe.loss.Loss`` instance.
+        :param goal: Adversarial goals. All supported values are ``'t'``, ``'tm'``, and ``'ut'``.
+        :param distance_metric: Adversarial distance metric. All supported values are ``'l_2'`` and ``'l_inf'``.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
+        :param iteration_callback: A function accept a ``xs`` ``tf.Tensor`` (the original examples) and a ``xs_adv``
+            ``tf.Tensor`` (the adversarial examples for ``xs``). During ``batch_attack()``, this callback function would
+            be runned after each iteration, and its return value would be yielded back to the caller. By default,
+            ``iteration_callback`` is ``None``.
         '''
         super().__init__(model, batch_size, loss, goal, distance_metric, session, iteration_callback)
         # random init magnitude
@@ -51,11 +51,11 @@ class PGD(BIM):
         ''' (Re)config the attack.
 
         :param rand_init_magnitude: Random init max distortion, could be either a float number or a numpy float number
-            array with shape of `(self.batch_size,)`.
+            array with shape of ``(self.batch_size,)``.
         :param magnitude: Max distortion, could be either a float number or a numpy float number array with shape of
-            `(self.batch_size,)`.
+            ``(self.batch_size,)``.
         :param alpha: Step size for each iteration, could be either a float number or a numpy float number array with
-            shape of `(self.batch_size,)`.
+            shape of ``(self.batch_size,)``.
         :param iteration: Iteration count. An integer.
         '''
         super().config(**kwargs)

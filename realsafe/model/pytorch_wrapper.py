@@ -5,20 +5,20 @@ from realsafe.model.base import ClassifierWithLogits
 
 
 def pytorch_classifier_with_logits(n_class, x_min, x_max, x_shape, x_dtype, y_dtype):
-    ''' A decorator for wrapping a pytorch model class into a `ClassifierWithLogits`.
+    ''' A decorator for wrapping a pytorch model class into a ``ClassifierWithLogits``.
 
-    The parameters provide metadata for the classifier, which are passed to the `ClassifierWithLogits` interface. The
-    decorated pytorch class should be an instance of `torch.nn.Module`, which provides both forward and backward
-    capacity. However, due to some limitation (or bug) of `@tf.custom_gradient`, we cannot backpropagate multiple
-    gradients through the wrapped model in one `session.run()`, even though pytorch support this feature via the
-    `retain_graph` parameter.
+    The parameters provide metadata for the classifier, which are passed to the ``ClassifierWithLogits`` interface. The
+    decorated pytorch class should be an instance of ``torch.nn.Module``, which provides both forward and backward
+    capacity. However, due to some limitation (or bug) of ``@tf.custom_gradient``, we cannot backpropagate multiple
+    gradients through the wrapped model in one ``session.run()``, even though pytorch support this feature via the
+    ``retain_graph`` parameter.
 
-    :param n_class: A `int` number. Number of class of the classifier.
-    :param x_min: A `float` number. Min value for the classifier's input.
-    :param x_max: A `float` number. Max value for the classifier's input.
-    :param x_shape: A `tuple` of `int` numbers. The shape of the classifier's input.
-    :param x_dtype: A `tf.DType` instance. The data type of the classifier's input.
-    :param y_dtype: A `tf.DType` instance. The data type of the classifier's classification result.
+    :param n_class: A ``int`` number. Number of class of the classifier.
+    :param x_min: A ``float`` number. Min value for the classifier's input.
+    :param x_max: A ``float`` number. Max value for the classifier's input.
+    :param x_shape: A ``tuple`` of ``int`` numbers. The shape of the classifier's input.
+    :param x_dtype: A ``tf.DType`` instance. The data type of the classifier's input.
+    :param y_dtype: A ``tf.DType`` instance. The data type of the classifier's classification result.
     '''
     def decorator(nn_class):  # the inner decorator
         class Wrapper(ClassifierWithLogits):  # Wrapper class for the pytorch model class `nn_class`

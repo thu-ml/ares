@@ -12,23 +12,23 @@ from realsafe.attack.utils import split_trunks
 class Evolutionary(BatchAttack):
     ''' Evolutionary. A black-box decision-based method.
 
-    - Supported distance metric: `l_2`.
-    - Supported goal: `t`, `tm`, `ut`.
+    - Supported distance metric: ``l_2``.
+    - Supported goal: ``t``, ``tm``, ``ut``.
     - References: https://arxiv.org/abs/1904.04433.
     '''
 
     def __init__(self, model, batch_size, goal, session, dimension_reduction=None, iteration_callback=None):
         ''' Initialize Evolutionary.
 
-        :param model: The model to attack. A `realsafe.model.Classifier` instance.
-        :param batch_size: Batch size for the `batch_attack()` method.
-        :param goal: Adversarial goals. All supported values are 't', 'tm', and 'ut'.
-        :param session: The `tf.Session` to run the attack in. The `model` should be loaded into this session.
-        :param dimension_reduction: `(height, width)`.
-        :param iteration_callback: A function accept a `xs` `tf.Tensor` (the original examples) and a `xs_adv`
-            `tf.Tensor` (the adversarial examples for `xs`). During `batch_attack()`, this callback function would be
-            runned after each iteration, and its return value would be yielded back to the caller. By default,
-            `iteration_callback` is `None`.
+        :param model: The model to attack. A ``realsafe.model.Classifier`` instance.
+        :param batch_size: Batch size for the ``batch_attack()`` method.
+        :param goal: Adversarial goals. All supported values are ``'t'``, ``'tm'``, and ``'ut'``.
+        :param session: The ``tf.Session`` to run the attack in. The ``model`` should be loaded into this session.
+        :param dimension_reduction: ``(height, width)``.
+        :param iteration_callback: A function accept a ``xs`` ``tf.Tensor`` (the original examples) and a ``xs_adv``
+            ``tf.Tensor`` (the adversarial examples for ``xs``). During ``batch_attack()``, this callback function would
+            be runned after each iteration, and its return value would be yielded back to the caller. By default,
+            ``iteration_callback`` is ``None``.
         '''
         self.model, self.batch_size, self.goal, self._session = model, batch_size, goal, session
 
@@ -53,7 +53,7 @@ class Evolutionary(BatchAttack):
         ''' (Re)config the attack.
 
         :param starting_points: Starting points which are already adversarial. A numpy array with data type of
-            `self.x_dtype`, with shape of `(self.batch_size, *self.x_shape)`.
+            ``self.x_dtype``, with shape of ``(self.batch_size, *self.x_shape)``.
         :param max_queries: Max queries. An integer.
         :param mu: A hyper-parameter controlling the mean of the Gaussian distribution. A float number.
         :param sigma: A hyper-parameter controlling the variance of the Gaussian distribution. A float number.
@@ -84,8 +84,9 @@ class Evolutionary(BatchAttack):
             self.logger = kwargs['logger']
 
     def _batch_attack_generator(self, xs, ys, ys_target):
-        ''' Attack a batch of examples. It is a generator which yields back `iteration_callback()`'s return value after
-        each iteration (query) if the `iteration_callback` is not `None`, and returns the adversarial examples.
+        ''' Attack a batch of examples. It is a generator which yields back ``iteration_callback()``'s return value
+        after each iteration (query) if the ``iteration_callback`` is not ``None``, and returns the adversarial
+        examples.
         '''
         if self.iteration_callback is not None:
             self._session.run(self.setup_xs_var, feed_dict={self.xs_ph: xs})
@@ -174,9 +175,9 @@ class Evolutionary(BatchAttack):
     def batch_attack(self, xs, ys=None, ys_target=None):
         ''' Attack a batch of examples.
 
-        :return: When the `iteration_callback` is `None`, return the generated adversarial examples. When the
-            `iteration_callback` is not `None`, return a generator, which yields back the callback's return value after
-            each iteration and returns the generated adversarial examples.
+        :return: When the ``iteration_callback`` is ``None``, return the generated adversarial examples. When the
+            ``iteration_callback`` is not ``None``, return a generator, which yields back the callback's return value
+            after each iteration and returns the generated adversarial examples.
         '''
         g = self._batch_attack_generator(xs, ys, ys_target)
         if self.iteration_callback is None:

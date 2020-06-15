@@ -7,8 +7,8 @@ import importlib
 
 def load_model_from_path(path):
     '''
-    Load a python file at `path` as a model. A function `load(session)` should be defined inside the python file, which
-    load the model into the `session` and returns the model instance.
+    Load a python file at ``path`` as a model. A function ``load(session)`` should be defined inside the python file,
+    which load the model into the ``session`` and returns the model instance.
     '''
     path = os.path.abspath(path)
 

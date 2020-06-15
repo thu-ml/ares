@@ -7,12 +7,12 @@ from realsafe.model.base import Classifier
 
 
 class EnsembleModel(Classifier):
-    ''' Ensemble multiple `ClassifierWithLogits` by averaging theirs output probabilities for each label. '''
+    ''' Ensemble multiple ``ClassifierWithLogits`` by averaging theirs output probabilities for each label. '''
 
     def __init__(self, models, weights):
         ''' Initialize EnsembleModel.
 
-        :param models: A list of `ClassifierWithLogits` to ensemble.
+        :param models: A list of ``ClassifierWithLogits`` to ensemble.
         :param weights: Weight for averaging these models' outputs.
         '''
         super().__init__(models[0].n_class,
@@ -25,14 +25,14 @@ class EnsembleModel(Classifier):
 
 
 class EnsembleRandomnessModel(Classifier):
-    ''' Ensemble a random `ClassifierWithLogits` by averaging its output probabilities for each label. '''
+    ''' Ensemble a random ``ClassifierWithLogits`` by averaging its output probabilities for each label. '''
 
     def __init__(self, model, n, session):
         ''' Initialize EnsembleRandomnessModel.
 
-        :param model: A `ClassifierWithLogits` to ensemble.
+        :param model: A ``ClassifierWithLogits`` to ensemble.
         :param n: Number of samples per input.
-        :param session: `tf.Session`.
+        :param session: ``tf.Session``.
         '''
         super().__init__(model.n_class, model.x_min, model.x_max, model.x_shape, model.x_dtype, model.y_dtype)
         self.model = model

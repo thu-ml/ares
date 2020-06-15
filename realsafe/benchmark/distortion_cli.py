@@ -9,7 +9,7 @@ result:
    result = np.load('path/to/output.npy', allow_pickle=True).item()
 
 The result is an array of the minimal distortion value found by the attack method for each input. If the attack method
-failed to generate an adversarial example, the value is set to `np.nan`.
+failed to generate an adversarial example, the value is set to ``np.nan``.
 '''
 
 if __name__ == '__main__':
