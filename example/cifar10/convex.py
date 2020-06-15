@@ -40,7 +40,7 @@ def download(model_path):
     pth_path = os.path.join(model_path, 'cifar_resnet_2px.pth')
     if not os.path.exists(pth_path):
         if not os.path.exists(os.path.dirname(pth_path)):
-            os.makedirs(os.path.dirname(pth_path))
+            os.makedirs(os.path.dirname(pth_path), exist_ok=True)
         url = 'https://github.com/locuslab/convex_adversarial/blob/master/models_scaled/cifar_resnet_2px.pth?raw=true'
         download_res(url, pth_path)
 

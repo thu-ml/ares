@@ -39,7 +39,7 @@ def download(model_path):
     url = 'https://github.com/facebookresearch/ImageNet-Adversarial-Training/releases/download/v0.1/R152-Denoise.npz'
     if not os.path.exists(model_path):
         if not os.path.exists(os.path.dirname(model_path)):
-            os.makedirs(os.path.dirname(model_path))
+            os.makedirs(os.path.dirname(model_path), exist_ok=True)
         download_res(url, model_path)
 
 

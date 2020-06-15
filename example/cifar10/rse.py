@@ -30,7 +30,7 @@ def load(_):
 def download(model_path):
     pth_path = os.path.join(model_path, 'cifar10_vgg_rse.pth')
     if not os.path.exists(os.path.dirname(pth_path)):
-        os.makedirs(os.path.dirname(pth_path))
+        os.makedirs(os.path.dirname(pth_path), exist_ok=True)
     if not os.path.exists(pth_path):
         print('Please download "cifar10_vgg_rse.pth" from ' +
               '"https://drive.google.com/drive/folders/1uAP6q-fSADhlkx-YNBipPzv4KCvC_3_J?usp=sharing", ' +

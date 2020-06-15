@@ -72,5 +72,5 @@ if __name__ == '__main__':
 
     _ = load_data()
     if not os.path.exists(PATH_TARGET):
-        os.makedirs(os.path.dirname(PATH_TARGET))
+        os.makedirs(os.path.dirname(PATH_TARGET), exist_ok=True)
         download_res('https://ml.cs.tsinghua.edu.cn/~qian/realsafe/target.npy', PATH_TARGET)

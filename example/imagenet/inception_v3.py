@@ -34,7 +34,7 @@ def load(session):
 def download(model_path):
     if not os.path.exists(model_path):
         if not os.path.exists(os.path.dirname(model_path)):
-            os.makedirs(os.path.dirname(model_path))
+            os.makedirs(os.path.dirname(model_path), exist_ok=True)
         gz_path = os.path.join(os.path.dirname(model_path), 'inception_v3_2016_08_28.tar.gz')
         if not os.path.exists(gz_path):
             download_res('http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz', gz_path)

@@ -44,6 +44,6 @@ class WideResNet_TRADES(torch.nn.Module):
 if __name__ == '__main__':
     if not os.path.exists(MODEL_PATH):
         if not os.path.exists(os.path.dirname(MODEL_PATH)):
-            os.makedirs(os.path.dirname(MODEL_PATH))
+            os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
         url = 'https://drive.google.com/file/d/10sHvaXhTNZGz618QmD5gSOAjO3rMzV33/view'
         print('Please download "{}" to "{}".'.format(url, MODEL_PATH))
