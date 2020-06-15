@@ -1,13 +1,34 @@
 # RealSafe
 
-__RealSafe__ is a Python library for adversarial machine learning research focusing on benchmarking adversarial robustness on image classification correctly and efficiently.
+This repository contains the code for __RealSafe__, a Python library for adversarial machine learning research focusing on benchmarking adversarial robustness on image classification correctly and comprehensively.
 
-Feature overview:
+We benchmark the adversarial robustness using 15 attacks and 16 defenses under complete threat models, which is described in the following paper
+
+[Benchmarking Adversarial Robustness on Image Classification](http://openaccess.thecvf.com/content_CVPR_2020/papers/Dong_Benchmarking_Adversarial_Robustness_on_Image_Classification_CVPR_2020_paper.pdf) (CVPR 2020, __Oral__)
+
+[Yinpeng Dong](http://ml.cs.tsinghua.edu.cn/~yinpeng/), Qi-An Fu, Xiao Yang, [Tianyu Pang](http://ml.cs.tsinghua.edu.cn/~yinpeng/), [Hang Su](http://www.suhangss.me), Zihao Xiao, and [Jun Zhu](http://ml.cs.tsinghua.edu.cn/~jun/index.shtml).
+
+### Feature overview:
 
 - Built on TensorFlow, and support TensorFlow & PyTorch models with the same interface.
-- Support [many attacks](https://github.com/thu-ml/realsafe/tree/master/realsafe/attack).
+- Support [many attacks](https://github.com/thu-ml/realsafe/tree/master/realsafe/attack) in various threat models.
 - Provide ready-to-use pre-trained baseline models ([8 on ImageNet](https://github.com/thu-ml/realsafe/tree/master/example/imagenet) & [8 on CIFAR10](https://github.com/thu-ml/realsafe/tree/master/example/cifar10)).
 - Provide efficient & easy-to-use tools for benchmarking models.
+
+### Citation
+
+If you find RealSafe useful, you could cite our paper on benchmarking adversarial robustness using all models, all attacks & defenses supported in RealSafe. We provide a BibTeX entry of this paper below:
+
+```
+@inproceedings{dong2020benchmarking,
+  title={Benchmarking Adversarial Robustness on Image Classification},
+  author={Dong, Yinpeng and Fu, Qi-An and Yang, Xiao and Pang, Tianyu and Su, Hang and Xiao, Zihao and Zhu, Jun},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages={321--331},
+  year={2020}
+}
+```
+
 
 ## Installation
 
@@ -29,7 +50,9 @@ The Boundary attack and the Evolutionary attack require `mpi4py` and a working M
 
 By default, RealSafe would save datasets and model checkpoints under the `~/.realsafe` directory. You could override it by setting the `REALSAFE_RES_DIR` environment variable to an alternative location.
 
-We support 2 dataset. To download the CIFAR-10 dataset, please run:
+We support 2 datasets: CIFAR-10 and ImageNet. 
+
+To download the CIFAR-10 dataset, please run:
 
 ``` shell
 python3 realsafe/dataset/cifar10.py
@@ -43,14 +66,14 @@ python3 realsafe/dataset/imagenet.py
 
 for instructions.
 
-RealSafe include third party models' code in the `third_party/` directory as git submodules. Before you use these models, you need to initialize these submodules:
+RealSafe includes third party models' code in the `third_party/` directory as git submodules. Before you use these models, you need to initialize these submodules:
 
 ``` shell
 git submodule init
 git submodule update --depth 1
 ```
 
-The `example/cifar10` directory and `example/imagenet` directory include wrappers for these models. Run the model's `.py` file to download its checkpoint or view instructions for downloading. For example, if you want to download the ResNet56 model's checkpoint, please run:
+The `example/cifar10` directory and `example/imagenet` directories include wrappers for these models. Run the model's `.py` file to download its checkpoint or view instructions for downloading. For example, if you want to download the ResNet56 model's checkpoint, please run:
 
 ``` shell
 python3 example/cifar10/resnet56.py
@@ -72,17 +95,4 @@ This command would find the minimal adversarial distortion achieved using the MI
 
 For more examples and usages (e.g. how to define new models), please browse our documentation website mentioned before.
 
-## Citing RealSafe
-
-If you find RealSafe useful, you could cite our paper on benchmarking adversarial robustness using all models, all attacks & defenses supported in RealSafe. We provide a BibTeX entry of this paper below:
-
-```
-@InProceedings{Dong_2020_CVPR,
-  author = {Dong, Yinpeng and Fu, Qi-An and Yang, Xiao and Pang, Tianyu and Su, Hang and Xiao, Zihao and Zhu, Jun},
-  title = {Benchmarking Adversarial Robustness on Image Classification},
-  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
-  month = {June},
-  year = {2020}
-}
-```
 
