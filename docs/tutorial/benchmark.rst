@@ -4,7 +4,7 @@ Running Benchmarks
 Using Python Interface
 ----------------------
 
-Please read documentation for :doc:``../api/realsafe.benchmark``.
+Please read documentation for :doc:`../api/realsafe.benchmark`.
 
 The workflow would be like:
 
