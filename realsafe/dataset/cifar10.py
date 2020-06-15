@@ -67,4 +67,10 @@ def load_dataset(offset=0, label_dtype=tf.int32, load_target=False, target_label
 
 
 if __name__ == '__main__':
+    import os
+    from realsafe.utils import download_res
+
     _ = load_data()
+    if not os.path.exists(PATH_TARGET):
+        os.makedirs(os.path.dirname(PATH_TARGET))
+        download_res('https://ml.cs.tsinghua.edu.cn/~qian/realsafe/target.npy', PATH_TARGET)
