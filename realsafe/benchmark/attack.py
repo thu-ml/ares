@@ -44,7 +44,7 @@ class AttackBenchmark(object):
     def config(self, **kwargs):
         ''' (Re)config the attack.
 
-        :param config_kwargs: The key word arguments for the attack method's `config()` method.
+        :param kwargs: The key word arguments for the attack method's `config()` method.
         '''
         self.attack.config(**kwargs)
 

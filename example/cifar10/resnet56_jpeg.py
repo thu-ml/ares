@@ -15,3 +15,7 @@ def load(session):
 @jpeg_compression()
 class ResNet56_JPEG(resnet56.ResNet56):
     pass
+
+
+if __name__ == '__main__':
+    resnet56.download(MODEL_PATH)

@@ -364,6 +364,7 @@ class DistortionBenchmark(object):
             second element is the image, third element is the ground truth label. If the goal is 'tm' or 't', a forth
             element should be provided as the target label for the attack.
         :param logger: A standard logger.
-        :return:
+        :return: An numpy array of minimal distortion value for each input. If the attack method failed to generate
+            adversarial example, the value is set to `np.nan`.
         '''
         return self._run(dataset, logger)

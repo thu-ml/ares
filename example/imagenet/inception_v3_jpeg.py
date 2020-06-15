@@ -16,3 +16,7 @@ def load(session):
 @jpeg_compression(quality=75)
 class InceptionV3Jpeg(inception_v3.InceptionV3):
     pass
+
+
+if __name__ == '__main__':
+    inception_v3.download(MODEL_PATH)

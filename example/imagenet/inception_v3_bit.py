@@ -16,3 +16,7 @@ def load(session):
 @bit_depth_reduction(step_num=4, alpha=200)
 class InceptionV3Bit(inception_v3.InceptionV3):
     pass
+
+
+if __name__ == '__main__':
+    inception_v3.download(MODEL_PATH)

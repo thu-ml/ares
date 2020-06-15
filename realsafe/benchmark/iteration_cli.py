@@ -1,4 +1,22 @@
-''' Provide a command line tool to call IterationBenchmark directly. '''
+''' Provide a command line tool to call IterationBenchmark directly.
+
+The output file contains metadata of the benchmark (including full cmdline) and its result in a dictionary. To load the
+result:
+
+.. code-block:: python
+
+   import numpy as np
+   result = np.load('path/to/output.npy', allow_pickle=True).item()
+
+The result's format is:
+
+- For 'nes', 'spsa', 'nattack' attack: Three numpy array. The first one is the labels of the adversarial examples. The
+  second one is the distance between the adversarial examples and the original examples. The third one is queries used
+  for attacking each examples.
+- Others: A dictionary, whose keys are iteration number, values are a tuple of two numpy array. The first element of the
+  tuple is the prediction labels for the adversarial examples. The second element of the tuple is the distance between
+  the adversarial examples and the original examples.
+'''
 
 if __name__ == '__main__':
     import sys

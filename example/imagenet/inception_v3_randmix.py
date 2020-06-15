@@ -106,3 +106,8 @@ def rgb_clustering(images, centroids, alpha):
     # update cluster centers
     new_centroids = tf.reduce_sum(reshaped_images * probs, axis=[1, 2]) / (tf.reduce_sum(probs, axis=[1, 2]) + 1e-16)
     return new_images, new_centroids
+
+
+if __name__ == '__main__':
+    from inception_v3 import download
+    download(MODEL_PATH)

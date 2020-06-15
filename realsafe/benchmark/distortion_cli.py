@@ -1,4 +1,16 @@
-''' Provide a command line tool to call DistortionBenchmark directly. '''
+''' Provide a command line tool to call DistortionBenchmark directly.
+
+The output file contains metadata of the benchmark (including full cmdline) and its result in a dictionary. To load the
+result:
+
+.. code-block:: python
+
+   import numpy as np
+   result = np.load('path/to/output.npy', allow_pickle=True).item()
+
+The result is an array of the minimal distortion value found by the attack method for each input. If the attack method
+failed to generate an adversarial example, the value is set to `np.nan`.
+'''
 
 if __name__ == '__main__':
     import sys
