@@ -136,9 +136,7 @@ class Evolutionary(BatchAttack):
         # send arguments to workers
         comm.bcast(shared_args, root=MPI.ROOT)
         comm.scatter(trunks, root=MPI.ROOT)
-        # delete the temp file
-        xs_shm_file.close()
-        xs_adv_shm_file.close()
+
         # the main loop
         for q in range(self.max_queries + 1):  # the first query is used to check the original examples
             # collect log from workers
@@ -167,6 +165,9 @@ class Evolutionary(BatchAttack):
         # copy the xs_adv
         xs_adv = xs_adv_shm.copy()
 
+        # delete the temp file
+        xs_shm_file.close()
+        xs_adv_shm_file.close()
         del xs_shm
         del xs_adv_shm
 
