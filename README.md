@@ -95,4 +95,6 @@ This command would find the minimal adversarial distortion achieved using the MI
 
 For more examples and usages (e.g. how to define new models), please browse our documentation website mentioned before.
 
+## Acknowledgements
 
+To benchmark adversarial robustness on *Face Recognition*, we recommend our series of work on face recognition [[Paper](https://arxiv.org/pdf/2007.04118.pdf), [Code](https://github.com/ShawnXYang/Face-Robustness-Benchmark)].
