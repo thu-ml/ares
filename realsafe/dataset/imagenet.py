@@ -87,19 +87,19 @@ def load_dataset(height, width, offset=0, label_dtype=tf.int32, load_target=Fals
 
 def _load_image(filename, to_height, to_width, clip):
     ''' Load image into uint8 tensor from file. '''
-    img = Image.open(os.path.join(PATH_IMGS, filename))
-    if img.mode != 'RGB':
-        img = img.convert(mode='RGB')
+    img = tf.image.decode_image(tf.io.read_file(os.path.join(PATH_IMGS, filename)))
+
+    if img.shape[2] == 1:
+        img = tf.repeat(img, repeats=3, axis=2)
 
     if clip:
-        img = np.array(img)
         height, width = img.shape[0], img.shape[1]  # pylint: disable=E1136  # pylint/issues/3139
-        center = int(0.875 * min(height, width))
+        center = int(0.875 * min(int(height), int(width)))
         offset_height, offset_width = (height - center + 1) // 2, (width - center + 1) // 2
         img = img[offset_height:offset_height+center, offset_width:offset_width+center, :]
-        img = Image.fromarray(img)
 
-    return tf.convert_to_tensor(np.array(img.resize((to_height, to_width))))
+    img = tf.image.resize(img, size=(to_height, to_width))
+    return tf.cast(img, tf.uint8)
 
 
 def _load_txt(txt_filename, label_offset):

@@ -40,7 +40,7 @@ cd realsafe/
 pip install -e .
 ```
 
-The `requirements.txt` includes its dependencies, you might want to change PyTorch's version as well as TensorFlow 1's version. TensorFlow 1.13 or later should work fine.
+The `requirements.txt` includes its dependencies, you might want to change PyTorch's version as well as TensorFlow 1's version (e.g. Switch to TensorFlow's GPU version). TensorFlow 1.13 or later should work fine.
 
 As for python version, Python 3.5 or later should work fine.
 
