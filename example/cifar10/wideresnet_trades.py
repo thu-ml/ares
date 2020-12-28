@@ -10,8 +10,8 @@ if THIRD_PARTY_PATH not in sys.path:
 import torch
 import tensorflow as tf
 
-from realsafe.model.pytorch_wrapper import pytorch_classifier_with_logits
-from realsafe.utils import get_res_path
+from ares.model.pytorch_wrapper import pytorch_classifier_with_logits
+from ares.utils import get_res_path
 
 from trades.models.wideresnet import WideResNet
 
