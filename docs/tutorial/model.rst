@@ -4,9 +4,9 @@ Defining & Using Models
 Interface for Model
 -------------------
 
-Please read documentation for :doc:`../api/realsafe.model`. All models under ``example/cifar10/`` and ``example/imagenet/`` might be helpful, too.
+Please read documentation for :doc:`../api/ares.model`. All models under ``example/cifar10/`` and ``example/imagenet/`` might be helpful, too.
 
-The :class:`Classifier <realsafe.model.base.Classifier>` defines an abstract base class for an image classifier output only labels:
+The :class:`Classifier <ares.model.base.Classifier>` defines an abstract base class for an image classifier output only labels:
 
 .. code-block:: python
 
@@ -18,7 +18,7 @@ The :class:`Classifier <realsafe.model.base.Classifier>` defines an abstract bas
        def _labels(self, xs):
            ...
 
-The :class:`ClassifierWithLogits <realsafe.model.base.ClassifierWithLogits` defines an abstract base class for an image classifier output not only labels, but also logits:
+The :class:`ClassifierWithLogits <ares.model.base.ClassifierWithLogits` defines an abstract base class for an image classifier output not only labels, but also logits:
 
 .. code-block:: python
 
@@ -50,12 +50,12 @@ Here is a brief example from ``example/cifar10/resnet56.py``:
 
 You need to pass meta information about the new model (data types, shape of input, numerical range of input) to the abstract base class in ``__init__()`` method. You need to return logits and labels for input ``xs_ph`` in ``_logits_and_labels()`` method. That's all.
 
-For :class:`Classifier <realsafe.model.base.Classifier>`, the only difference is, only labels are needed in ``_labels()`` method.
+For :class:`Classifier <ares.model.base.Classifier>`, the only difference is, only labels are needed in ``_labels()`` method.
 
 Defining Model in PyTorch
 -------------------------
 
-We provide a decorator :meth:`pytorch_classifier_with_logits <realsafe.model.pytorch_wrapper.pytorch_classifier_with_logits>` which wraps a ``torch.nn.Module`` into a :class:`Classifier <realsafe.model.base.Classifier>` with differentiable logits output.
+We provide a decorator :meth:`pytorch_classifier_with_logits <ares.model.pytorch_wrapper.pytorch_classifier_with_logits>` which wraps a ``torch.nn.Module`` into a :class:`Classifier <ares.model.base.Classifier>` with differentiable logits output.
 
 Here is a brief example from ``example/cifar10/wideresnet_trades.py``:
 
@@ -82,7 +82,7 @@ Using Models
 
 Always use the ``logits()``, ``labels()`` and ``logits_and_labels()`` methods instead of the ``_labels()`` and ``_logits_and_labels()`` methods you defined. These methods without ``_`` prefix would cache results and avoid recalculating logits and labels for same input tensor.
 
-Besides loading models manually, we provide :meth:`load_model_from_path <realsafe.model.loader.load_model_from_path>` to aid loading a model from a Python file. A global function ``load(session)`` should be defined inside the python file, which loads the model into the ``session`` and returns the model instance. Here is an example from ``example/cifar10/resnet56.py``:
+Besides loading models manually, we provide :meth:`load_model_from_path <ares.model.loader.load_model_from_path>` to aid loading a model from a Python file. A global function ``load(session)`` should be defined inside the python file, which loads the model into the ``session`` and returns the model instance. Here is an example from ``example/cifar10/resnet56.py``:
 
 .. code-block:: python
 
@@ -91,9 +91,9 @@ Besides loading models manually, we provide :meth:`load_model_from_path <realsaf
        model.load(MODEL_PATH, session)
        return model
 
-This way of loading models are used by RealSafe's command line interface. See :doc:`benchmark` for more information.
+This way of loading models are used by ares's command line interface. See :doc:`benchmark` for more information.
 
-All models under ``example/`` could be loaded using :meth:`load_model_from_path <realsafe.model.loader.load_model_from_path>`. For example:
+All models under ``example/`` could be loaded using :meth:`load_model_from_path <ares.model.loader.load_model_from_path>`. For example:
 
 .. code-block:: python
 

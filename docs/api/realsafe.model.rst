@@ -1,34 +1,34 @@
-realsafe.model package
+ares.model package
 ======================
 
-realsafe.model.base module
+ares.model.base module
 --------------------------
 
-.. automodule:: realsafe.model.base
+.. automodule:: ares.model.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.model.ensemble module
+ares.model.ensemble module
 ------------------------------
 
-.. automodule:: realsafe.model.ensemble
+.. automodule:: ares.model.ensemble
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.model.loader module
+ares.model.loader module
 ----------------------------
 
-.. automodule:: realsafe.model.loader
+.. automodule:: ares.model.loader
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.model.pytorch\_wrapper module
+ares.model.pytorch\_wrapper module
 --------------------------------------
 
-.. automodule:: realsafe.model.pytorch_wrapper
+.. automodule:: ares.model.pytorch_wrapper
    :members:
    :undoc-members:
    :show-inheritance:

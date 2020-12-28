@@ -1,5 +1,5 @@
-from realsafe import NES, CWLoss
-from realsafe.model.loader import load_model_from_path
+from ares import NES, CWLoss
+from ares.model.loader import load_model_from_path
 
 from keras.datasets.cifar10 import load_data
 import os

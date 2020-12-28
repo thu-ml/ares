@@ -7,8 +7,8 @@ from keras.layers import AveragePooling2D, Input, Flatten
 from keras.regularizers import l2
 from keras.models import Model
 
-from realsafe.model import ClassifierWithLogits
-from realsafe.utils import get_res_path, download_res
+from ares.model import ClassifierWithLogits
+from ares.utils import get_res_path, download_res
 
 MODEL_PATH = get_res_path('./cifar10/adp')
 
