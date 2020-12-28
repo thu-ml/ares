@@ -1,4 +1,4 @@
-Welcome to RealSafe's documentation!
+Welcome to ARES's documentation!
 ====================================
 
 .. toctree::
@@ -13,12 +13,12 @@ Welcome to RealSafe's documentation!
    :maxdepth: 1
    :caption: API Docs
 
-   api/realsafe.model
-   api/realsafe.loss
-   api/realsafe.attack
-   api/realsafe.defense
-   api/realsafe.benchmark
-   api/realsafe.dataset
+   api/ares.model
+   api/ares.loss
+   api/ares.attack
+   api/ares.defense
+   api/ares.benchmark
+   api/ares.dataset
 
 Indices and tables
 ==================

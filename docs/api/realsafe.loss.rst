@@ -1,26 +1,26 @@
-realsafe.loss package
+ares.loss package
 =====================
 
-realsafe.loss.base module
+ares.loss.base module
 -------------------------
 
-.. automodule:: realsafe.loss.base
+.. automodule:: ares.loss.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.loss.cross\_entropy module
+ares.loss.cross\_entropy module
 -----------------------------------
 
-.. automodule:: realsafe.loss.cross_entropy
+.. automodule:: ares.loss.cross_entropy
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.loss.cw module
+ares.loss.cw module
 -----------------------
 
-.. automodule:: realsafe.loss.cw
+.. automodule:: ares.loss.cw
    :members:
    :undoc-members:
    :show-inheritance:
