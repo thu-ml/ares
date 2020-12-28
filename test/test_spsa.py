@@ -1,5 +1,5 @@
-from ares.model.loader import load_model_from_path
-from ares import SPSA, CWLoss
+from realsafe.model.loader import load_model_from_path
+from realsafe import SPSA, CWLoss
 from keras.datasets.cifar10 import load_data
 import os
 import numpy as np

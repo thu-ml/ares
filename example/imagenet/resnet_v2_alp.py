@@ -13,8 +13,8 @@ import numpy as np
 
 import models.research.slim.nets.resnet_v2 as resnet_v2
 
-from ares import ClassifierWithLogits
-from ares.utils import get_res_path, download_res
+from realsafe import ClassifierWithLogits
+from realsafe.utils import get_res_path, download_res
 
 slim = tf.contrib.slim
 

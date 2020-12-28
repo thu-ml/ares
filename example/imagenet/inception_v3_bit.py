@@ -1,5 +1,5 @@
-from ares.defense.bit_depth_reduction import bit_depth_reduction
-from ares.utils import get_res_path
+from realsafe.defense.bit_depth_reduction import bit_depth_reduction
+from realsafe.utils import get_res_path
 
 import inception_v3
 

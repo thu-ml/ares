@@ -4,8 +4,8 @@ import os
 
 from keras.datasets.cifar10 import load_data
 
-from ares import Evolutionary
-from ares.model.loader import load_model_from_path
+from realsafe import Evolutionary
+from realsafe.model.loader import load_model_from_path
 
 logger = tf.get_logger()
 logger.setLevel(tf.logging.INFO)

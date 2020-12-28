@@ -2,8 +2,8 @@ import os
 import numpy as np
 import tensorflow as tf
 
-from ares.model.base import ClassifierWithLogits
-from ares.utils import download_res, get_res_path
+from realsafe.model.base import ClassifierWithLogits
+from realsafe.utils import download_res, get_res_path
 
 MODEL_PATH = get_res_path('./cifar10/resnet56.ckpt')
 

@@ -1,98 +1,98 @@
-ares.attack package
+realsafe.attack package
 =======================
 
-ares.attack.base module
+realsafe.attack.base module
 ---------------------------
 
-.. automodule:: ares.attack.base
+.. automodule:: realsafe.attack.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.fgsm module
+realsafe.attack.fgsm module
 ---------------------------
 
-.. automodule:: ares.attack.fgsm
+.. automodule:: realsafe.attack.fgsm
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.bim module
+realsafe.attack.bim module
 --------------------------
 
-.. automodule:: ares.attack.bim
+.. automodule:: realsafe.attack.bim
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.pgd module
+realsafe.attack.pgd module
 --------------------------
 
-.. automodule:: ares.attack.pgd
+.. automodule:: realsafe.attack.pgd
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.mim module
+realsafe.attack.mim module
 --------------------------
 
-.. automodule:: ares.attack.mim
+.. automodule:: realsafe.attack.mim
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.cw module
+realsafe.attack.cw module
 -------------------------
 
-.. automodule:: ares.attack.cw
+.. automodule:: realsafe.attack.cw
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.deepfool module
+realsafe.attack.deepfool module
 -------------------------------
 
-.. automodule:: ares.attack.deepfool
+.. automodule:: realsafe.attack.deepfool
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.nes module
+realsafe.attack.nes module
 --------------------------
 
-.. automodule:: ares.attack.nes
+.. automodule:: realsafe.attack.nes
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.spsa module
+realsafe.attack.spsa module
 ---------------------------
 
-.. automodule:: ares.attack.spsa
+.. automodule:: realsafe.attack.spsa
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.nattack module
+realsafe.attack.nattack module
 ------------------------------
 
-.. automodule:: ares.attack.nattack
+.. automodule:: realsafe.attack.nattack
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.boundary module
+realsafe.attack.boundary module
 -------------------------------
 
-.. automodule:: ares.attack.boundary
+.. automodule:: realsafe.attack.boundary
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.attack.evolutionary module
+realsafe.attack.evolutionary module
 -----------------------------------
 
-.. automodule:: ares.attack.evolutionary
+.. automodule:: realsafe.attack.evolutionary
    :members:
    :undoc-members:
    :show-inheritance:

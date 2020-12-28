@@ -17,8 +17,8 @@ import tensorflow as tf
 
 import models.research.slim.nets.inception_v3 as inception_v3
 
-from ares import ClassifierWithLogits
-from ares.utils import get_res_path, download_res
+from realsafe import ClassifierWithLogits
+from realsafe.utils import get_res_path, download_res
 
 slim = tf.contrib.slim
 

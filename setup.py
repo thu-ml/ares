@@ -1,9 +1,9 @@
 from setuptools import setup
 
-setup(name='ares',
+setup(name='realsafe',
       version='0.1',
       description='',
       author='',
       author_email='',
-      packages=['ares'],
+      packages=['realsafe'],
       install_requires=[])

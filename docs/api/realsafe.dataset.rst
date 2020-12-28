@@ -1,26 +1,26 @@
-ares.dataset package
+realsafe.dataset package
 ========================
 
-ares.dataset.cifar10 module
+realsafe.dataset.cifar10 module
 -------------------------------
 
-.. automodule:: ares.dataset.cifar10
+.. automodule:: realsafe.dataset.cifar10
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.dataset.imagenet module
+realsafe.dataset.imagenet module
 --------------------------------
 
-.. automodule:: ares.dataset.imagenet
+.. automodule:: realsafe.dataset.imagenet
    :members:
    :undoc-members:
    :show-inheritance:
 
-ares.dataset.utils module
+realsafe.dataset.utils module
 -----------------------------
 
-.. automodule:: ares.dataset.utils
+.. automodule:: realsafe.dataset.utils
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-from ares.attack.utils import clip_eta_batch
+from realsafe.attack.utils import clip_eta_batch
 
 session = tf.Session()
 batch_size = 100

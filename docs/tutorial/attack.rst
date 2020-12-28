@@ -4,17 +4,17 @@ Using Attacks
 Interface for Attack
 --------------------
 
-Please read documentation for :doc:`../api/ares.attack`.
+Please read documentation for :doc:`../api/realsafe.attack`.
 
 There are two kinds of attacks:
 
-- Attacks that supports attacking multiple images simultaneously (e.g. all white-box attacks). Their abstract base class is :class:`BatchAttack <ares.attack.base.BatchAttack>`. They have a ``batch_attack(xs)`` method.
-- Attacks that attacks images one by one (e.g. NES). Their abstract base class is :class:`Attack <ares.attack.base.Attack>`. They have a ``attack(x)`` method.
+- Attacks that supports attacking multiple images simultaneously (e.g. all white-box attacks). Their abstract base class is :class:`BatchAttack <realsafe.attack.base.BatchAttack>`. They have a ``batch_attack(xs)`` method.
+- Attacks that attacks images one by one (e.g. NES). Their abstract base class is :class:`Attack <realsafe.attack.base.Attack>`. They have a ``attack(x)`` method.
 
 Using Attacks
 -------------
 
-An example for using :class:`MIM <ares.attack.mim.MIM>`:
+An example for using :class:`MIM <realsafe.attack.mim.MIM>`:
 
 .. code-block:: python
 

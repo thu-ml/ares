@@ -12,9 +12,9 @@ if THIRD_PARTY_PATH not in sys.path:
 
 from deepdefense_pytorch.models.cifar10 import ConvNet
 
-from ares.model import ClassifierWithLogits
-from ares.utils import get_res_path, download_res
-from ares.model.pytorch_wrapper import pytorch_classifier_with_logits
+from realsafe.model import ClassifierWithLogits
+from realsafe.utils import get_res_path, download_res
+from realsafe.model.pytorch_wrapper import pytorch_classifier_with_logits
 
 import torch
 import scipy.io
@@ -50,7 +50,7 @@ def download(model_path):
         os.remove(tar_path)
     stats_path = os.path.abspath(os.path.join(model_path, 'stats.mat'))
     if not os.path.exists(stats_path):
-        download_res('http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/ares/DeepDefense/stats.mat', stats_path)
+        download_res('http://ml.cs.tsinghua.edu.cn/~xiaoyang/downloads/realsafe/DeepDefense/stats.mat', stats_path)
 
 
 @pytorch_classifier_with_logits(10, 0.0, 255.0, (32, 32, 3), tf.float32, tf.int32)

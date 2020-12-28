@@ -18,9 +18,9 @@ sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'ARES'
-copyright = '2020, ARES contributors'
-author = 'ARES contributors'
+project = 'RealSafe'
+copyright = '2020, RealSafe contributors'
+author = 'RealSafe contributors'
 
 # The short X.Y version
 version = '0.1'

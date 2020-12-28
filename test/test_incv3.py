@@ -3,9 +3,9 @@ import os
 import tensorflow as tf
 import numpy as np
 
-from ares import CrossEntropyLoss, BIM
-from ares.model.loader import load_model_from_path
-from ares.dataset import imagenet, dataset_to_iterator
+from realsafe import CrossEntropyLoss, BIM
+from realsafe.model.loader import load_model_from_path
+from realsafe.dataset import imagenet, dataset_to_iterator
 
 batch_size = 25
 

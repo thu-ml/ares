@@ -4,8 +4,8 @@ import os
 
 from keras.datasets.cifar10 import load_data
 
-from ares import DeepFool
-from ares.model.loader import load_model_from_path
+from realsafe import DeepFool
+from realsafe.model.loader import load_model_from_path
 
 batch_size = 100
 

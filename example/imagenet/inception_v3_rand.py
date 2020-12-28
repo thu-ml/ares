@@ -1,5 +1,5 @@
-from ares.defense.randomization import randomization
-from ares.utils import get_res_path
+from realsafe.defense.randomization import randomization
+from realsafe.utils import get_res_path
 
 import inception_v3
 

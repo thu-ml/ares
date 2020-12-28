@@ -2,9 +2,9 @@ import tensorflow as tf
 import numpy as np
 import os
 
-from ares.dataset import cifar10, dataset_to_iterator
-from ares.model.loader import load_model_from_path
-from ares.model.ensemble import EnsembleModel, EnsembleRandomnessModel
+from realsafe.dataset import cifar10, dataset_to_iterator
+from realsafe.model.loader import load_model_from_path
+from realsafe.model.ensemble import EnsembleModel, EnsembleRandomnessModel
 
 batch_size = 100
 

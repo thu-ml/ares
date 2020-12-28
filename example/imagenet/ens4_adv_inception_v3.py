@@ -10,8 +10,8 @@ import tensorflow as tf
 
 from inception_v3 import inception_v3
 
-from ares import ClassifierWithLogits
-from ares.utils import get_res_path, download_res
+from realsafe import ClassifierWithLogits
+from realsafe.utils import get_res_path, download_res
 
 slim = tf.contrib.slim
 

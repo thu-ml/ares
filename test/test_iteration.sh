@@ -42,7 +42,7 @@ run_bim() {
     method='bim'
     for goal in t ut; do
         echo "Running ${method} (${goal}, l_inf)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_inf \
             --batch-size ${BATCH_SIZE} \
@@ -53,7 +53,7 @@ run_bim() {
             ../example/cifar10/resnet56.py \
             --output "${OUTPUT_PREFIX}${method}_${goal}_l_inf.npy"
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -70,7 +70,7 @@ run_pgd() {
     method='pgd'
     for goal in t ut; do
         echo "Running ${method} (${goal}, l_inf)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_inf \
             --batch-size ${BATCH_SIZE} \
@@ -82,7 +82,7 @@ run_pgd() {
             ../example/cifar10/resnet56.py \
             --output "${OUTPUT_PREFIX}${method}_${goal}_l_inf.npy"
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -100,7 +100,7 @@ run_mim() {
     method='mim'
     for goal in t ut; do
         echo "Running ${method} (${goal}, l_inf)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_inf \
             --batch-size ${BATCH_SIZE} \
@@ -111,7 +111,7 @@ run_mim() {
             ../example/cifar10/resnet56.py \
             --output "${OUTPUT_PREFIX}${method}_${goal}_l_inf.npy"
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -128,7 +128,7 @@ run_cw() {
     method='cw'
     for goal in t ut tm; do
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -145,7 +145,7 @@ run_deepfool() {
     method='deepfool'
     goal='ut'
     echo "Running ${method} (${goal}, l_inf)..."
-    python3 -m ares.benchmark.iteration_cli \
+    python3 -m realsafe.benchmark.iteration_cli \
         --method ${method} \
         --goal ${goal} --distance-metric l_inf \
         --batch-size ${BATCH_SIZE} \
@@ -156,7 +156,7 @@ run_deepfool() {
         ../example/cifar10/resnet56.py \
         --output "${OUTPUT_PREFIX}${method}_${goal}_l_inf.npy"
     echo "Running ${method} (${goal}, l_2)..."
-    python3 -m ares.benchmark.iteration_cli \
+    python3 -m realsafe.benchmark.iteration_cli \
         --method ${method} \
         --goal ${goal} --distance-metric l_2 \
         --batch-size ${BATCH_SIZE} \
@@ -172,7 +172,7 @@ run_nes() {
     method='nes'
     for goal in ut t tm; do
         echo "Running ${method} (${goal}, l_inf)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_inf \
             --batch-size ${BATCH_SIZE} \
@@ -185,7 +185,7 @@ run_nes() {
             ../example/cifar10/resnet56.py \
             --output "${OUTPUT_PREFIX}${method}_${goal}_l_inf.npy"
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -204,7 +204,7 @@ run_spsa() {
     method='spsa'
     for goal in ut t tm; do
         echo "Running ${method} (${goal}, l_inf)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_inf \
             --batch-size ${BATCH_SIZE} \
@@ -216,7 +216,7 @@ run_spsa() {
             ../example/cifar10/resnet56.py \
             --output "${OUTPUT_PREFIX}${method}_${goal}_l_inf.npy"
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -234,7 +234,7 @@ run_nattack() {
     method='nattack'
     for goal in ut t tm; do
         echo "Running ${method} (${goal}, l_inf)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_inf \
             --batch-size ${BATCH_SIZE} \
@@ -246,7 +246,7 @@ run_nattack() {
             ../example/cifar10/resnet56.py \
             --output "${OUTPUT_PREFIX}${method}_${goal}_l_inf.npy"
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -264,7 +264,7 @@ run_boundary() {
     method='boundary'
     for goal in ut t; do
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
@@ -281,7 +281,7 @@ run_evolutionary() {
     method='evolutionary'
     for goal in ut t; do
         echo "Running ${method} (${goal}, l_2)..."
-        python3 -m ares.benchmark.iteration_cli \
+        python3 -m realsafe.benchmark.iteration_cli \
             --method ${method} \
             --goal ${goal} --distance-metric l_2 \
             --batch-size ${BATCH_SIZE} \
