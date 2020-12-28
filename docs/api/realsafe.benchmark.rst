@@ -1,58 +1,58 @@
-realsafe.benchmark package
+ares.benchmark package
 ==========================
 
-realsafe.benchmark.iteration module
+ares.benchmark.iteration module
 -----------------------------------
 
-.. automodule:: realsafe.benchmark.iteration
+.. automodule:: ares.benchmark.iteration
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.benchmark.distortion module
+ares.benchmark.distortion module
 ------------------------------------
 
-.. automodule:: realsafe.benchmark.distortion
+.. automodule:: ares.benchmark.distortion
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.benchmark.attack module
+ares.benchmark.attack module
 --------------------------------
 
-.. automodule:: realsafe.benchmark.attack
+.. automodule:: ares.benchmark.attack
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.benchmark.iteration\_cli module
+ares.benchmark.iteration\_cli module
 ----------------------------------------
 
-.. automodule:: realsafe.benchmark.iteration_cli
+.. automodule:: ares.benchmark.iteration_cli
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.benchmark.distortion\_cli module
+ares.benchmark.distortion\_cli module
 -----------------------------------------
 
-.. automodule:: realsafe.benchmark.distortion_cli
+.. automodule:: ares.benchmark.distortion_cli
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.benchmark.attack\_cli module
+ares.benchmark.attack\_cli module
 -------------------------------------
 
-.. automodule:: realsafe.benchmark.attack_cli
+.. automodule:: ares.benchmark.attack_cli
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.benchmark.prediction\_cli module
+ares.benchmark.prediction\_cli module
 -----------------------------------------
 
-.. automodule:: realsafe.benchmark.prediction_cli
+.. automodule:: ares.benchmark.prediction_cli
    :members:
    :undoc-members:
    :show-inheritance:

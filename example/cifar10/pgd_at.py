@@ -13,8 +13,8 @@ if THIRD_PARTY_PATH not in sys.path:
 from functools import partial
 import tensorflow as tf
 
-from realsafe.model import ClassifierWithLogits
-from realsafe.utils import get_res_path, download_res
+from ares.model import ClassifierWithLogits
+from ares.utils import get_res_path, download_res
 
 MODEL_PATH = get_res_path('./cifar10/pgd_at')
 

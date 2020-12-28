@@ -24,8 +24,8 @@ import torch
 import numpy as np
 import tensorflow as tf
 
-from realsafe.utils import get_res_path, download_res
-from realsafe.model.pytorch_wrapper import pytorch_classifier_with_logits
+from ares.utils import get_res_path, download_res
+from ares.model.pytorch_wrapper import pytorch_classifier_with_logits
 
 MODEL_PATH = get_res_path('./cifar10/convex')
 

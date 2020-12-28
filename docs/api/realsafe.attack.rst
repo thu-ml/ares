@@ -1,98 +1,98 @@
-realsafe.attack package
+ares.attack package
 =======================
 
-realsafe.attack.base module
+ares.attack.base module
 ---------------------------
 
-.. automodule:: realsafe.attack.base
+.. automodule:: ares.attack.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.fgsm module
+ares.attack.fgsm module
 ---------------------------
 
-.. automodule:: realsafe.attack.fgsm
+.. automodule:: ares.attack.fgsm
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.bim module
+ares.attack.bim module
 --------------------------
 
-.. automodule:: realsafe.attack.bim
+.. automodule:: ares.attack.bim
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.pgd module
+ares.attack.pgd module
 --------------------------
 
-.. automodule:: realsafe.attack.pgd
+.. automodule:: ares.attack.pgd
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.mim module
+ares.attack.mim module
 --------------------------
 
-.. automodule:: realsafe.attack.mim
+.. automodule:: ares.attack.mim
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.cw module
+ares.attack.cw module
 -------------------------
 
-.. automodule:: realsafe.attack.cw
+.. automodule:: ares.attack.cw
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.deepfool module
+ares.attack.deepfool module
 -------------------------------
 
-.. automodule:: realsafe.attack.deepfool
+.. automodule:: ares.attack.deepfool
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.nes module
+ares.attack.nes module
 --------------------------
 
-.. automodule:: realsafe.attack.nes
+.. automodule:: ares.attack.nes
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.spsa module
+ares.attack.spsa module
 ---------------------------
 
-.. automodule:: realsafe.attack.spsa
+.. automodule:: ares.attack.spsa
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.nattack module
+ares.attack.nattack module
 ------------------------------
 
-.. automodule:: realsafe.attack.nattack
+.. automodule:: ares.attack.nattack
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.boundary module
+ares.attack.boundary module
 -------------------------------
 
-.. automodule:: realsafe.attack.boundary
+.. automodule:: ares.attack.boundary
    :members:
    :undoc-members:
    :show-inheritance:
 
-realsafe.attack.evolutionary module
+ares.attack.evolutionary module
 -----------------------------------
 
-.. automodule:: realsafe.attack.evolutionary
+.. automodule:: ares.attack.evolutionary
    :members:
    :undoc-members:
    :show-inheritance:

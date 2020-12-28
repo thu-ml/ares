@@ -21,8 +21,8 @@ ResNetDenoiseModel = iat.nets.ResNetDenoiseModel
 from tensorpack import TowerContext
 from tensorpack.tfutils import get_model_loader
 
-from realsafe import ClassifierWithLogits
-from realsafe.utils import get_res_path, download_res
+from ares import ClassifierWithLogits
+from ares.utils import get_res_path, download_res
 
 import argparse
 

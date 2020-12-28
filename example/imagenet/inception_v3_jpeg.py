@@ -1,5 +1,5 @@
-from realsafe.defense.jpeg_compression import jpeg_compression
-from realsafe.utils import get_res_path
+from ares.defense.jpeg_compression import jpeg_compression
+from ares.utils import get_res_path
 
 import inception_v3
 
