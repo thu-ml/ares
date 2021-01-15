@@ -1,5 +1,7 @@
 # ARES
 
+This branch is for the __Adversarial Attacks on ML Defense Models at CVPR 2021 workshop__ competition. If you only want to use the library, please go to [main branch](https://github.com/thu-ml/ares/tree/main).
+
 This repository contains the code for __ARES__ (Adversarial Robustness Evaluation for Safety), a Python library for adversarial machine learning research focusing on benchmarking adversarial robustness on image classification correctly and comprehensively.
 
 We benchmark the adversarial robustness using 15 attacks and 16 defenses under complete threat models, which is described in the following paper
