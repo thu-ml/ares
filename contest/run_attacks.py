@@ -7,6 +7,7 @@ import sys
 MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(os.path.dirname(__file__))), "example")
 MODELS = [
     "cifar10-pgd_at",
+    "cifar10-wideresnet_trades",
     "cifar10-feature_scatter",
     "cifar10-robust_overfitting",
     "cifar10-rst",

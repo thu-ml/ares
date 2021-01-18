@@ -22,12 +22,12 @@ optional arguments:
   --models MODELS    comma-separated list of models to run in the format of
                      '<dataset>-<model>', e.g. 'imagenet-free_at', default to
                      all models used by competition stage I, they are
-                     cifar10-pgd_at, cifar10-feature_scatter,
-                     cifar10-robust_overfitting, cifar10-rst, cifar10-fast_at,
-                     cifar10-at_he, cifar10-pre_training, cifar10-mmc,
-                     cifar10-free_at, cifar10-awp, cifar10-hydra,
-                     cifar10-label_smoothing, imagenet-fast_at, imagenet-
-                     free_at
+                     cifar10-pgd_at, cifar10-wideresnet_trades,
+                     cifar10-feature_scatter, cifar10-robust_overfitting,
+                     cifar10-rst, cifar10-fast_at, cifar10-at_he,
+                     cifar10-pre_training, cifar10-mmc, cifar10-free_at,
+                     cifar10-awp, cifar10-hydra, cifar10-label_smoothing,
+                     imagenet-fast_at, imagenet-free_at
   --attacks ATTACKS  comma-separated list of attack folder/package names to
                      run, default to 'attacker'
   --output OUTPUT    output directory, default to the current directory
@@ -44,18 +44,7 @@ This command would write scores to `/tmp/attacker.csv` for `attacker/`, and `/tm
 
 ```bash
 cifar10-pgd_at,0.515
-cifar10-feature_scatter,0.248
-cifar10-robust_overfitting,0.422
-cifar10-rst,0.346
-cifar10-fast_at,0.492
-cifar10-at_he,0.373
-cifar10-pre_training,0.4
-cifar10-mmc,0.42
-cifar10-free_at,0.525
-cifar10-awp,0.349
-cifar10-hydra,0.369
-cifar10-label_smoothing,0.418
-cifar10-pgd_at,0.515
+cifar10-wideresnet_trades,0.418
 cifar10-feature_scatter,0.248
 cifar10-robust_overfitting,0.422
 cifar10-rst,0.346

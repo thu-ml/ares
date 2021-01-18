@@ -23,8 +23,6 @@ echo -e "\033[33mRunning 'python3 ../example/cifar10/hydra.py'\033[0m"
 python3 ../example/cifar10/hydra.py
 echo -e "\033[33mRunning 'python3 ../example/cifar10/label_smoothing.py'\033[0m"
 python3 ../example/cifar10/label_smoothing.py
-echo -e "\033[33mRunning 'python3 ../example/cifar10/fast_at.py'\033[0m"
-python3 ../example/cifar10/fast_at.py
 echo -e "\033[33mRunning 'python3 ../example/cifar10/free_at.py'\033[0m"
 python3 ../example/cifar10/free_at.py
 echo -e "\033[33mRunning 'python3 ../example/imagenet/fast_at.py'\033[0m"
