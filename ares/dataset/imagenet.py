@@ -7,6 +7,9 @@ from PIL import Image
 
 from ares.utils import get_res_path, download_res
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 PATH_IMGS = get_res_path('./imagenet/ILSVRC2012_img_val')
 PATH_VAL_TXT = get_res_path('./imagenet/val.txt')
 PATH_TARGET_TXT = get_res_path('./imagenet/target.txt')
