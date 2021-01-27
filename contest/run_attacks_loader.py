@@ -55,6 +55,7 @@ def run_one_model(model_name, attackers, session, output_directory):
             xs_adv = attacker.batch_attack(xs, ys=ys).astype(np.float32)
             xs_adv = np.clip(xs_adv, xs - eps * (model.x_max - model.x_min), xs + eps * (model.x_max - model.x_min))
             xs_adv = np.clip(xs_adv, model.x_min, model.x_max)
+            assert not np.any(np.isnan(xs_adv))
             labels = session.run(labels_op, feed_dict={xs_ph: xs_adv})
             success_count += np.sum(np.logical_not(np.equal(labels, ys)))
         score = success_count / 1000.0
