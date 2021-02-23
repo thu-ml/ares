@@ -33,7 +33,7 @@ def download(model_path):
         if not os.path.exists(zip_path):
             if not os.path.exists(os.path.dirname(zip_path)):
                 os.makedirs(os.path.dirname(zip_path), exist_ok=True)
-        download_res('https://www.dropbox.com/s/g4b6ntrp8zrudbz/adv_trained.zip?dl=1', zip_path)
+            download_res('https://www.dropbox.com/s/g4b6ntrp8zrudbz/adv_trained.zip?dl=1', zip_path)
         import zipfile
         zipfile.ZipFile(zip_path).extractall(model_path)
         os.remove(zip_path)
