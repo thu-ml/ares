@@ -52,7 +52,7 @@ def run_one_model(model_name, attackers, session, output_directory):
         attacker.config(magnitude=eps * (model.x_max - model.x_min))
         success_count = 0
         for batch, (_, xs, ys) in enumerate(dataset_to_iterator(dataset.batch(BATCH_SIZE), session)):
-            xs_adv = attacker.batch_attack(xs, ys=ys).astype(np.float32)
+            xs_adv = attacker.batch_attack(xs.copy(), ys=ys.copy()).astype(np.float32)
             xs_adv = np.clip(xs_adv, xs - eps * (model.x_max - model.x_min), xs + eps * (model.x_max - model.x_min))
             xs_adv = np.clip(xs_adv, model.x_min, model.x_max)
             labels = session.run(labels_op, feed_dict={xs_ph: xs_adv})
