@@ -53,7 +53,7 @@ def load_dataset(offset=0, label_dtype=tf.int32, load_target=False, target_label
     ys = ys.map(lambda y: tf.cast(y, label_dtype))
     ts = ts.map(lambda t: tf.cast(t, label_dtype))
 
-    ids = tf.data.Dataset.range(offset, len(ys_test) - offset)
+    ids = tf.data.Dataset.range(offset, len(ys_test))
 
     if target_label is not None:
         if load_target:
