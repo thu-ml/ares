@@ -6,7 +6,7 @@ We benchmark the adversarial robustness using 15 attacks and 16 defenses under c
 
 [Benchmarking Adversarial Robustness on Image Classification](http://openaccess.thecvf.com/content_CVPR_2020/papers/Dong_Benchmarking_Adversarial_Robustness_on_Image_Classification_CVPR_2020_paper.pdf) (CVPR 2020, __Oral__)
 
-[Yinpeng Dong](http://ml.cs.tsinghua.edu.cn/~yinpeng/), Qi-An Fu, Xiao Yang, [Tianyu Pang](http://ml.cs.tsinghua.edu.cn/~yinpeng/), [Hang Su](http://www.suhangss.me), Zihao Xiao, and [Jun Zhu](http://ml.cs.tsinghua.edu.cn/~jun/index.shtml).
+[Yinpeng Dong](http://ml.cs.tsinghua.edu.cn/~yinpeng/), Qi-An Fu, Xiao Yang, [Tianyu Pang](http://ml.cs.tsinghua.edu.cn/~tianyu/), [Hang Su](http://www.suhangss.me), Zihao Xiao, and [Jun Zhu](http://ml.cs.tsinghua.edu.cn/~jun/index.shtml).
 
 ### Feature overview:
 
