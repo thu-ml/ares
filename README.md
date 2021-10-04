@@ -97,4 +97,6 @@ This command would find the minimal adversarial distortion achieved using the MI
 
 For more examples and usages (e.g. how to define new models), please browse our documentation website mentioned before.
 
+## Acknowledgement
 
+This work was supported by the National Key Research and Development Program of China, Beijing Academy of Artificial Intelligence (BAAI), a grant from Tsinghua Institute for Guo Qiang.
