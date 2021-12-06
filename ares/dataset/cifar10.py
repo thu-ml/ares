@@ -7,6 +7,9 @@ from keras.datasets.cifar10 import load_data
 
 from ares.utils import get_res_path
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 PATH_TARGET = get_res_path('cifar10/target.npy')
 
 
