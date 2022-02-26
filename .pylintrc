@@ -1,8 +1,0 @@
-[MASTER]
-generated-members=REQUEST,acl_users,aq_parent
-max-line-length=120
-extension-pkg-whitelist=numpy,torch,tensorflow
-
-[TYPECHECK]
-ignored-modules=numpy,torch,tensorflow,cv2
-ignored-classes=numpy,torch,tensorflow,cv2

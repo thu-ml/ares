@@ -1,0 +1,1006 @@
+waitGPU: Waiting for the following conditions, checking every 10 seconds. 
++ GPU id is [1, 2]
+waitGPU: Setting GPU to: [1, 2]
+Files already downloaded and verified
+Files already downloaded and verified
+Files already downloaded and verified
+Train Epoch: 1 [0/50000 (0%)]	Loss: 2.293949
+Train Epoch: 1 [12800/50000 (26%)]	Loss: 2.042428
+Train Epoch: 1 [25600/50000 (51%)]	Loss: 1.927593
+Train Epoch: 1 [38400/50000 (77%)]	Loss: 1.856360
+================================================================
+Training: Average loss: 1.6614, Accuracy: 20866/50000 (42%)
+Test: Average loss: 1.6430, Accuracy: 4189/10000 (42%)
+natural_err_total:  tensor(5811., device='cuda:0')
+robust_err_total:  tensor(7636., device='cuda:0')
+================================================================
+Train Epoch: 2 [0/50000 (0%)]	Loss: 1.924386
+Train Epoch: 2 [12800/50000 (26%)]	Loss: 1.768411
+Train Epoch: 2 [25600/50000 (51%)]	Loss: 1.613293
+Train Epoch: 2 [38400/50000 (77%)]	Loss: 1.715821
+================================================================
+Training: Average loss: 1.4800, Accuracy: 26578/50000 (53%)
+Test: Average loss: 1.4336, Accuracy: 5344/10000 (53%)
+natural_err_total:  tensor(4656., device='cuda:0')
+robust_err_total:  tensor(7098., device='cuda:0')
+================================================================
+Train Epoch: 3 [0/50000 (0%)]	Loss: 1.656437
+Train Epoch: 3 [12800/50000 (26%)]	Loss: 1.660543
+Train Epoch: 3 [25600/50000 (51%)]	Loss: 1.556103
+Train Epoch: 3 [38400/50000 (77%)]	Loss: 1.565308
+================================================================
+Training: Average loss: 1.4101, Accuracy: 27068/50000 (54%)
+Test: Average loss: 1.3895, Accuracy: 5328/10000 (53%)
+natural_err_total:  tensor(4672., device='cuda:0')
+robust_err_total:  tensor(7092., device='cuda:0')
+================================================================
+Train Epoch: 4 [0/50000 (0%)]	Loss: 1.650650
+Train Epoch: 4 [12800/50000 (26%)]	Loss: 1.602672
+Train Epoch: 4 [25600/50000 (51%)]	Loss: 1.569264
+Train Epoch: 4 [38400/50000 (77%)]	Loss: 1.465118
+================================================================
+Training: Average loss: 1.3142, Accuracy: 31018/50000 (62%)
+Test: Average loss: 1.2803, Accuracy: 6160/10000 (62%)
+natural_err_total:  tensor(3840., device='cuda:0')
+robust_err_total:  tensor(6544., device='cuda:0')
+================================================================
+Train Epoch: 5 [0/50000 (0%)]	Loss: 1.540987
+Train Epoch: 5 [12800/50000 (26%)]	Loss: 1.554792
+Train Epoch: 5 [25600/50000 (51%)]	Loss: 1.498073
+Train Epoch: 5 [38400/50000 (77%)]	Loss: 1.496391
+================================================================
+Training: Average loss: 1.2853, Accuracy: 31288/50000 (63%)
+Test: Average loss: 1.2547, Accuracy: 6290/10000 (63%)
+natural_err_total:  tensor(3710., device='cuda:0')
+robust_err_total:  tensor(6299., device='cuda:0')
+================================================================
+Train Epoch: 6 [0/50000 (0%)]	Loss: 1.511188
+Train Epoch: 6 [12800/50000 (26%)]	Loss: 1.364014
+Train Epoch: 6 [25600/50000 (51%)]	Loss: 1.385767
+Train Epoch: 6 [38400/50000 (77%)]	Loss: 1.548917
+================================================================
+Training: Average loss: 1.1854, Accuracy: 33006/50000 (66%)
+Test: Average loss: 1.1599, Accuracy: 6517/10000 (65%)
+natural_err_total:  tensor(3483., device='cuda:0')
+robust_err_total:  tensor(6203., device='cuda:0')
+================================================================
+Train Epoch: 7 [0/50000 (0%)]	Loss: 1.445153
+Train Epoch: 7 [12800/50000 (26%)]	Loss: 1.414059
+Train Epoch: 7 [25600/50000 (51%)]	Loss: 1.497594
+Train Epoch: 7 [38400/50000 (77%)]	Loss: 1.514607
+================================================================
+Training: Average loss: 1.1084, Accuracy: 34512/50000 (69%)
+Test: Average loss: 1.0910, Accuracy: 6805/10000 (68%)
+natural_err_total:  tensor(3195., device='cuda:0')
+robust_err_total:  tensor(5938., device='cuda:0')
+================================================================
+Train Epoch: 8 [0/50000 (0%)]	Loss: 1.396559
+Train Epoch: 8 [12800/50000 (26%)]	Loss: 1.510581
+Train Epoch: 8 [25600/50000 (51%)]	Loss: 1.364473
+Train Epoch: 8 [38400/50000 (77%)]	Loss: 1.378320
+================================================================
+Training: Average loss: 1.0928, Accuracy: 34428/50000 (69%)
+Test: Average loss: 1.0849, Accuracy: 6804/10000 (68%)
+natural_err_total:  tensor(3196., device='cuda:0')
+robust_err_total:  tensor(5787., device='cuda:0')
+================================================================
+Train Epoch: 9 [0/50000 (0%)]	Loss: 1.311513
+Train Epoch: 9 [12800/50000 (26%)]	Loss: 1.437434
+Train Epoch: 9 [25600/50000 (51%)]	Loss: 1.327650
+Train Epoch: 9 [38400/50000 (77%)]	Loss: 1.443264
+================================================================
+Training: Average loss: 1.0845, Accuracy: 35623/50000 (71%)
+Test: Average loss: 1.0652, Accuracy: 6966/10000 (70%)
+natural_err_total:  tensor(3034., device='cuda:0')
+robust_err_total:  tensor(5734., device='cuda:0')
+================================================================
+Train Epoch: 10 [0/50000 (0%)]	Loss: 1.348172
+Train Epoch: 10 [12800/50000 (26%)]	Loss: 1.421312
+Train Epoch: 10 [25600/50000 (51%)]	Loss: 1.380757
+Train Epoch: 10 [38400/50000 (77%)]	Loss: 1.394042
+================================================================
+Training: Average loss: 1.0729, Accuracy: 36323/50000 (73%)
+Test: Average loss: 1.0825, Accuracy: 7071/10000 (71%)
+natural_err_total:  tensor(2929., device='cuda:0')
+robust_err_total:  tensor(5622., device='cuda:0')
+================================================================
+Train Epoch: 11 [0/50000 (0%)]	Loss: 1.320325
+Train Epoch: 11 [12800/50000 (26%)]	Loss: 1.287744
+Train Epoch: 11 [25600/50000 (51%)]	Loss: 1.463415
+Train Epoch: 11 [38400/50000 (77%)]	Loss: 1.329903
+================================================================
+Training: Average loss: 1.0282, Accuracy: 35994/50000 (72%)
+Test: Average loss: 1.0396, Accuracy: 7011/10000 (70%)
+natural_err_total:  tensor(2989., device='cuda:0')
+robust_err_total:  tensor(5653., device='cuda:0')
+================================================================
+Train Epoch: 12 [0/50000 (0%)]	Loss: 1.390944
+Train Epoch: 12 [12800/50000 (26%)]	Loss: 1.424582
+Train Epoch: 12 [25600/50000 (51%)]	Loss: 1.245329
+Train Epoch: 12 [38400/50000 (77%)]	Loss: 1.386603
+================================================================
+Training: Average loss: 0.9986, Accuracy: 36683/50000 (73%)
+Test: Average loss: 1.0153, Accuracy: 7178/10000 (72%)
+natural_err_total:  tensor(2822., device='cuda:0')
+robust_err_total:  tensor(5651., device='cuda:0')
+================================================================
+Train Epoch: 13 [0/50000 (0%)]	Loss: 1.259009
+Train Epoch: 13 [12800/50000 (26%)]	Loss: 1.273645
+Train Epoch: 13 [25600/50000 (51%)]	Loss: 1.206383
+Train Epoch: 13 [38400/50000 (77%)]	Loss: 1.248567
+================================================================
+Training: Average loss: 0.9721, Accuracy: 38475/50000 (77%)
+Test: Average loss: 0.9794, Accuracy: 7444/10000 (74%)
+natural_err_total:  tensor(2556., device='cuda:0')
+robust_err_total:  tensor(5395., device='cuda:0')
+================================================================
+Train Epoch: 14 [0/50000 (0%)]	Loss: 1.291389
+Train Epoch: 14 [12800/50000 (26%)]	Loss: 1.276564
+Train Epoch: 14 [25600/50000 (51%)]	Loss: 1.262893
+Train Epoch: 14 [38400/50000 (77%)]	Loss: 1.315888
+================================================================
+Training: Average loss: 0.9768, Accuracy: 38478/50000 (77%)
+Test: Average loss: 0.9915, Accuracy: 7433/10000 (74%)
+natural_err_total:  tensor(2567., device='cuda:0')
+robust_err_total:  tensor(5411., device='cuda:0')
+================================================================
+Train Epoch: 15 [0/50000 (0%)]	Loss: 1.289290
+Train Epoch: 15 [12800/50000 (26%)]	Loss: 1.437011
+Train Epoch: 15 [25600/50000 (51%)]	Loss: 1.368152
+Train Epoch: 15 [38400/50000 (77%)]	Loss: 1.274381
+================================================================
+Training: Average loss: 0.9781, Accuracy: 37844/50000 (76%)
+Test: Average loss: 1.0043, Accuracy: 7245/10000 (72%)
+natural_err_total:  tensor(2755., device='cuda:0')
+robust_err_total:  tensor(5455., device='cuda:0')
+================================================================
+Train Epoch: 16 [0/50000 (0%)]	Loss: 1.134045
+Train Epoch: 16 [12800/50000 (26%)]	Loss: 1.296696
+Train Epoch: 16 [25600/50000 (51%)]	Loss: 1.356981
+Train Epoch: 16 [38400/50000 (77%)]	Loss: 1.293314
+================================================================
+Training: Average loss: 0.9864, Accuracy: 38508/50000 (77%)
+Test: Average loss: 0.9963, Accuracy: 7466/10000 (75%)
+natural_err_total:  tensor(2534., device='cuda:0')
+robust_err_total:  tensor(5385., device='cuda:0')
+================================================================
+Train Epoch: 17 [0/50000 (0%)]	Loss: 1.110434
+Train Epoch: 17 [12800/50000 (26%)]	Loss: 1.217561
+Train Epoch: 17 [25600/50000 (51%)]	Loss: 1.322451
+Train Epoch: 17 [38400/50000 (77%)]	Loss: 1.299959
+================================================================
+Training: Average loss: 0.9357, Accuracy: 39005/50000 (78%)
+Test: Average loss: 0.9681, Accuracy: 7488/10000 (75%)
+natural_err_total:  tensor(2512., device='cuda:0')
+robust_err_total:  tensor(5233., device='cuda:0')
+================================================================
+Train Epoch: 18 [0/50000 (0%)]	Loss: 1.298379
+Train Epoch: 18 [12800/50000 (26%)]	Loss: 1.261485
+Train Epoch: 18 [25600/50000 (51%)]	Loss: 1.292841
+Train Epoch: 18 [38400/50000 (77%)]	Loss: 1.264557
+================================================================
+Training: Average loss: 0.9358, Accuracy: 39290/50000 (79%)
+Test: Average loss: 0.9653, Accuracy: 7542/10000 (75%)
+natural_err_total:  tensor(2458., device='cuda:0')
+robust_err_total:  tensor(5099., device='cuda:0')
+================================================================
+Train Epoch: 19 [0/50000 (0%)]	Loss: 1.288232
+Train Epoch: 19 [12800/50000 (26%)]	Loss: 1.227548
+Train Epoch: 19 [25600/50000 (51%)]	Loss: 1.405743
+Train Epoch: 19 [38400/50000 (77%)]	Loss: 1.341086
+================================================================
+Training: Average loss: 0.8975, Accuracy: 39757/50000 (80%)
+Test: Average loss: 0.9222, Accuracy: 7577/10000 (76%)
+natural_err_total:  tensor(2423., device='cuda:0')
+robust_err_total:  tensor(5159., device='cuda:0')
+================================================================
+Train Epoch: 20 [0/50000 (0%)]	Loss: 1.403456
+Train Epoch: 20 [12800/50000 (26%)]	Loss: 1.252512
+Train Epoch: 20 [25600/50000 (51%)]	Loss: 1.257683
+Train Epoch: 20 [38400/50000 (77%)]	Loss: 1.233727
+================================================================
+Training: Average loss: 0.8851, Accuracy: 40468/50000 (81%)
+Test: Average loss: 0.9303, Accuracy: 7702/10000 (77%)
+natural_err_total:  tensor(2298., device='cuda:0')
+robust_err_total:  tensor(5177., device='cuda:0')
+================================================================
+Train Epoch: 21 [0/50000 (0%)]	Loss: 1.240256
+Train Epoch: 21 [12800/50000 (26%)]	Loss: 1.206698
+Train Epoch: 21 [25600/50000 (51%)]	Loss: 1.193634
+Train Epoch: 21 [38400/50000 (77%)]	Loss: 1.203671
+================================================================
+Training: Average loss: 0.8637, Accuracy: 40340/50000 (81%)
+Test: Average loss: 0.9085, Accuracy: 7664/10000 (77%)
+natural_err_total:  tensor(2336., device='cuda:0')
+robust_err_total:  tensor(5303., device='cuda:0')
+================================================================
+Train Epoch: 22 [0/50000 (0%)]	Loss: 1.146090
+Train Epoch: 22 [12800/50000 (26%)]	Loss: 1.165603
+Train Epoch: 22 [25600/50000 (51%)]	Loss: 1.277790
+Train Epoch: 22 [38400/50000 (77%)]	Loss: 1.250614
+================================================================
+Training: Average loss: 0.8880, Accuracy: 40304/50000 (81%)
+Test: Average loss: 0.9270, Accuracy: 7653/10000 (77%)
+natural_err_total:  tensor(2347., device='cuda:0')
+robust_err_total:  tensor(5149., device='cuda:0')
+================================================================
+Train Epoch: 23 [0/50000 (0%)]	Loss: 1.391920
+Train Epoch: 23 [12800/50000 (26%)]	Loss: 1.223560
+Train Epoch: 23 [25600/50000 (51%)]	Loss: 1.185057
+Train Epoch: 23 [38400/50000 (77%)]	Loss: 1.287309
+================================================================
+Training: Average loss: 0.8570, Accuracy: 40504/50000 (81%)
+Test: Average loss: 0.9090, Accuracy: 7621/10000 (76%)
+natural_err_total:  tensor(2379., device='cuda:0')
+robust_err_total:  tensor(5370., device='cuda:0')
+================================================================
+Train Epoch: 24 [0/50000 (0%)]	Loss: 1.195972
+Train Epoch: 24 [12800/50000 (26%)]	Loss: 1.188262
+Train Epoch: 24 [25600/50000 (51%)]	Loss: 1.200507
+Train Epoch: 24 [38400/50000 (77%)]	Loss: 1.278839
+================================================================
+Training: Average loss: 0.9114, Accuracy: 39932/50000 (80%)
+Test: Average loss: 0.9510, Accuracy: 7539/10000 (75%)
+natural_err_total:  tensor(2461., device='cuda:0')
+robust_err_total:  tensor(5083., device='cuda:0')
+================================================================
+Train Epoch: 25 [0/50000 (0%)]	Loss: 1.193939
+Train Epoch: 25 [12800/50000 (26%)]	Loss: 1.148234
+Train Epoch: 25 [25600/50000 (51%)]	Loss: 1.190219
+Train Epoch: 25 [38400/50000 (77%)]	Loss: 1.349306
+================================================================
+Training: Average loss: 0.8761, Accuracy: 39887/50000 (80%)
+Test: Average loss: 0.9224, Accuracy: 7567/10000 (76%)
+natural_err_total:  tensor(2433., device='cuda:0')
+robust_err_total:  tensor(5045., device='cuda:0')
+================================================================
+Train Epoch: 26 [0/50000 (0%)]	Loss: 1.229803
+Train Epoch: 26 [12800/50000 (26%)]	Loss: 1.140647
+Train Epoch: 26 [25600/50000 (51%)]	Loss: 1.141717
+Train Epoch: 26 [38400/50000 (77%)]	Loss: 1.196738
+================================================================
+Training: Average loss: 0.8172, Accuracy: 41767/50000 (84%)
+Test: Average loss: 0.8745, Accuracy: 7861/10000 (79%)
+natural_err_total:  tensor(2139., device='cuda:0')
+robust_err_total:  tensor(4995., device='cuda:0')
+================================================================
+Train Epoch: 27 [0/50000 (0%)]	Loss: 1.179202
+Train Epoch: 27 [12800/50000 (26%)]	Loss: 1.156562
+Train Epoch: 27 [25600/50000 (51%)]	Loss: 1.181996
+Train Epoch: 27 [38400/50000 (77%)]	Loss: 1.224076
+================================================================
+Training: Average loss: 0.8391, Accuracy: 41319/50000 (83%)
+Test: Average loss: 0.8994, Accuracy: 7753/10000 (78%)
+natural_err_total:  tensor(2247., device='cuda:0')
+robust_err_total:  tensor(5179., device='cuda:0')
+================================================================
+Train Epoch: 28 [0/50000 (0%)]	Loss: 1.079316
+Train Epoch: 28 [12800/50000 (26%)]	Loss: 1.148813
+Train Epoch: 28 [25600/50000 (51%)]	Loss: 1.252541
+Train Epoch: 28 [38400/50000 (77%)]	Loss: 1.233747
+================================================================
+Training: Average loss: 0.8566, Accuracy: 41107/50000 (82%)
+Test: Average loss: 0.9317, Accuracy: 7645/10000 (76%)
+natural_err_total:  tensor(2355., device='cuda:0')
+robust_err_total:  tensor(5360., device='cuda:0')
+================================================================
+Train Epoch: 29 [0/50000 (0%)]	Loss: 1.166881
+Train Epoch: 29 [12800/50000 (26%)]	Loss: 1.095066
+Train Epoch: 29 [25600/50000 (51%)]	Loss: 1.122965
+Train Epoch: 29 [38400/50000 (77%)]	Loss: 1.031462
+================================================================
+Training: Average loss: 0.8315, Accuracy: 41656/50000 (83%)
+Test: Average loss: 0.8926, Accuracy: 7794/10000 (78%)
+natural_err_total:  tensor(2206., device='cuda:0')
+robust_err_total:  tensor(5064., device='cuda:0')
+================================================================
+Train Epoch: 30 [0/50000 (0%)]	Loss: 1.181192
+Train Epoch: 30 [12800/50000 (26%)]	Loss: 1.262855
+Train Epoch: 30 [25600/50000 (51%)]	Loss: 1.208790
+Train Epoch: 30 [38400/50000 (77%)]	Loss: 1.107208
+================================================================
+Training: Average loss: 0.8314, Accuracy: 41953/50000 (84%)
+Test: Average loss: 0.8863, Accuracy: 7820/10000 (78%)
+natural_err_total:  tensor(2180., device='cuda:0')
+robust_err_total:  tensor(4964., device='cuda:0')
+================================================================
+Train Epoch: 31 [0/50000 (0%)]	Loss: 1.040994
+Train Epoch: 31 [12800/50000 (26%)]	Loss: 1.132272
+Train Epoch: 31 [25600/50000 (51%)]	Loss: 1.178695
+Train Epoch: 31 [38400/50000 (77%)]	Loss: 1.124878
+================================================================
+Training: Average loss: 0.7970, Accuracy: 41710/50000 (83%)
+Test: Average loss: 0.8678, Accuracy: 7744/10000 (77%)
+natural_err_total:  tensor(2256., device='cuda:0')
+robust_err_total:  tensor(5012., device='cuda:0')
+================================================================
+Train Epoch: 32 [0/50000 (0%)]	Loss: 1.062307
+Train Epoch: 32 [12800/50000 (26%)]	Loss: 1.204593
+Train Epoch: 32 [25600/50000 (51%)]	Loss: 1.192698
+Train Epoch: 32 [38400/50000 (77%)]	Loss: 1.046791
+================================================================
+Training: Average loss: 0.8012, Accuracy: 42717/50000 (85%)
+Test: Average loss: 0.8639, Accuracy: 7989/10000 (80%)
+natural_err_total:  tensor(2011., device='cuda:0')
+robust_err_total:  tensor(4863., device='cuda:0')
+================================================================
+Train Epoch: 33 [0/50000 (0%)]	Loss: 1.216957
+Train Epoch: 33 [12800/50000 (26%)]	Loss: 1.027533
+Train Epoch: 33 [25600/50000 (51%)]	Loss: 1.175202
+Train Epoch: 33 [38400/50000 (77%)]	Loss: 1.161510
+================================================================
+Training: Average loss: 0.7492, Accuracy: 42941/50000 (86%)
+Test: Average loss: 0.8160, Accuracy: 8001/10000 (80%)
+natural_err_total:  tensor(1999., device='cuda:0')
+robust_err_total:  tensor(4893., device='cuda:0')
+================================================================
+Train Epoch: 34 [0/50000 (0%)]	Loss: 1.054966
+Train Epoch: 34 [12800/50000 (26%)]	Loss: 1.100149
+Train Epoch: 34 [25600/50000 (51%)]	Loss: 1.132217
+Train Epoch: 34 [38400/50000 (77%)]	Loss: 1.139556
+================================================================
+Training: Average loss: 0.7768, Accuracy: 42214/50000 (84%)
+Test: Average loss: 0.8542, Accuracy: 7751/10000 (78%)
+natural_err_total:  tensor(2249., device='cuda:0')
+robust_err_total:  tensor(5000., device='cuda:0')
+================================================================
+Train Epoch: 35 [0/50000 (0%)]	Loss: 1.232640
+Train Epoch: 35 [12800/50000 (26%)]	Loss: 1.243524
+Train Epoch: 35 [25600/50000 (51%)]	Loss: 1.180683
+Train Epoch: 35 [38400/50000 (77%)]	Loss: 1.234172
+================================================================
+Training: Average loss: 0.7939, Accuracy: 42559/50000 (85%)
+Test: Average loss: 0.8653, Accuracy: 7874/10000 (79%)
+natural_err_total:  tensor(2126., device='cuda:0')
+robust_err_total:  tensor(5063., device='cuda:0')
+================================================================
+Train Epoch: 36 [0/50000 (0%)]	Loss: 1.204988
+Train Epoch: 36 [12800/50000 (26%)]	Loss: 1.266271
+Train Epoch: 36 [25600/50000 (51%)]	Loss: 1.185920
+Train Epoch: 36 [38400/50000 (77%)]	Loss: 1.153275
+================================================================
+Training: Average loss: 0.7761, Accuracy: 43262/50000 (87%)
+Test: Average loss: 0.8472, Accuracy: 7981/10000 (80%)
+natural_err_total:  tensor(2019., device='cuda:0')
+robust_err_total:  tensor(4855., device='cuda:0')
+================================================================
+Train Epoch: 37 [0/50000 (0%)]	Loss: 1.075241
+Train Epoch: 37 [12800/50000 (26%)]	Loss: 1.111244
+Train Epoch: 37 [25600/50000 (51%)]	Loss: 1.092854
+Train Epoch: 37 [38400/50000 (77%)]	Loss: 1.153291
+================================================================
+Training: Average loss: 0.7928, Accuracy: 43000/50000 (86%)
+Test: Average loss: 0.8672, Accuracy: 7926/10000 (79%)
+natural_err_total:  tensor(2074., device='cuda:0')
+robust_err_total:  tensor(4927., device='cuda:0')
+================================================================
+Train Epoch: 38 [0/50000 (0%)]	Loss: 1.047203
+Train Epoch: 38 [12800/50000 (26%)]	Loss: 1.066564
+Train Epoch: 38 [25600/50000 (51%)]	Loss: 1.129753
+Train Epoch: 38 [38400/50000 (77%)]	Loss: 1.151794
+================================================================
+Training: Average loss: 0.7284, Accuracy: 43174/50000 (86%)
+Test: Average loss: 0.8114, Accuracy: 7968/10000 (80%)
+natural_err_total:  tensor(2032., device='cuda:0')
+robust_err_total:  tensor(4936., device='cuda:0')
+================================================================
+Train Epoch: 39 [0/50000 (0%)]	Loss: 1.084742
+Train Epoch: 39 [12800/50000 (26%)]	Loss: 1.086701
+Train Epoch: 39 [25600/50000 (51%)]	Loss: 1.098886
+Train Epoch: 39 [38400/50000 (77%)]	Loss: 1.024634
+================================================================
+Training: Average loss: 0.7397, Accuracy: 43715/50000 (87%)
+Test: Average loss: 0.8209, Accuracy: 8021/10000 (80%)
+natural_err_total:  tensor(1979., device='cuda:0')
+robust_err_total:  tensor(4744., device='cuda:0')
+================================================================
+Train Epoch: 40 [0/50000 (0%)]	Loss: 1.164637
+Train Epoch: 40 [12800/50000 (26%)]	Loss: 1.248622
+Train Epoch: 40 [25600/50000 (51%)]	Loss: 1.216038
+Train Epoch: 40 [38400/50000 (77%)]	Loss: 1.091386
+================================================================
+Training: Average loss: 0.7740, Accuracy: 42999/50000 (86%)
+Test: Average loss: 0.8505, Accuracy: 7930/10000 (79%)
+natural_err_total:  tensor(2070., device='cuda:0')
+robust_err_total:  tensor(4881., device='cuda:0')
+================================================================
+Train Epoch: 41 [0/50000 (0%)]	Loss: 1.023442
+Train Epoch: 41 [12800/50000 (26%)]	Loss: 0.992913
+Train Epoch: 41 [25600/50000 (51%)]	Loss: 1.125967
+Train Epoch: 41 [38400/50000 (77%)]	Loss: 1.183620
+================================================================
+Training: Average loss: 0.7436, Accuracy: 42999/50000 (86%)
+Test: Average loss: 0.8351, Accuracy: 7906/10000 (79%)
+natural_err_total:  tensor(2094., device='cuda:0')
+robust_err_total:  tensor(4885., device='cuda:0')
+================================================================
+Train Epoch: 42 [0/50000 (0%)]	Loss: 1.102413
+Train Epoch: 42 [12800/50000 (26%)]	Loss: 1.027594
+Train Epoch: 42 [25600/50000 (51%)]	Loss: 1.072042
+Train Epoch: 42 [38400/50000 (77%)]	Loss: 1.038961
+================================================================
+Training: Average loss: 0.7196, Accuracy: 43992/50000 (88%)
+Test: Average loss: 0.8195, Accuracy: 8030/10000 (80%)
+natural_err_total:  tensor(1970., device='cuda:0')
+robust_err_total:  tensor(4845., device='cuda:0')
+================================================================
+Train Epoch: 43 [0/50000 (0%)]	Loss: 1.036623
+Train Epoch: 43 [12800/50000 (26%)]	Loss: 1.157731
+Train Epoch: 43 [25600/50000 (51%)]	Loss: 1.180137
+Train Epoch: 43 [38400/50000 (77%)]	Loss: 1.130766
+================================================================
+Training: Average loss: 0.7236, Accuracy: 43639/50000 (87%)
+Test: Average loss: 0.8149, Accuracy: 7960/10000 (80%)
+natural_err_total:  tensor(2040., device='cuda:0')
+robust_err_total:  tensor(4848., device='cuda:0')
+================================================================
+Train Epoch: 44 [0/50000 (0%)]	Loss: 1.135808
+Train Epoch: 44 [12800/50000 (26%)]	Loss: 1.118822
+Train Epoch: 44 [25600/50000 (51%)]	Loss: 1.095038
+Train Epoch: 44 [38400/50000 (77%)]	Loss: 1.078515
+================================================================
+Training: Average loss: 0.7523, Accuracy: 42940/50000 (86%)
+Test: Average loss: 0.8377, Accuracy: 7890/10000 (79%)
+natural_err_total:  tensor(2110., device='cuda:0')
+robust_err_total:  tensor(4939., device='cuda:0')
+================================================================
+Train Epoch: 45 [0/50000 (0%)]	Loss: 1.120574
+Train Epoch: 45 [12800/50000 (26%)]	Loss: 1.142195
+Train Epoch: 45 [25600/50000 (51%)]	Loss: 1.136232
+Train Epoch: 45 [38400/50000 (77%)]	Loss: 1.078908
+================================================================
+Training: Average loss: 0.7291, Accuracy: 43465/50000 (87%)
+Test: Average loss: 0.8171, Accuracy: 7976/10000 (80%)
+natural_err_total:  tensor(2024., device='cuda:0')
+robust_err_total:  tensor(4802., device='cuda:0')
+================================================================
+Train Epoch: 46 [0/50000 (0%)]	Loss: 1.166944
+Train Epoch: 46 [12800/50000 (26%)]	Loss: 1.180329
+Train Epoch: 46 [25600/50000 (51%)]	Loss: 1.111153
+Train Epoch: 46 [38400/50000 (77%)]	Loss: 1.027060
+================================================================
+Training: Average loss: 0.7158, Accuracy: 43016/50000 (86%)
+Test: Average loss: 0.8279, Accuracy: 7828/10000 (78%)
+natural_err_total:  tensor(2172., device='cuda:0')
+robust_err_total:  tensor(5144., device='cuda:0')
+================================================================
+Train Epoch: 47 [0/50000 (0%)]	Loss: 1.020554
+Train Epoch: 47 [12800/50000 (26%)]	Loss: 1.009188
+Train Epoch: 47 [25600/50000 (51%)]	Loss: 1.256893
+Train Epoch: 47 [38400/50000 (77%)]	Loss: 1.033052
+================================================================
+Training: Average loss: 0.7463, Accuracy: 43971/50000 (88%)
+Test: Average loss: 0.8314, Accuracy: 7999/10000 (80%)
+natural_err_total:  tensor(2001., device='cuda:0')
+robust_err_total:  tensor(4861., device='cuda:0')
+================================================================
+Train Epoch: 48 [0/50000 (0%)]	Loss: 0.975424
+Train Epoch: 48 [12800/50000 (26%)]	Loss: 0.995388
+Train Epoch: 48 [25600/50000 (51%)]	Loss: 0.920826
+Train Epoch: 48 [38400/50000 (77%)]	Loss: 1.066505
+================================================================
+Training: Average loss: 0.7011, Accuracy: 44397/50000 (89%)
+Test: Average loss: 0.8096, Accuracy: 8080/10000 (81%)
+natural_err_total:  tensor(1920., device='cuda:0')
+robust_err_total:  tensor(4789., device='cuda:0')
+================================================================
+Train Epoch: 49 [0/50000 (0%)]	Loss: 1.037675
+Train Epoch: 49 [12800/50000 (26%)]	Loss: 1.032034
+Train Epoch: 49 [25600/50000 (51%)]	Loss: 1.096994
+Train Epoch: 49 [38400/50000 (77%)]	Loss: 1.135035
+================================================================
+Training: Average loss: 0.6899, Accuracy: 44094/50000 (88%)
+Test: Average loss: 0.7930, Accuracy: 8065/10000 (81%)
+natural_err_total:  tensor(1935., device='cuda:0')
+robust_err_total:  tensor(4832., device='cuda:0')
+================================================================
+Train Epoch: 50 [0/50000 (0%)]	Loss: 1.104985
+Train Epoch: 50 [12800/50000 (26%)]	Loss: 1.060684
+Train Epoch: 50 [25600/50000 (51%)]	Loss: 1.042841
+Train Epoch: 50 [38400/50000 (77%)]	Loss: 1.017236
+================================================================
+Training: Average loss: 0.7146, Accuracy: 44508/50000 (89%)
+Test: Average loss: 0.8148, Accuracy: 8099/10000 (81%)
+natural_err_total:  tensor(1901., device='cuda:0')
+robust_err_total:  tensor(4775., device='cuda:0')
+================================================================
+Train Epoch: 51 [0/50000 (0%)]	Loss: 1.118791
+Train Epoch: 51 [12800/50000 (26%)]	Loss: 1.028187
+Train Epoch: 51 [25600/50000 (51%)]	Loss: 1.107867
+Train Epoch: 51 [38400/50000 (77%)]	Loss: 1.081217
+================================================================
+Training: Average loss: 0.6885, Accuracy: 44186/50000 (88%)
+Test: Average loss: 0.7961, Accuracy: 8052/10000 (81%)
+natural_err_total:  tensor(1948., device='cuda:0')
+robust_err_total:  tensor(4949., device='cuda:0')
+================================================================
+Train Epoch: 52 [0/50000 (0%)]	Loss: 1.036803
+Train Epoch: 52 [12800/50000 (26%)]	Loss: 1.075583
+Train Epoch: 52 [25600/50000 (51%)]	Loss: 1.126218
+Train Epoch: 52 [38400/50000 (77%)]	Loss: 1.127795
+================================================================
+Training: Average loss: 0.7327, Accuracy: 43879/50000 (88%)
+Test: Average loss: 0.8277, Accuracy: 7987/10000 (80%)
+natural_err_total:  tensor(2013., device='cuda:0')
+robust_err_total:  tensor(4915., device='cuda:0')
+================================================================
+Train Epoch: 53 [0/50000 (0%)]	Loss: 1.211306
+Train Epoch: 53 [12800/50000 (26%)]	Loss: 0.993549
+Train Epoch: 53 [25600/50000 (51%)]	Loss: 1.082736
+Train Epoch: 53 [38400/50000 (77%)]	Loss: 1.070452
+================================================================
+Training: Average loss: 0.6717, Accuracy: 44705/50000 (89%)
+Test: Average loss: 0.7802, Accuracy: 8117/10000 (81%)
+natural_err_total:  tensor(1883., device='cuda:0')
+robust_err_total:  tensor(4732., device='cuda:0')
+================================================================
+Train Epoch: 54 [0/50000 (0%)]	Loss: 0.940033
+Train Epoch: 54 [12800/50000 (26%)]	Loss: 1.067435
+Train Epoch: 54 [25600/50000 (51%)]	Loss: 1.020114
+Train Epoch: 54 [38400/50000 (77%)]	Loss: 1.085757
+================================================================
+Training: Average loss: 0.7339, Accuracy: 43563/50000 (87%)
+Test: Average loss: 0.8560, Accuracy: 7764/10000 (78%)
+natural_err_total:  tensor(2236., device='cuda:0')
+robust_err_total:  tensor(4952., device='cuda:0')
+================================================================
+Train Epoch: 55 [0/50000 (0%)]	Loss: 1.017061
+Train Epoch: 55 [12800/50000 (26%)]	Loss: 0.941716
+Train Epoch: 55 [25600/50000 (51%)]	Loss: 1.057159
+Train Epoch: 55 [38400/50000 (77%)]	Loss: 0.987147
+================================================================
+Training: Average loss: 0.7096, Accuracy: 44386/50000 (89%)
+Test: Average loss: 0.8050, Accuracy: 8073/10000 (81%)
+natural_err_total:  tensor(1927., device='cuda:0')
+robust_err_total:  tensor(4752., device='cuda:0')
+================================================================
+Train Epoch: 56 [0/50000 (0%)]	Loss: 1.068632
+Train Epoch: 56 [12800/50000 (26%)]	Loss: 1.133765
+Train Epoch: 56 [25600/50000 (51%)]	Loss: 0.954387
+Train Epoch: 56 [38400/50000 (77%)]	Loss: 0.987114
+================================================================
+Training: Average loss: 0.7069, Accuracy: 43682/50000 (87%)
+Test: Average loss: 0.8139, Accuracy: 7891/10000 (79%)
+natural_err_total:  tensor(2109., device='cuda:0')
+robust_err_total:  tensor(4844., device='cuda:0')
+================================================================
+Train Epoch: 57 [0/50000 (0%)]	Loss: 1.027750
+Train Epoch: 57 [12800/50000 (26%)]	Loss: 1.047138
+Train Epoch: 57 [25600/50000 (51%)]	Loss: 1.099880
+Train Epoch: 57 [38400/50000 (77%)]	Loss: 1.001703
+================================================================
+Training: Average loss: 0.6547, Accuracy: 44208/50000 (88%)
+Test: Average loss: 0.7892, Accuracy: 7908/10000 (79%)
+natural_err_total:  tensor(2092., device='cuda:0')
+robust_err_total:  tensor(4785., device='cuda:0')
+================================================================
+Train Epoch: 58 [0/50000 (0%)]	Loss: 1.039973
+Train Epoch: 58 [12800/50000 (26%)]	Loss: 0.982975
+Train Epoch: 58 [25600/50000 (51%)]	Loss: 1.049849
+Train Epoch: 58 [38400/50000 (77%)]	Loss: 1.164475
+================================================================
+Training: Average loss: 0.6584, Accuracy: 44928/50000 (90%)
+Test: Average loss: 0.7793, Accuracy: 8109/10000 (81%)
+natural_err_total:  tensor(1891., device='cuda:0')
+robust_err_total:  tensor(4829., device='cuda:0')
+================================================================
+Train Epoch: 59 [0/50000 (0%)]	Loss: 0.983140
+Train Epoch: 59 [12800/50000 (26%)]	Loss: 1.106729
+Train Epoch: 59 [25600/50000 (51%)]	Loss: 1.088564
+Train Epoch: 59 [38400/50000 (77%)]	Loss: 1.114965
+================================================================
+Training: Average loss: 0.6588, Accuracy: 44878/50000 (90%)
+Test: Average loss: 0.7806, Accuracy: 8079/10000 (81%)
+natural_err_total:  tensor(1921., device='cuda:0')
+robust_err_total:  tensor(4856., device='cuda:0')
+================================================================
+Train Epoch: 60 [0/50000 (0%)]	Loss: 1.115477
+Train Epoch: 60 [12800/50000 (26%)]	Loss: 1.046457
+Train Epoch: 60 [25600/50000 (51%)]	Loss: 1.002944
+Train Epoch: 60 [38400/50000 (77%)]	Loss: 1.247852
+================================================================
+Training: Average loss: 0.6767, Accuracy: 44542/50000 (89%)
+Test: Average loss: 0.8133, Accuracy: 7939/10000 (79%)
+natural_err_total:  tensor(2061., device='cuda:0')
+robust_err_total:  tensor(4936., device='cuda:0')
+================================================================
+Train Epoch: 61 [0/50000 (0%)]	Loss: 0.960359
+Train Epoch: 61 [12800/50000 (26%)]	Loss: 1.101671
+Train Epoch: 61 [25600/50000 (51%)]	Loss: 1.063012
+Train Epoch: 61 [38400/50000 (77%)]	Loss: 1.152417
+================================================================
+Training: Average loss: 0.6966, Accuracy: 43882/50000 (88%)
+Test: Average loss: 0.8245, Accuracy: 7889/10000 (79%)
+natural_err_total:  tensor(2111., device='cuda:0')
+robust_err_total:  tensor(4834., device='cuda:0')
+================================================================
+Train Epoch: 62 [0/50000 (0%)]	Loss: 0.996383
+Train Epoch: 62 [12800/50000 (26%)]	Loss: 0.983405
+Train Epoch: 62 [25600/50000 (51%)]	Loss: 1.115477
+Train Epoch: 62 [38400/50000 (77%)]	Loss: 1.033404
+================================================================
+Training: Average loss: 0.7027, Accuracy: 44911/50000 (90%)
+Test: Average loss: 0.8234, Accuracy: 8027/10000 (80%)
+natural_err_total:  tensor(1973., device='cuda:0')
+robust_err_total:  tensor(4843., device='cuda:0')
+================================================================
+Train Epoch: 63 [0/50000 (0%)]	Loss: 0.933276
+Train Epoch: 63 [12800/50000 (26%)]	Loss: 1.024755
+Train Epoch: 63 [25600/50000 (51%)]	Loss: 1.076536
+Train Epoch: 63 [38400/50000 (77%)]	Loss: 0.980332
+================================================================
+Training: Average loss: 0.6920, Accuracy: 44594/50000 (89%)
+Test: Average loss: 0.8151, Accuracy: 7997/10000 (80%)
+natural_err_total:  tensor(2003., device='cuda:0')
+robust_err_total:  tensor(4829., device='cuda:0')
+================================================================
+Train Epoch: 64 [0/50000 (0%)]	Loss: 1.010963
+Train Epoch: 64 [12800/50000 (26%)]	Loss: 1.002446
+Train Epoch: 64 [25600/50000 (51%)]	Loss: 1.037544
+Train Epoch: 64 [38400/50000 (77%)]	Loss: 1.011001
+================================================================
+Training: Average loss: 0.6677, Accuracy: 44807/50000 (90%)
+Test: Average loss: 0.8023, Accuracy: 8025/10000 (80%)
+natural_err_total:  tensor(1975., device='cuda:0')
+robust_err_total:  tensor(4809., device='cuda:0')
+================================================================
+Train Epoch: 65 [0/50000 (0%)]	Loss: 0.884914
+Train Epoch: 65 [12800/50000 (26%)]	Loss: 0.993902
+Train Epoch: 65 [25600/50000 (51%)]	Loss: 1.080278
+Train Epoch: 65 [38400/50000 (77%)]	Loss: 0.989382
+================================================================
+Training: Average loss: 0.6720, Accuracy: 44828/50000 (90%)
+Test: Average loss: 0.7967, Accuracy: 8012/10000 (80%)
+natural_err_total:  tensor(1988., device='cuda:0')
+robust_err_total:  tensor(4843., device='cuda:0')
+================================================================
+Train Epoch: 66 [0/50000 (0%)]	Loss: 0.997145
+Train Epoch: 66 [12800/50000 (26%)]	Loss: 1.068722
+Train Epoch: 66 [25600/50000 (51%)]	Loss: 1.058252
+Train Epoch: 66 [38400/50000 (77%)]	Loss: 1.092090
+================================================================
+Training: Average loss: 0.6793, Accuracy: 44896/50000 (90%)
+Test: Average loss: 0.8075, Accuracy: 8049/10000 (80%)
+natural_err_total:  tensor(1951., device='cuda:0')
+robust_err_total:  tensor(4702., device='cuda:0')
+================================================================
+Train Epoch: 67 [0/50000 (0%)]	Loss: 0.993054
+Train Epoch: 67 [12800/50000 (26%)]	Loss: 1.045895
+Train Epoch: 67 [25600/50000 (51%)]	Loss: 1.102541
+Train Epoch: 67 [38400/50000 (77%)]	Loss: 1.049390
+================================================================
+Training: Average loss: 0.6811, Accuracy: 44544/50000 (89%)
+Test: Average loss: 0.8125, Accuracy: 7931/10000 (79%)
+natural_err_total:  tensor(2069., device='cuda:0')
+robust_err_total:  tensor(4836., device='cuda:0')
+================================================================
+Train Epoch: 68 [0/50000 (0%)]	Loss: 0.974764
+Train Epoch: 68 [12800/50000 (26%)]	Loss: 1.133883
+Train Epoch: 68 [25600/50000 (51%)]	Loss: 1.024039
+Train Epoch: 68 [38400/50000 (77%)]	Loss: 0.963536
+================================================================
+Training: Average loss: 0.6535, Accuracy: 44875/50000 (90%)
+Test: Average loss: 0.7945, Accuracy: 8020/10000 (80%)
+natural_err_total:  tensor(1980., device='cuda:0')
+robust_err_total:  tensor(4924., device='cuda:0')
+================================================================
+Train Epoch: 69 [0/50000 (0%)]	Loss: 0.953522
+Train Epoch: 69 [12800/50000 (26%)]	Loss: 1.045176
+Train Epoch: 69 [25600/50000 (51%)]	Loss: 1.011138
+Train Epoch: 69 [38400/50000 (77%)]	Loss: 1.179464
+================================================================
+Training: Average loss: 0.6529, Accuracy: 45459/50000 (91%)
+Test: Average loss: 0.7797, Accuracy: 8106/10000 (81%)
+natural_err_total:  tensor(1894., device='cuda:0')
+robust_err_total:  tensor(4832., device='cuda:0')
+================================================================
+Train Epoch: 70 [0/50000 (0%)]	Loss: 0.942720
+Train Epoch: 70 [12800/50000 (26%)]	Loss: 0.999131
+Train Epoch: 70 [25600/50000 (51%)]	Loss: 1.232839
+Train Epoch: 70 [38400/50000 (77%)]	Loss: 1.028648
+================================================================
+Training: Average loss: 0.6926, Accuracy: 44673/50000 (89%)
+Test: Average loss: 0.8209, Accuracy: 7941/10000 (79%)
+natural_err_total:  tensor(2059., device='cuda:0')
+robust_err_total:  tensor(4901., device='cuda:0')
+================================================================
+Train Epoch: 71 [0/50000 (0%)]	Loss: 0.929598
+Train Epoch: 71 [12800/50000 (26%)]	Loss: 0.978755
+Train Epoch: 71 [25600/50000 (51%)]	Loss: 1.073874
+Train Epoch: 71 [38400/50000 (77%)]	Loss: 0.975509
+================================================================
+Training: Average loss: 0.6785, Accuracy: 44642/50000 (89%)
+Test: Average loss: 0.8199, Accuracy: 7961/10000 (80%)
+natural_err_total:  tensor(2039., device='cuda:0')
+robust_err_total:  tensor(4941., device='cuda:0')
+================================================================
+Train Epoch: 72 [0/50000 (0%)]	Loss: 1.101962
+Train Epoch: 72 [12800/50000 (26%)]	Loss: 1.070302
+Train Epoch: 72 [25600/50000 (51%)]	Loss: 1.080882
+Train Epoch: 72 [38400/50000 (77%)]	Loss: 0.957402
+================================================================
+Training: Average loss: 0.6571, Accuracy: 45303/50000 (91%)
+Test: Average loss: 0.7875, Accuracy: 8109/10000 (81%)
+natural_err_total:  tensor(1891., device='cuda:0')
+robust_err_total:  tensor(4735., device='cuda:0')
+================================================================
+Train Epoch: 73 [0/50000 (0%)]	Loss: 0.842262
+Train Epoch: 73 [12800/50000 (26%)]	Loss: 0.914136
+Train Epoch: 73 [25600/50000 (51%)]	Loss: 1.082159
+Train Epoch: 73 [38400/50000 (77%)]	Loss: 1.063268
+================================================================
+Training: Average loss: 0.6511, Accuracy: 45200/50000 (90%)
+Test: Average loss: 0.7824, Accuracy: 8103/10000 (81%)
+natural_err_total:  tensor(1897., device='cuda:0')
+robust_err_total:  tensor(4829., device='cuda:0')
+================================================================
+Train Epoch: 74 [0/50000 (0%)]	Loss: 1.006325
+Train Epoch: 74 [12800/50000 (26%)]	Loss: 1.045448
+Train Epoch: 74 [25600/50000 (51%)]	Loss: 1.029513
+Train Epoch: 74 [38400/50000 (77%)]	Loss: 1.072832
+================================================================
+Training: Average loss: 0.6545, Accuracy: 44979/50000 (90%)
+Test: Average loss: 0.8029, Accuracy: 7905/10000 (79%)
+natural_err_total:  tensor(2095., device='cuda:0')
+robust_err_total:  tensor(4864., device='cuda:0')
+================================================================
+Train Epoch: 75 [0/50000 (0%)]	Loss: 1.072896
+Train Epoch: 75 [12800/50000 (26%)]	Loss: 0.714237
+Train Epoch: 75 [25600/50000 (51%)]	Loss: 0.760545
+Train Epoch: 75 [38400/50000 (77%)]	Loss: 0.880466
+================================================================
+Training: Average loss: 0.4387, Accuracy: 47797/50000 (96%)
+Test: Average loss: 0.6297, Accuracy: 8423/10000 (84%)
+natural_err_total:  tensor(1577., device='cuda:0')
+robust_err_total:  tensor(4404., device='cuda:0')
+================================================================
+Train Epoch: 76 [0/50000 (0%)]	Loss: 0.699532
+Train Epoch: 76 [12800/50000 (26%)]	Loss: 0.685265
+Train Epoch: 76 [25600/50000 (51%)]	Loss: 0.832442
+Train Epoch: 76 [38400/50000 (77%)]	Loss: 0.750977
+================================================================
+Training: Average loss: 0.4114, Accuracy: 48088/50000 (96%)
+Test: Average loss: 0.6157, Accuracy: 8456/10000 (85%)
+natural_err_total:  tensor(1544., device='cuda:0')
+robust_err_total:  tensor(4439., device='cuda:0')
+================================================================
+Train Epoch: 77 [0/50000 (0%)]	Loss: 0.676717
+Train Epoch: 77 [12800/50000 (26%)]	Loss: 0.759756
+Train Epoch: 77 [25600/50000 (51%)]	Loss: 0.730511
+Train Epoch: 77 [38400/50000 (77%)]	Loss: 0.740573
+================================================================
+Training: Average loss: 0.3928, Accuracy: 48305/50000 (97%)
+Test: Average loss: 0.6042, Accuracy: 8466/10000 (85%)
+natural_err_total:  tensor(1534., device='cuda:0')
+robust_err_total:  tensor(4408., device='cuda:0')
+================================================================
+Train Epoch: 78 [0/50000 (0%)]	Loss: 0.797539
+Train Epoch: 78 [12800/50000 (26%)]	Loss: 0.786388
+Train Epoch: 78 [25600/50000 (51%)]	Loss: 0.660165
+Train Epoch: 78 [38400/50000 (77%)]	Loss: 0.762627
+================================================================
+Training: Average loss: 0.3716, Accuracy: 48225/50000 (96%)
+Test: Average loss: 0.5989, Accuracy: 8413/10000 (84%)
+natural_err_total:  tensor(1587., device='cuda:0')
+robust_err_total:  tensor(4423., device='cuda:0')
+================================================================
+Train Epoch: 79 [0/50000 (0%)]	Loss: 0.759527
+Train Epoch: 79 [12800/50000 (26%)]	Loss: 0.782387
+Train Epoch: 79 [25600/50000 (51%)]	Loss: 0.583337
+Train Epoch: 79 [38400/50000 (77%)]	Loss: 0.669680
+================================================================
+Training: Average loss: 0.3441, Accuracy: 48604/50000 (97%)
+Test: Average loss: 0.5861, Accuracy: 8438/10000 (84%)
+natural_err_total:  tensor(1562., device='cuda:0')
+robust_err_total:  tensor(4469., device='cuda:0')
+================================================================
+Train Epoch: 80 [0/50000 (0%)]	Loss: 0.679117
+Train Epoch: 80 [12800/50000 (26%)]	Loss: 0.559823
+Train Epoch: 80 [25600/50000 (51%)]	Loss: 0.783442
+Train Epoch: 80 [38400/50000 (77%)]	Loss: 0.740903
+================================================================
+Training: Average loss: 0.3482, Accuracy: 48512/50000 (97%)
+Test: Average loss: 0.5859, Accuracy: 8473/10000 (85%)
+natural_err_total:  tensor(1527., device='cuda:0')
+robust_err_total:  tensor(4455., device='cuda:0')
+================================================================
+Train Epoch: 81 [0/50000 (0%)]	Loss: 0.708402
+Train Epoch: 81 [12800/50000 (26%)]	Loss: 0.705651
+Train Epoch: 81 [25600/50000 (51%)]	Loss: 0.657183
+Train Epoch: 81 [38400/50000 (77%)]	Loss: 0.706835
+================================================================
+Training: Average loss: 0.3252, Accuracy: 48692/50000 (97%)
+Test: Average loss: 0.5699, Accuracy: 8486/10000 (85%)
+natural_err_total:  tensor(1514., device='cuda:0')
+robust_err_total:  tensor(4517., device='cuda:0')
+================================================================
+Train Epoch: 82 [0/50000 (0%)]	Loss: 0.623652
+Train Epoch: 82 [12800/50000 (26%)]	Loss: 0.655801
+Train Epoch: 82 [25600/50000 (51%)]	Loss: 0.715461
+Train Epoch: 82 [38400/50000 (77%)]	Loss: 0.688846
+================================================================
+Training: Average loss: 0.3126, Accuracy: 48752/50000 (98%)
+Test: Average loss: 0.5656, Accuracy: 8458/10000 (85%)
+natural_err_total:  tensor(1542., device='cuda:0')
+robust_err_total:  tensor(4518., device='cuda:0')
+================================================================
+Train Epoch: 83 [0/50000 (0%)]	Loss: 0.622573
+Train Epoch: 83 [12800/50000 (26%)]	Loss: 0.719655
+Train Epoch: 83 [25600/50000 (51%)]	Loss: 0.680483
+Train Epoch: 83 [38400/50000 (77%)]	Loss: 0.569876
+================================================================
+Training: Average loss: 0.3270, Accuracy: 48728/50000 (97%)
+Test: Average loss: 0.5825, Accuracy: 8402/10000 (84%)
+natural_err_total:  tensor(1598., device='cuda:0')
+robust_err_total:  tensor(4555., device='cuda:0')
+================================================================
+Train Epoch: 84 [0/50000 (0%)]	Loss: 0.584433
+Train Epoch: 84 [12800/50000 (26%)]	Loss: 0.575471
+Train Epoch: 84 [25600/50000 (51%)]	Loss: 0.537789
+Train Epoch: 84 [38400/50000 (77%)]	Loss: 0.653624
+================================================================
+Training: Average loss: 0.2982, Accuracy: 48879/50000 (98%)
+Test: Average loss: 0.5688, Accuracy: 8429/10000 (84%)
+natural_err_total:  tensor(1571., device='cuda:0')
+robust_err_total:  tensor(4616., device='cuda:0')
+================================================================
+Train Epoch: 85 [0/50000 (0%)]	Loss: 0.596946
+Train Epoch: 85 [12800/50000 (26%)]	Loss: 0.675658
+Train Epoch: 85 [25600/50000 (51%)]	Loss: 0.621048
+Train Epoch: 85 [38400/50000 (77%)]	Loss: 0.757537
+================================================================
+Training: Average loss: 0.2991, Accuracy: 48807/50000 (98%)
+Test: Average loss: 0.5639, Accuracy: 8450/10000 (84%)
+natural_err_total:  tensor(1550., device='cuda:0')
+robust_err_total:  tensor(4614., device='cuda:0')
+================================================================
+Train Epoch: 86 [0/50000 (0%)]	Loss: 0.605202
+Train Epoch: 86 [12800/50000 (26%)]	Loss: 0.680324
+Train Epoch: 86 [25600/50000 (51%)]	Loss: 0.596580
+Train Epoch: 86 [38400/50000 (77%)]	Loss: 0.635143
+================================================================
+Training: Average loss: 0.3089, Accuracy: 48845/50000 (98%)
+Test: Average loss: 0.5680, Accuracy: 8461/10000 (85%)
+natural_err_total:  tensor(1539., device='cuda:0')
+robust_err_total:  tensor(4590., device='cuda:0')
+================================================================
+Train Epoch: 87 [0/50000 (0%)]	Loss: 0.569486
+Train Epoch: 87 [12800/50000 (26%)]	Loss: 0.600473
+Train Epoch: 87 [25600/50000 (51%)]	Loss: 0.543093
+Train Epoch: 87 [38400/50000 (77%)]	Loss: 0.588170
+================================================================
+Training: Average loss: 0.3129, Accuracy: 48829/50000 (98%)
+Test: Average loss: 0.5801, Accuracy: 8374/10000 (84%)
+natural_err_total:  tensor(1626., device='cuda:0')
+robust_err_total:  tensor(4616., device='cuda:0')
+================================================================
+Train Epoch: 88 [0/50000 (0%)]	Loss: 0.716796
+Train Epoch: 88 [12800/50000 (26%)]	Loss: 0.634805
+Train Epoch: 88 [25600/50000 (51%)]	Loss: 0.521832
+Train Epoch: 88 [38400/50000 (77%)]	Loss: 0.534282
+================================================================
+Training: Average loss: 0.3113, Accuracy: 48768/50000 (98%)
+Test: Average loss: 0.5899, Accuracy: 8375/10000 (84%)
+natural_err_total:  tensor(1625., device='cuda:0')
+robust_err_total:  tensor(4706., device='cuda:0')
+================================================================
+Train Epoch: 89 [0/50000 (0%)]	Loss: 0.714146
+Train Epoch: 89 [12800/50000 (26%)]	Loss: 0.586787
+Train Epoch: 89 [25600/50000 (51%)]	Loss: 0.722628
+Train Epoch: 89 [38400/50000 (77%)]	Loss: 0.623003
+================================================================
+Training: Average loss: 0.3122, Accuracy: 48882/50000 (98%)
+Test: Average loss: 0.5799, Accuracy: 8386/10000 (84%)
+natural_err_total:  tensor(1614., device='cuda:0')
+robust_err_total:  tensor(4651., device='cuda:0')
+================================================================
+Train Epoch: 90 [0/50000 (0%)]	Loss: 0.656447
+Train Epoch: 90 [12800/50000 (26%)]	Loss: 0.560420
+Train Epoch: 90 [25600/50000 (51%)]	Loss: 0.586727
+Train Epoch: 90 [38400/50000 (77%)]	Loss: 0.611660
+================================================================
+Training: Average loss: 0.2458, Accuracy: 49140/50000 (98%)
+Test: Average loss: 0.5314, Accuracy: 8503/10000 (85%)
+natural_err_total:  tensor(1497., device='cuda:0')
+robust_err_total:  tensor(4598., device='cuda:0')
+================================================================
+Train Epoch: 91 [0/50000 (0%)]	Loss: 0.541211
+Train Epoch: 91 [12800/50000 (26%)]	Loss: 0.407985
+Train Epoch: 91 [25600/50000 (51%)]	Loss: 0.510484
+Train Epoch: 91 [38400/50000 (77%)]	Loss: 0.501581
+================================================================
+Training: Average loss: 0.2427, Accuracy: 49123/50000 (98%)
+Test: Average loss: 0.5258, Accuracy: 8534/10000 (85%)
+natural_err_total:  tensor(1466., device='cuda:0')
+robust_err_total:  tensor(4532., device='cuda:0')
+================================================================
+Train Epoch: 92 [0/50000 (0%)]	Loss: 0.462428
+Train Epoch: 92 [12800/50000 (26%)]	Loss: 0.493637
+Train Epoch: 92 [25600/50000 (51%)]	Loss: 0.440821
+Train Epoch: 92 [38400/50000 (77%)]	Loss: 0.537001
+================================================================
+Training: Average loss: 0.2175, Accuracy: 49295/50000 (99%)
+Test: Average loss: 0.5133, Accuracy: 8553/10000 (86%)
+natural_err_total:  tensor(1447., device='cuda:0')
+robust_err_total:  tensor(4613., device='cuda:0')
+================================================================
+Train Epoch: 93 [0/50000 (0%)]	Loss: 0.462333
+Train Epoch: 93 [12800/50000 (26%)]	Loss: 0.400380
+Train Epoch: 93 [25600/50000 (51%)]	Loss: 0.327302
+Train Epoch: 93 [38400/50000 (77%)]	Loss: 0.622231
+================================================================
+Training: Average loss: 0.2298, Accuracy: 49218/50000 (98%)
+Test: Average loss: 0.5249, Accuracy: 8517/10000 (85%)
+natural_err_total:  tensor(1483., device='cuda:0')
+robust_err_total:  tensor(4619., device='cuda:0')
+================================================================
+Train Epoch: 94 [0/50000 (0%)]	Loss: 0.382716
+Train Epoch: 94 [12800/50000 (26%)]	Loss: 0.423272
+Train Epoch: 94 [25600/50000 (51%)]	Loss: 0.513590
+Train Epoch: 94 [38400/50000 (77%)]	Loss: 0.370262
+================================================================
+Training: Average loss: 0.2170, Accuracy: 49252/50000 (99%)
+Test: Average loss: 0.5219, Accuracy: 8505/10000 (85%)
+natural_err_total:  tensor(1495., device='cuda:0')
+robust_err_total:  tensor(4609., device='cuda:0')
+================================================================
+Train Epoch: 95 [0/50000 (0%)]	Loss: 0.413333
+Train Epoch: 95 [12800/50000 (26%)]	Loss: 0.455618
+Train Epoch: 95 [25600/50000 (51%)]	Loss: 0.438310
+Train Epoch: 95 [38400/50000 (77%)]	Loss: 0.487824
+================================================================
+Training: Average loss: 0.1983, Accuracy: 49359/50000 (99%)
+Test: Average loss: 0.5091, Accuracy: 8516/10000 (85%)
+natural_err_total:  tensor(1484., device='cuda:0')
+robust_err_total:  tensor(4629., device='cuda:0')
+================================================================
+Train Epoch: 96 [0/50000 (0%)]	Loss: 0.363063
+Train Epoch: 96 [12800/50000 (26%)]	Loss: 0.420525
+Train Epoch: 96 [25600/50000 (51%)]	Loss: 0.444182
+Train Epoch: 96 [38400/50000 (77%)]	Loss: 0.367211
+================================================================
+Training: Average loss: 0.1947, Accuracy: 49358/50000 (99%)
+Test: Average loss: 0.5129, Accuracy: 8509/10000 (85%)
+natural_err_total:  tensor(1491., device='cuda:0')
+robust_err_total:  tensor(4642., device='cuda:0')
+================================================================
+Train Epoch: 97 [0/50000 (0%)]	Loss: 0.498983
+Train Epoch: 97 [12800/50000 (26%)]	Loss: 0.417610
+Train Epoch: 97 [25600/50000 (51%)]	Loss: 0.372492
+Train Epoch: 97 [38400/50000 (77%)]	Loss: 0.520711
+================================================================
+Training: Average loss: 0.1987, Accuracy: 49321/50000 (99%)
+Test: Average loss: 0.5124, Accuracy: 8516/10000 (85%)
+natural_err_total:  tensor(1484., device='cuda:0')
+robust_err_total:  tensor(4672., device='cuda:0')
+================================================================
+Train Epoch: 98 [0/50000 (0%)]	Loss: 0.390450
+Train Epoch: 98 [12800/50000 (26%)]	Loss: 0.472789
+Train Epoch: 98 [25600/50000 (51%)]	Loss: 0.421433
+Train Epoch: 98 [38400/50000 (77%)]	Loss: 0.423767
+================================================================
+Training: Average loss: 0.1877, Accuracy: 49365/50000 (99%)
+Test: Average loss: 0.5182, Accuracy: 8478/10000 (85%)
+natural_err_total:  tensor(1522., device='cuda:0')
+robust_err_total:  tensor(4649., device='cuda:0')
+================================================================
+Train Epoch: 99 [0/50000 (0%)]	Loss: 0.396733
+Train Epoch: 99 [12800/50000 (26%)]	Loss: 0.437968
+Train Epoch: 99 [25600/50000 (51%)]	Loss: 0.386745
+Train Epoch: 99 [38400/50000 (77%)]	Loss: 0.355021
+================================================================
+Training: Average loss: 0.1862, Accuracy: 49288/50000 (99%)
+Test: Average loss: 0.5175, Accuracy: 8490/10000 (85%)
+natural_err_total:  tensor(1510., device='cuda:0')
+robust_err_total:  tensor(4680., device='cuda:0')
+================================================================
+Train Epoch: 100 [0/50000 (0%)]	Loss: 0.395080
+Train Epoch: 100 [12800/50000 (26%)]	Loss: 0.391842
+Train Epoch: 100 [25600/50000 (51%)]	Loss: 0.388038
+Train Epoch: 100 [38400/50000 (77%)]	Loss: 0.354367
+================================================================
+Training: Average loss: 0.1790, Accuracy: 49414/50000 (99%)
+Test: Average loss: 0.5022, Accuracy: 8550/10000 (86%)
+natural_err_total:  tensor(1450., device='cuda:0')
+robust_err_total:  tensor(4671., device='cuda:0')
+================================================================

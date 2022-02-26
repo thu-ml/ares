@@ -1,0 +1,8 @@
+torch==1.4.0
+torchvision==0.5.0
+numpy==1.21.0
+pandas
+timm==0.4.12
+scipy==1.5.4
+opencv-python-headless
+dataclasses

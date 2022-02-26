@@ -1,0 +1,76 @@
+TRAIN:
+    
+    # Architecture name, see pytorch models package for
+    # a list of possible architectures
+    arch: 'resnet50'
+
+
+    # SGD paramters
+    lr: 0.1
+    momentum: 0.9
+    weight_decay: 0.0001
+
+    # Print frequency, is used for both training and testing
+    print_freq: 10
+
+    # Dataset mean and std used for data normalization
+    mean: !!python/tuple [0.485, 0.456, 0.406]
+    std: !!python/tuple [0.229, 0.224, 0.225]
+
+    # FAST ADVERSARIAL TRAINING PARAMETER
+
+    # Starting epoch (interpret as multiplied by n_repeats)
+    # start_epoch: 6
+    # # Number of training epochs
+    # epochs: 28
+
+    # lr_epochs: !!python/tuple [25,28]
+    # lr_values: !!python/tuple [0.0025, 0.00025]
+
+    # Starting epoch (interpret as multiplied by n_repeats)
+    start_epoch: 12
+    # Number of training epochs
+    epochs: 15
+
+    # lr_epochs: !!python/tuple [12,13,15]
+    # lr_values: !!python/tuple [0, 0.01, 0.001]
+
+    lr_epochs: !!python/tuple [12,15]
+    lr_values: !!python/tuple [0.004, 0.0004]
+
+    half: true
+    random_init: true
+    
+ADV:
+    # FGSM parameters during training
+    clip_eps: 4.0
+    fgsm_step: 5.0
+
+    # Number of repeats for free adversarial training
+    n_repeats: 1
+
+    # PGD attack parameters used during validation
+    # the same clip_eps as above is used for PGD
+    pgd_attack: 
+    #- !!python/tuple [10, 0.00392156862] #[10 iters, 1.0/255.0]
+    - !!python/tuple [50, 0.00392156862] #[50 iters, 1.0/255.0]
+    
+DATA:
+    # Number of data workers
+    workers: 4
+
+    # Color value range
+    max_color_value: 255.0
+
+    # FAST ADVERSARIAL TRAINING PARAMETER
+
+    # Image Size
+    img_size: 0
+
+    # Training batch size
+    batch_size: 128
+
+    # Crop Size for data augmentation
+    crop_size: 288
+
+    
