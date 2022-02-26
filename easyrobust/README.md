@@ -5,7 +5,7 @@ EasyRobust is a tool for training your robust models. Now it support adversarial
 ## Install
 
 ```
-git clone https://github.com/alibaba/easyrobust.git
+git clone https://github.com/thu-ml/ares/tree/main/easyrobust
 cd easyrobust
 pip install -e .
 ```
