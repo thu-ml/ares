@@ -6,7 +6,7 @@ robustness on image classification correctly and comprehensively.
 
 - Clone this repo
     ```bash
-    git clone https://github.com/haichen-ber/pytorch_ares.git
+    git clone https://github.com/thu-ml/ares/tree/main/pytorch_ares
     ```
 - Install the experimental environment
     ```bash
