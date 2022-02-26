@@ -1,0 +1,2 @@
+-r base.txt
+tensorflow>=0.10.0
