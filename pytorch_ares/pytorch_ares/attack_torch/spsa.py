@@ -31,7 +31,7 @@ class SPSA(object):
         if norm == np.inf:
             eta = torch.clamp(eta, -eps, eps)
         elif norm == 2:
-            normVal = torch.norm(eta.view(batchsize, -1), self.p, 1)#求范数
+            normVal = torch.norm(eta.view(batchsize, -1), self.norm, 1)#求范数
             mask = normVal<=eps
             scaling = eps/normVal
             scaling[mask] = 1
