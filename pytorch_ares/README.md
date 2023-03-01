@@ -67,7 +67,7 @@ The requirements.txt includes its dependencies.
 ARES provides command line interface to run benchmarks. For example, you can test the attack success rate of fgsm on resnet18 on the cifar10 dataset:
 
     cd test/
-    python test_white_box_attack.py --attack_name fgsm --dataset_name cifar10
+    python test_fgsm.py --dataset_name cifar10
 
 There are 4 run_***.py files in the attack_benchmark folder that evaluate the adversarial robustness benchmarks on the cifar10 and imagenet datasets. For example, if you want to evaluate the robustness of the defense model on the cifar10 dataset, you can run the following command line:
 
