@@ -1,4 +1,4 @@
-.pep8
-.pylintrc
+**/__pycache__
 .DS_Store
-__pycache__/
+.DS_Store?
+**/.vscode
