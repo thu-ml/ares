@@ -1,2 +1,0 @@
-ConfigArgParse==0.14.0
-tqdm==4.31.1

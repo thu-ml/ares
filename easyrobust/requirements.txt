@@ -1,6 +1,0 @@
-timm==0.4.12
-torch
-torchvision
-pyyaml
-imagecorruptions
-einops

@@ -1,0 +1,107 @@
+# distributed setting
+distributed: False
+
+# amp parameters
+apex_amp: False
+native_amp: False
+
+# model parameters
+model: convnext_small
+num_classes: 1000
+resume: ''
+gp: null
+channels_last: False
+
+# Batch norm parameters
+bn_momentum: null
+bn_eps: null
+sync_bn: False
+dist_bn: reduce
+split_bn: False
+
+# optimizer parameters
+opt: adamw
+opt_eps: 1.0e-8
+opt_betas: null
+momentum: 0.9
+weight_decay: 0.05
+clip_grad: null
+clip_mode: norm
+layer_decay: null
+
+# lr schedule
+epochs: 300
+sched: cosine
+sched_on_updates: True
+lrb: 5.0e-4
+lr: null
+lr_noise: null
+lr_noise_pct: 0.67
+lr_noise_std: 1.0
+lr_cycle_mul: 1.0
+lr_cycle_decay: 0.5
+lr_cycle_limit: 1
+lr_k_decay: 1.0
+warmup_lr: 1.0e-6
+min_lr: 1.0e-5
+epoch_repeats: 0
+start_epoch: null
+decay_epochs: 30
+warmup_epochs: 5
+cooldown_epochs: 0
+patience_epochs: 0
+decay_rate: 0.1
+
+# dataset parameters
+batch_size: 64
+train_dir: ''
+eval_dir: ''
+input_size: 224
+crop_pct: 0.875
+interpolation: bicubic
+mean: [0.485, 0.456, 0.406]
+std: [0.229, 0.224, 0.225]
+
+# augmentation
+no_aug: False
+color_jitter: 0.4
+aa: rand-m9-mstd0.5-inc1
+aug_repeats: 0
+aug_splits: 0
+jsd_loss: False
+# random erase
+reprob: 0.25
+remode: pixel
+recount: 1
+resplit: False
+mixup: 0.8
+cutmix: 1.0
+cutmix_minmax: null
+mixup_prob: 1.0
+mixup_switch_prob: 0.5
+mixup_mode: batch
+mixup_off_epoch: 0
+smoothing: 0.1
+train_interpolation: bicubic
+# drop connection
+drop: 0.0
+drop_path: 0.0
+drop_block: null
+
+# ema
+model_ema: True
+model_ema_force_cpu: False
+model_ema_decay: 0.9998
+
+# misc
+seed: 0
+log_interval: 50
+recovery_interval: 0
+num_workers: 6
+output_dir: ''
+eval_metric: top1
+pin_mem: True
+
+# advtrain
+advtrain: True
+attack_criterion: mixup

@@ -1,2 +1,0 @@
--r base.txt
-tensorflow-gpu>=0.10.0

@@ -1,0 +1,2 @@
+python run_attack.py --gpu 0 --crop_pct 0.875 --input_size 224 --interpolation 'bilinear' --data_dir DATA_PATH --label_file LABEL_PATH \
+--batchsize 20 --num_workers 16  --model_name 'resnet50_at' --attack_name 'pgd' --dataset 'imagenet'
