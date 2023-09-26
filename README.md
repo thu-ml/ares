@@ -47,7 +47,7 @@
 
 ## 📘 Documentation
 
-📚 Access detailed **tutorials** and **API docs** on strategies to attack classification models, object detection models, and robust training [here](https://thu-ml-ares2.0.io/).
+📚 Access detailed **tutorials** and **API docs** on strategies to attack classification models, object detection models, and robust training [here](https://thu-ml.github.io/ares/).
 
 
 ## 📝 Citation
