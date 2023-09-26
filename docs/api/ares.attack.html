@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ares.attack package &mdash; ARES 2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ares.attack.detection package" href="ares.detection.html" />
+    <link rel="prev" title="Robust Training for Image Classification" href="../tutorial/robust_training.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ARES
+          </a>
+              <div class="version">
+                2.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/attack_classification.html">Attacking Image Classification Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/attack_detection.html">Attacking Object Detection Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/robust_training.html">Robust Training for Image Classification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ares.attack package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-ares.attack.fgsm">ares.attack.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ares.attack.autoattack.autoattack">ares.attack.autoattack module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ares.detection.html">ares.attack.detection package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ares.defense.html">ares.defense package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ares.dataset.html">ares.dataset package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ares.model.html">ares.model package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ares.utils.html">ares.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ARES</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ares.attack package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ares.attack.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ares-attack-package">
+<h1>ares.attack package<a class="headerlink" href="#ares-attack-package" title="Permalink to this heading">¶</a></h1>
+<section id="module-ares.attack.fgsm">
+<span id="ares-attack-base-module"></span><h2>ares.attack.base module<a class="headerlink" href="#module-ares.attack.fgsm" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.fgsm.FGSM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.fgsm.</span></span><span class="sig-name descname"><span class="pre">FGSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/fgsm.html#FGSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.fgsm.FGSM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fast Gradient Sign Method (FGSM). A white-box single-step constraint-based method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;fgsm&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1412.6572">https://arxiv.org/abs/1412.6572</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.fgsm.FGSM.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/fgsm.html#FGSM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.fgsm.FGSM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for FGSM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.fgsm.FGSM.attack_detection_forward">
+<span class="sig-name descname"><span class="pre">attack_detection_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_vanish_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/fgsm.html#FGSM.attack_detection_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.fgsm.FGSM.attack_detection_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to attack object detection models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_data</strong> (<em>dict</em>) – {‘inputs’: torch.Tensor with shape [N,C,H,W] and value range [0, 1], ‘data_samples’: list of mmdet.structures.DetDataSample}.</p></li>
+<li><p><strong>excluded_losses</strong> (<em>list</em>) – List of losses not used to compute the attack loss.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – Factor used to scale adv images.</p></li>
+<li><p><strong>object_vanish_only</strong> (<em>bool</em>) – When True, just make objects vanish only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adversarial images with value range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.bim"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.bim.BIM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.bim.</span></span><span class="sig-name descname"><span class="pre">BIM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/bim.html#BIM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.bim.BIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Basic Iterative Method (BIM). A white-box iterative constraint-based method. Require a differentiable loss function.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;bim&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1607.02533">https://arxiv.org/abs/1607.02533</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.bim.BIM.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/bim.html#BIM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.bim.BIM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf. It is selected from [1, 2, np.inf].</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The step size for each attack iteration. Defaults to 1/255.</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – The attack steps. Defaults to 20.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function. Defaults to ‘ce’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.bim.BIM.attack_detection_forward">
+<span class="sig-name descname"><span class="pre">attack_detection_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_vanish_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/bim.html#BIM.attack_detection_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.bim.BIM.attack_detection_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to attack object detection models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_data</strong> (<em>dict</em>) – {‘inputs’: torch.Tensor with shape [N,C,H,W] and value range [0, 1], ‘data_samples’: list of mmdet.structures.DetDataSample}.</p></li>
+<li><p><strong>excluded_losses</strong> (<em>list</em>) – List of losses not used to compute the attack loss.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – Factor used to scale adv images.</p></li>
+<li><p><strong>object_vanish_only</strong> (<em>bool</em>) – When True, just make objects vanish only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adversarial images with value range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.mim"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.mim.MIM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.mim.</span></span><span class="sig-name descname"><span class="pre">MIM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/mim.html#MIM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.mim.MIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Momentum Iterative Method (MIM). A white-box iterative constraint-based method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;mim&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1710.06081">https://arxiv.org/abs/1710.06081</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.mim.MIM.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/mim.html#MIM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.mim.MIM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for MIM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The step size for each attack iteration. Defaults to 1/255.</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – The attack steps. Defaults to 20.</p></li>
+<li><p><strong>decay_factor</strong> (<em>float</em>) – The decay factor. Defaults to 1.0.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function. Defaults to ‘ce’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.mim.MIM.attack_detection_forward">
+<span class="sig-name descname"><span class="pre">attack_detection_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_vanish_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/mim.html#MIM.attack_detection_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.mim.MIM.attack_detection_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to attack object detection models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_data</strong> (<em>dict</em>) – {‘inputs’: torch.Tensor with shape [N,C,H,W] and value range [0, 1], ‘data_samples’: list of mmdet.structures.DetDataSample}.</p></li>
+<li><p><strong>excluded_losses</strong> (<em>list</em>) – List of losses not used to compute the attack loss.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – Factor used to scale adv images.</p></li>
+<li><p><strong>object_vanish_only</strong> (<em>bool</em>) – When True, just make objects vanish only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adversarial images with value range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.tim"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.tim.</span></span><span class="sig-name descname"><span class="pre">TIFGSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gaussian'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diversity_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Translation invariant attacks.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;tim&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1904.02884">https://arxiv.org/abs/1904.02884</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gaussian'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diversity_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for TIFGSM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The attack range for each step.</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – The number of attack iteration.</p></li>
+<li><p><strong>kernel_name</strong> (<em>str</em>) – The name of the kernel.</p></li>
+<li><p><strong>len_kernel</strong> (<em>int</em>) – The size for gaussian kernel.</p></li>
+<li><p><strong>nsig</strong> (<em>float</em>) – The sigma for gaussian kernel.</p></li>
+<li><p><strong>decay_factor</strong> (<em>float</em>) – The decay factor.</p></li>
+<li><p><strong>resize_rate</strong> (<em>float</em>) – The resize rate for input transform.</p></li>
+<li><p><strong>diversity_prob</strong> (<em>float</em>) – The probability of input transform.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM.attack_detection_forward">
+<span class="sig-name descname"><span class="pre">attack_detection_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_vanish_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM.attack_detection_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM.attack_detection_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to attack object detection models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_data</strong> (<em>dict</em>) – {‘inputs’: torch.Tensor with shape [N,C,H,W] and value range [0, 1], ‘data_samples’: list of mmdet.structures.DetDataSample}.</p></li>
+<li><p><strong>excluded_losses</strong> (<em>list</em>) – List of losses not used to compute the attack loss.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – Factor used to scale adv images.</p></li>
+<li><p><strong>object_vanish_only</strong> (<em>bool</em>) – When True, just make objects vanish only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adversarial images with value range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM.gkern">
+<span class="sig-name descname"><span class="pre">gkern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM.gkern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM.gkern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a 2D Gaussian kernel array.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM.input_diversity">
+<span class="sig-name descname"><span class="pre">input_diversity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM.input_diversity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM.input_diversity" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to perform random input transform.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM.kernel_generation">
+<span class="sig-name descname"><span class="pre">kernel_generation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM.kernel_generation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM.kernel_generation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM.lkern">
+<span class="sig-name descname"><span class="pre">lkern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM.lkern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM.lkern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tim.TIFGSM.ukern">
+<span class="sig-name descname"><span class="pre">ukern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tim.html#TIFGSM.ukern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tim.TIFGSM.ukern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.PGD"></span><p>Projected Gradient Descent (PGD). A white-box iterative constraint-based method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;pgd&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1706.06083">https://arxiv.org/abs/1706.06083</a>.</p></li>
+</ul>
+<span class="target" id="module-ares.attack.cw"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.cw.CW">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.cw.</span></span><span class="sig-name descname"><span class="pre">CW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_search_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/cw.html#CW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.cw.CW" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Carlini &amp; Wagner Attack (C&amp;W). A white-box iterative optimization-based method. Require a differentiable logits.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;cw&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 2.</p></li>
+<li><p>References: References: <a class="reference external" href="https://arxiv.org/pdf/1608.04644.pdf">https://arxiv.org/pdf/1608.04644.pdf</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.cw.CW.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_search_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/cw.html#CW.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.cw.CW.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to 2.</p></li>
+<li><p><strong>kappa</strong> (<em>float</em>) – Defaults to 0.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – The learning rate for attack process.</p></li>
+<li><p><strong>init_const</strong> (<em>float</em>) – The initialized constant.</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em>) – The maximum iteration.</p></li>
+<li><p><strong>binary_search_steps</strong> (<em>int</em>) – The steps for binary search.</p></li>
+<li><p><strong>num_classes</strong> (<em>int</em>) – The number of classes of all the labels.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.cw.CW.atanh">
+<span class="sig-name descname"><span class="pre">atanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/cw.html#CW.atanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.cw.CW.atanh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.deepfool"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.deepfool.DeepFool">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.deepfool.</span></span><span class="sig-name descname"><span class="pre">DeepFool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overshoot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/deepfool.html#DeepFool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.deepfool.DeepFool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>DeepFool. A white-box iterative optimization method. It needs to calculate the Jacobian of the logits with
+relate to input, so that it only applies to tasks with small number of classification class.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;deepfool&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1511.04599">https://arxiv.org/abs/1511.04599</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.deepfool.DeepFool.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overshoot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/deepfool.html#DeepFool.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.deepfool.DeepFool.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>overshoot</strong> (<em>float</em>) – The parameter overshoot. Defaults to 0.02.</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em>) – The maximum iteration.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.deepfool.DeepFool.deepfool">
+<span class="sig-name descname"><span class="pre">deepfool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/deepfool.html#DeepFool.deepfool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.deepfool.DeepFool.deepfool" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function for deepfool.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.nes"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.nes.NES">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.nes.</span></span><span class="sig-name descname"><span class="pre">NES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nes_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_per_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_perturb_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nes.html#NES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nes.NES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Natural Evolution Strategies (NES). A black-box constraint-based method. Use NES as gradient estimation
+technique and employ PGD with this estimated gradient to generate the adversarial example.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;nes&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References:
+1. <a class="reference external" href="https://arxiv.org/abs/1804.08598">https://arxiv.org/abs/1804.08598</a>.
+2. <a class="reference external" href="http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf">http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nes.NES.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nes_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_per_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_perturb_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nes.html#NES.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nes.NES.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for NES.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The step size for each attack iteration. Defaults to 1/255.</p></li>
+<li><p><strong>nes_samples</strong> (<em>int</em>) – The samples for NES.</p></li>
+<li><p><strong>sample_per_draw</strong> (<em>int</em>) – Sample in each draw.</p></li>
+<li><p><strong>max_queries</strong> (<em>int</em>) – Maximum query number.</p></li>
+<li><p><strong>search_sigma</strong> (<em>float</em>) – The sigma param for searching.</p></li>
+<li><p><strong>decay</strong> (<em>float</em>) – Decay rate.</p></li>
+<li><p><strong>random_perturb_start</strong> (<em>bool</em>) – Whether start with random perturbation.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nes.NES.clip_eta">
+<span class="sig-name descname"><span class="pre">clip_eta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nes.html#NES.clip_eta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nes.NES.clip_eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to clip image according to the constraint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nes.NES.nes">
+<span class="sig-name descname"><span class="pre">nes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_victim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_victim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nes.html#NES.nes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nes.NES.nes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The attack process of NES.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nes.NES.nes_gradient">
+<span class="sig-name descname"><span class="pre">nes_gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytarget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nes.html#NES.nes_gradient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nes.NES.nes_gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to calculate the gradient of NES.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.spsa"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.spsa.SPSA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.spsa.</span></span><span class="sig-name descname"><span class="pre">SPSA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spsa_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_per_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stop_loss_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/spsa.html#SPSA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.spsa.SPSA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Simultaneous Perturbation Stochastic Approximation (SPSA). A black-box constraint-based method. Use SPSA as
+gradient estimation technique and employ Adam with this estimated gradient to generate the adversarial example.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;spsa&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1802.05666">https://arxiv.org/abs/1802.05666</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.spsa.SPSA.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spsa_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_per_draw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stop_loss_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/spsa.html#SPSA.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.spsa.SPSA.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for SPSA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate of attack.</p></li>
+<li><p><strong>delta</strong> (<em>float</em>) – The delta param.</p></li>
+<li><p><strong>spsa_samples</strong> (<em>int</em>) – Number of samples in SPSA.</p></li>
+<li><p><strong>sample_per_draw</strong> (<em>int</em>) – Sample in each draw.</p></li>
+<li><p><strong>nb_iter</strong> (<em>int</em>) – Number of iteration.</p></li>
+<li><p><strong>early_stop_loss_threshold</strong> (<em>float</em>) – The threshold for early stop.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.spsa.SPSA.clip_eta">
+<span class="sig-name descname"><span class="pre">clip_eta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/spsa.html#SPSA.clip_eta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.spsa.SPSA.clip_eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to clip image according to the constraint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.spsa.SPSA.spsa">
+<span class="sig-name descname"><span class="pre">spsa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/spsa.html#SPSA.spsa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.spsa.SPSA.spsa" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of SPSA attack.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.nattack"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.nattack.Nattack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.nattack.</span></span><span class="sig-name descname"><span class="pre">Nattack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#Nattack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.Nattack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>NAttack. A black-box constraint-based method. It is motivated by NES.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;nattack&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1905.00441">https://arxiv.org/abs/1905.00441</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nattack.Nattack.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#Nattack.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.Nattack.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for NATTACK.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>max_queries</strong> (<em>int</em>) – The maximum query number.</p></li>
+<li><p><strong>sample_size</strong> (<em>int</em>) – The sample size.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – The learning rate.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em>) – The sigma parameter.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nattack.Nattack.atanh">
+<span class="sig-name descname"><span class="pre">atanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#Nattack.atanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.Nattack.atanh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nattack.Nattack.clip_eta">
+<span class="sig-name descname"><span class="pre">clip_eta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#Nattack.clip_eta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.Nattack.clip_eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to clip image according to the constraint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nattack.Nattack.is_adversarial">
+<span class="sig-name descname"><span class="pre">is_adversarial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#Nattack.is_adversarial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.Nattack.is_adversarial" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to judge if the input image is adversarial.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nattack.Nattack.nattack">
+<span class="sig-name descname"><span class="pre">nattack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#Nattack.nattack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.Nattack.nattack" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function for nattack</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.nattack.Nattack.scale_to_tanh">
+<span class="sig-name descname"><span class="pre">scale_to_tanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#Nattack.scale_to_tanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.Nattack.scale_to_tanh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ares.attack.nattack.nattack_loss">
+<span class="sig-prename descclassname"><span class="pre">ares.attack.nattack.</span></span><span class="sig-name descname"><span class="pre">nattack_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_lables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targeted</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#nattack_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.nattack_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>The loss function for nattack.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ares.attack.nattack.scale">
+<span class="sig-prename descclassname"><span class="pre">ares.attack.nattack.</span></span><span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/nattack.html#scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.nattack.scale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-ares.attack.boundary"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.boundary.BoundaryAttack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.boundary.</span></span><span class="sig-name descname"><span class="pre">BoundaryAttack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spherical_step_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orth_step_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonal_step_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perp_step_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/boundary.html#BoundaryAttack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.boundary.BoundaryAttack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Boundary. A black-box decision-based method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;boundary&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 2.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1712.04248">https://arxiv.org/abs/1712.04248</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.boundary.BoundaryAttack.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spherical_step_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orth_step_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonal_step_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perp_step_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/boundary.html#BoundaryAttack.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.boundary.BoundaryAttack.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to 2.</p></li>
+<li><p><strong>spherical_step_eps</strong> (<em>float</em>) – The spherical step epsilon.</p></li>
+<li><p><strong>orth_step_factor</strong> (<em>float</em>) – The orthogonal step factor.</p></li>
+<li><p><strong>orthogonal_step_eps</strong> (<em>float</em>) – The orthogonal step epsilon.</p></li>
+<li><p><strong>perp_step_factor</strong> (<em>float</em>) – The perpendicular step factor.</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em>) – The maximum iteration.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.boundary.BoundaryAttack.boundary">
+<span class="sig-name descname"><span class="pre">boundary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytarget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/boundary.html#BoundaryAttack.boundary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.boundary.BoundaryAttack.boundary" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function of boundary attack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.boundary.BoundaryAttack.get_init_noise">
+<span class="sig-name descname"><span class="pre">get_init_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytarget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/boundary.html#BoundaryAttack.get_init_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.boundary.BoundaryAttack.get_init_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to initialize noise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.boundary.BoundaryAttack.perturbation">
+<span class="sig-name descname"><span class="pre">perturbation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_adv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytarget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/boundary.html#BoundaryAttack.perturbation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.boundary.BoundaryAttack.perturbation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function of single attack iteration.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.evolutionary"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.evolutionary.Evolutionary">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.evolutionary.</span></span><span class="sig-name descname"><span class="pre">Evolutionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ccov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.03</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/evolutionary.html#Evolutionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.evolutionary.Evolutionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Evolutionary. A black-box decision-based method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;evolutionary&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 2.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1904.04433">https://arxiv.org/abs/1904.04433</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.evolutionary.Evolutionary.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ccov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.03</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/evolutionary.html#Evolutionary.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.evolutionary.Evolutionary.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to initialize evolutionary attack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>ccov</strong> (<em>float</em>) – The parameter cconv. Defaults to 0.001.</p></li>
+<li><p><strong>decay_weight</strong> (<em>float</em>) – The decay weight param. Defaults to 0.99.</p></li>
+<li><p><strong>max_queries</strong> (<em>int</em>) – The maximum query number. Defaults to 10000.</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – The mean for bias. Defaults to 0.01.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em>) – The deviation for bias. Defaults to 3e-2.</p></li>
+<li><p><strong>maxlen</strong> (<em>int</em>) – The maximum length. Defaults to 30.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.evolutionary.Evolutionary.evolutionary">
+<span class="sig-name descname"><span class="pre">evolutionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytarget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/evolutionary.html#Evolutionary.evolutionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.evolutionary.Evolutionary.evolutionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to conduct evolutionary attack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.evolutionary.Evolutionary.get_init_noise">
+<span class="sig-name descname"><span class="pre">get_init_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytarget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/evolutionary.html#Evolutionary.get_init_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.evolutionary.Evolutionary.get_init_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to initialize noise.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.di_fgsm"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.di_fgsm.DI2FGSM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.di_fgsm.</span></span><span class="sig-name descname"><span class="pre">DI2FGSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diversity_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/di_fgsm.html#DI2FGSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.di_fgsm.DI2FGSM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Diverse Input Iterative Fast Gradient Sign Method. A transfer-based black-box attack method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;dim&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1803.06978">https://arxiv.org/abs/1803.06978</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.di_fgsm.DI2FGSM.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diversity_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/di_fgsm.html#DI2FGSM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.di_fgsm.DI2FGSM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The step size for each attack iteration. Defaults to 1/255.</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – The attack steps. Defaults to 20.</p></li>
+<li><p><strong>decay_factor</strong> (<em>float</em>) – The decay factor.</p></li>
+<li><p><strong>resize_rate</strong> (<em>float</em>) – The resize rate for input transform.</p></li>
+<li><p><strong>diversity_prob</strong> (<em>float</em>) – The probability of input transform.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.di_fgsm.DI2FGSM.attack_detection_forward">
+<span class="sig-name descname"><span class="pre">attack_detection_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_vanish_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/di_fgsm.html#DI2FGSM.attack_detection_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.di_fgsm.DI2FGSM.attack_detection_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to attack object detection models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_data</strong> (<em>dict</em>) – {‘inputs’: torch.Tensor with shape [N,C,H,W] and value range [0, 1], ‘data_samples’: list of mmdet.structures.DetDataSample}.</p></li>
+<li><p><strong>excluded_losses</strong> (<em>list</em>) – List of losses not used to compute the attack loss.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – Factor used to scale adv images.</p></li>
+<li><p><strong>object_vanish_only</strong> (<em>bool</em>) – When True, just make objects vanish only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adversarial images with value range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.di_fgsm.DI2FGSM.input_diversity">
+<span class="sig-name descname"><span class="pre">input_diversity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/di_fgsm.html#DI2FGSM.input_diversity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.di_fgsm.DI2FGSM.input_diversity" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function perform diverse transform for input images.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.si_ni_fgsm"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.si_ni_fgsm.SI_NI_FGSM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.si_ni_fgsm.</span></span><span class="sig-name descname"><span class="pre">SI_NI_FGSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/si_ni_fgsm.html#SI_NI_FGSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.si_ni_fgsm.SI_NI_FGSM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Nesterov Accelerated Gradient and Scale Invariance with FGSM. A black-box attack method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;si_ni_fgsm&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/1908.06281">https://arxiv.org/abs/1908.06281</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.si_ni_fgsm.SI_NI_FGSM.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/si_ni_fgsm.html#SI_NI_FGSM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.si_ni_fgsm.SI_NI_FGSM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for PGD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The attack range for each step.</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – The number of attack iteration.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – The scale factor.</p></li>
+<li><p><strong>decay_factor</strong> (<em>float</em>) – The decay factor.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.si_ni_fgsm.SI_NI_FGSM.attack_detection_forward">
+<span class="sig-name descname"><span class="pre">attack_detection_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_vanish_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/si_ni_fgsm.html#SI_NI_FGSM.attack_detection_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.si_ni_fgsm.SI_NI_FGSM.attack_detection_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to attack object detection models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_data</strong> (<em>dict</em>) – {‘inputs’: torch.Tensor with shape [N,C,H,W] and value range [0, 1], ‘data_samples’: list of mmdet.structures.DetDataSample}.</p></li>
+<li><p><strong>excluded_losses</strong> (<em>list</em>) – List of losses not used to compute the attack loss.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – Factor used to scale adv images.</p></li>
+<li><p><strong>object_vanish_only</strong> (<em>bool</em>) – When True, just make objects vanish only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adversarial images with value range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.vmi_fgsm"></span><dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.vmi_fgsm.VMI_fgsm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.vmi_fgsm.</span></span><span class="sig-name descname"><span class="pre">VMI_fgsm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/vmi_fgsm.html#VMI_fgsm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.vmi_fgsm.VMI_fgsm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Enhancing the Transferability of Adversarial Attacks through Variance Tuning.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;vmi_fgsm&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/2103.15571">https://arxiv.org/abs/2103.15571</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.vmi_fgsm.VMI_fgsm.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/vmi_fgsm.html#VMI_fgsm.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.vmi_fgsm.VMI_fgsm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for VMI_FGSM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The attack range for each step.</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – The number of attack iteration.</p></li>
+<li><p><strong>decay_factor</strong> (<em>float</em>) – The decay factor.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The beta param.</p></li>
+<li><p><strong>sample_number</strong> (<em>int</em>) – The number of samples.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.vmi_fgsm.VMI_fgsm.attack_detection_forward">
+<span class="sig-name descname"><span class="pre">attack_detection_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_vanish_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/vmi_fgsm.html#VMI_fgsm.attack_detection_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.vmi_fgsm.VMI_fgsm.attack_detection_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to attack object detection models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_data</strong> (<em>dict</em>) – {‘inputs’: torch.Tensor with shape [N,C,H,W] and value range [0, 1], ‘data_samples’: list of mmdet.structures.DetDataSample}.</p></li>
+<li><p><strong>excluded_losses</strong> (<em>list</em>) – List of losses not used to compute the attack loss.</p></li>
+<li><p><strong>scale_factor</strong> (<em>float</em>) – Factor used to scale adv images.</p></li>
+<li><p><strong>object_vanish_only</strong> (<em>bool</em>) – When True, just make objects vanish only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adversarial images with value range [0,1].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ares.attack.tta"></span><dl class="py function">
+<dt class="sig sig-object py" id="ares.attack.tta.Cos_dis">
+<span class="sig-prename descclassname"><span class="pre">ares.attack.tta.</span></span><span class="sig-name descname"><span class="pre">Cos_dis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#Cos_dis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.Cos_dis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ares.attack.tta.Poincare_dis">
+<span class="sig-prename descclassname"><span class="pre">ares.attack.tta.</span></span><span class="sig-name descname"><span class="pre">Poincare_dis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#Poincare_dis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.Poincare_dis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ares.attack.tta.TI_tta">
+<span class="sig-prename descclassname"><span class="pre">ares.attack.tta.</span></span><span class="sig-name descname"><span class="pre">TI_tta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#TI_tta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.TI_tta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.tta.TTA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.tta.</span></span><span class="sig-name descname"><span class="pre">TTA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diversity_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#TTA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.TTA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Transferable Targeted Attacks.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;tta&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/2012.11207">https://arxiv.org/abs/2012.11207</a>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tta.TTA.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01568627450980392</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00392156862745098</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diversity_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ce'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#TTA.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.TTA.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initialize function for TTA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint. Defaults to np.inf.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>stepsize</strong> (<em>float</em>) – The attack range for each step.</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – The number of attack iteration.</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em>) – The size for gaussian kernel.</p></li>
+<li><p><strong>nsig</strong> (<em>float</em>) – The sigma for gaussian kernel.</p></li>
+<li><p><strong>resize_rate</strong> (<em>float</em>) – The resize rate for input transform.</p></li>
+<li><p><strong>diversity_prob</strong> (<em>float</em>) – The probability of input transform.</p></li>
+<li><p><strong>loss</strong> (<em>str</em>) – The loss function.</p></li>
+<li><p><strong>target</strong> (<em>bool</em>) – Conduct target/untarget attack. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tta.TTA.ce_loss">
+<span class="sig-name descname"><span class="pre">ce_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#TTA.ce_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.TTA.ce_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function of ce loss for TTA.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tta.TTA.input_diversity">
+<span class="sig-name descname"><span class="pre">input_diversity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#TTA.input_diversity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.TTA.input_diversity" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to perform random input transform.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tta.TTA.logits_loss">
+<span class="sig-name descname"><span class="pre">logits_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#TTA.logits_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.TTA.logits_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>The logits function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.tta.TTA.po_trip_loss">
+<span class="sig-name descname"><span class="pre">po_trip_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#TTA.po_trip_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.TTA.po_trip_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to calculate po trip loss.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ares.attack.tta.gkern">
+<span class="sig-prename descclassname"><span class="pre">ares.attack.tta.</span></span><span class="sig-name descname"><span class="pre">gkern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/tta.html#gkern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.tta.gkern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-ares.attack.SGM"></span><p>Skip Gradient Method. A transfer-based black-box attack method.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;sgm&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker</span> <span class="o">=</span> <span class="n">attacker_cls</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adv_images</span> <span class="o">=</span> <span class="n">attacker</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Supported distance metric: 1, 2, np.inf.</p></li>
+<li><p>References: <a class="reference external" href="https://arxiv.org/abs/2002.05990">https://arxiv.org/abs/2002.05990</a>.</p></li>
+</ul>
+</section>
+<section id="module-ares.attack.autoattack.autoattack">
+<span id="ares-attack-autoattack-module"></span><h2>ares.attack.autoattack module<a class="headerlink" href="#module-ares.attack.autoattack.autoattack" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ares.attack.autoattack.autoattack.</span></span><span class="sig-name descname"><span class="pre">AutoAttack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attacks_to_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_tf_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to perform autoattack. It is called by registry.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ares.utils.registry</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attacker_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_attack</span><span class="p">(</span><span class="s1">&#39;autoattack&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attacks_to_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_tf_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – The target model to be attacked.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to perform autoattack. Defaults to ‘cuda’.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The norm of distance calculation for adversarial constraint.
+Defaults to np.inf. It is selected from [1, 2, np.inf].</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – The maximum perturbation range epsilon.</p></li>
+<li><p><strong>seed</strong> (<em>float</em>) – Random seed. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Output the details during the attack process. Defaults to True.</p></li>
+<li><p><strong>attacks_to_run</strong> (<em>list</em>) – Set the attacks to run. Defaults to []. It should be selected
+from [‘apgd-ce’, ‘apgd-dlr’, ‘fab’, ‘square’, ‘apgd-t’, ‘fab-t’].</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – Define the version of attack. Defaults to ‘standard’. It is selected
+from [‘standard’, ‘plus’, ‘rand’].</p></li>
+<li><p><strong>is_tf_model</strong> (<em>bool</em>) – Whether the model is based on tensorflow. Defaults to False.</p></li>
+<li><p><strong>log_path</strong> (<em>str</em>) – Path to the log file. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack.clean_accuracy">
+<span class="sig-name descname"><span class="pre">clean_accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack.clean_accuracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack.clean_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack.get_logits">
+<span class="sig-name descname"><span class="pre">get_logits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack.get_logits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack.get_logits" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the logits of the target model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack.get_seed">
+<span class="sig-name descname"><span class="pre">get_seed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack.get_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack.get_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function automatically set a random seed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack.run_standard_evaluation">
+<span class="sig-name descname"><span class="pre">run_standard_evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack.run_standard_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack.run_standard_evaluation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack.run_standard_evaluation_individual">
+<span class="sig-name descname"><span class="pre">run_standard_evaluation_individual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack.run_standard_evaluation_individual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack.run_standard_evaluation_individual" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ares.attack.autoattack.autoattack.AutoAttack.set_version">
+<span class="sig-name descname"><span class="pre">set_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ares/attack/autoattack/autoattack.html#AutoAttack.set_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ares.attack.autoattack.autoattack.AutoAttack.set_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to set the attack version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version</strong> (<em>str</em>) – The version of attack. Defaults to ‘standard’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial/robust_training.html" class="btn btn-neutral float-left" title="Robust Training for Image Classification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ares.detection.html" class="btn btn-neutral float-right" title="ares.attack.detection package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ARES 2.0 contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
