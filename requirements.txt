@@ -1,7 +1,7 @@
 torch==2.0.1 --index-url https://download.pytorch.org/whl/cu118
 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cu118
 timm==0.9.7
-scipy==1.9.1
+scipy==1.10.0
 tqdm==4.65.0
 gdown==4.7.1
 pandas==1.4.4
